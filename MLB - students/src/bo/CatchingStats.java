@@ -11,7 +11,7 @@ import javax.persistence.OneToOne;
 
 @SuppressWarnings("serial")
 @Entity(name="catchingstats")
-public class CatchingStats implements Serializable{
+public class CatchingStats implements Serializable {
 	
 	@Id
 	@OneToOne
@@ -64,7 +64,7 @@ public class CatchingStats implements Serializable{
 	
 	@Override
 	public boolean equals(Object obj) {
-		if(!(obj instanceof BattingStats)){
+		if(!(obj instanceof CatchingStats)){
 			return false;
 		}
 		CatchingStats other = (CatchingStats)obj;

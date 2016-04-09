@@ -194,6 +194,4 @@ public class Player {
 		if (this.getDeathDay()!=null) hash += this.getDeathDay().hashCode();
 		return hash;
 	}
-	
-	
 }
