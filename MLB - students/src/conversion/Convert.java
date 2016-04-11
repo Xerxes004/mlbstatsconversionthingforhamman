@@ -15,18 +15,21 @@ import bo.FieldingStats;
 import bo.PitchingStats;
 import bo.Player;
 import bo.PlayerSeason;
+import bo.Team;
+import bo.TeamSeason;
 import dataaccesslayer.HibernateUtil;
 
 public class Convert {
 
 	static Connection conn;
-	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.6.131:3306/mlb?user=seth&password=password"; 
+	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
 
 	public static void main(String[] args) {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
-			convertPlayers();
+			//convertPlayers();
+			convertTeams();
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
 			System.out.println("Elapsed time in mins: " + elapsed);
@@ -41,6 +44,128 @@ public class Convert {
 		}
 		HibernateUtil.getSessionFactory().close();
 	}
+	
+	
+	public static void convertTeams() {
+		try {
+			PreparedStatement ps = conn.prepareStatement("select " +
+						"franchID, " + 
+						"teamID, " +
+						"name, " + 
+						"lgID, " +
+						"min(yearID) as yearFounded, " +
+						"max(yearID) as yearLast " +
+						"from Teams group by franchID");
+			ResultSet rs = ps.executeQuery();
+			int count = 0;
+			while(rs.next()) {
+				count++;
+				if (count % 10 == 0) System.out.println(count);
+				String franchId = rs.getString("franchID");
+				String teamId = rs.getString("teamID");
+				String name = rs.getString("name");
+				String league = rs.getString("lgID");
+				Integer yearFounded = rs.getInt("yearFounded");
+				Integer yearLast = rs.getInt("yearLast");
+				
+				if (franchId == null || franchId.isEmpty() ||
+					name == null || name.isEmpty() ||
+					league == null || league.isEmpty())
+				{
+					continue;
+				}
+				
+				Team team = new Team();
+				team.setName(name);
+				team.setLeague(league);
+				team.setYearFounded(yearFounded);
+				team.setYearLast(yearLast);
+				
+				addSeasons(team, franchId);
+				addRoster(team, teamId);
+				
+				
+				
+				HibernateUtil.persistTeam(team);				
+			}
+		}
+		catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	public static void addRoster(Team team, String teamId) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("select " + 
+					"yearID, G, W, L, Rank, attendance " +
+					"from Appearances " +
+					"where teamID = ?");
+			ps.setString(1, teamId);
+			ResultSet rs = ps.executeQuery();
+			
+			TeamSeason season = null;
+			while (rs.next()) {
+				int seasonYear = rs.getInt("yearID");
+				season = team.getTeamSeason(seasonYear);
+				// it is possible to see more than one of these per player if he switched teams
+				// set all of these attrs the first time we see this playerseason
+				if (season==null) {
+					season = new TeamSeason(team, seasonYear);
+					team.addTeamSeason(season);
+					season.setGamesPlayed(rs.getInt("G"));
+					season.setWins(rs.getInt("W"));
+					season.setLosses(rs.getInt("L"));
+					season.setRank(rs.getInt("Rank"));
+					season.setTotalAttendance(rs.getInt("attendance"));
+				// set this the consecutive time(s) so it is the total games played regardless of team	
+				} else {
+					season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+				}
+			}
+			
+			rs.close();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void addSeasons(Team team, String franchId) {
+		try {
+			PreparedStatement ps = conn.prepareStatement("select " + 
+					"yearID, G, W, L, Rank, attendance " +
+					"from Teams " +
+					"where franchID = ?");
+			ps.setString(1, franchId);
+			ResultSet rs = ps.executeQuery();
+			
+			TeamSeason season = null;
+			while (rs.next()) {
+				int seasonYear = rs.getInt("yearID");
+				season = team.getTeamSeason(seasonYear);
+				// it is possible to see more than one of these per player if he switched teams
+				// set all of these attrs the first time we see this playerseason
+				if (season==null) {
+					season = new TeamSeason(team, seasonYear);
+					team.addTeamSeason(season);
+					season.setGamesPlayed(rs.getInt("G"));
+					season.setWins(rs.getInt("W"));
+					season.setLosses(rs.getInt("L"));
+					season.setRank(rs.getInt("Rank"));
+					season.setTotalAttendance(rs.getInt("attendance"));
+				// set this the consecutive time(s) so it is the total games played regardless of team	
+				} else {
+					season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+				}
+			}
+			
+			rs.close();
+			ps.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 		
 	public static void convertPlayers() {
 		try {
@@ -78,6 +203,7 @@ public class Convert {
 				if (pid == null	|| pid.isEmpty() || 
 					firstName == null || firstName.isEmpty() ||
 					lastName == null || lastName.isEmpty()) continue;
+				
 				Player p = new Player();
 				p.setName(firstName + " " + lastName);
 				p.setGivenName(rs.getString("nameGiven"));

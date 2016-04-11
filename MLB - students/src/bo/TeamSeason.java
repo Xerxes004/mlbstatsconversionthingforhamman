@@ -1,13 +1,21 @@
 package bo;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @SuppressWarnings("serial")
 @Entity(name = "teamseason")
@@ -22,6 +30,13 @@ public class TeamSeason implements Serializable{
 		Team team;
 		@Column(name="year")
 		Integer seasonYear;
+		
+		TeamSeasonId () {}
+		
+		TeamSeasonId (Team team, Integer season) {
+			this.team = team;
+			this.seasonYear = season;
+		}
 		
 		@Override
 		public boolean equals(Object obj) {
@@ -44,6 +59,10 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
+	@Fetch(FetchMode.JOIN)
+	Set<Player> roster = new HashSet<Player>();
+	
 	@Column
 	Integer gamesPlayed;
 	@Column
@@ -54,6 +73,12 @@ public class TeamSeason implements Serializable{
 	Integer rank;
 	@Column
 	Integer totalAttendance;
+	
+	public TeamSeason() {}
+	
+	public TeamSeason (Team team, Integer year) {
+		this.id = new TeamSeasonId(team, year);
+	}
 	
 	public TeamSeasonId getId() {
 		return id;
@@ -101,6 +126,22 @@ public class TeamSeason implements Serializable{
 	
 	public void setTotalAttendance(Integer totalAttendance) {
 		this.totalAttendance = totalAttendance;
+	}
+	
+	public void setTeam (Team team) {
+		this.id.team = team;
+	}
+	
+	public Team getTeam () {
+		return this.id.team;
+	}
+	
+	public void setYear(Integer year) {
+		this.id.seasonYear = year;
+	}
+	
+	public Integer getYear() {
+		return this.id.seasonYear;
 	}
 	
 	@Override
