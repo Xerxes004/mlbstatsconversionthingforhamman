@@ -11,6 +11,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
@@ -59,9 +60,9 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
-	@Fetch(FetchMode.JOIN)
-	Set<Player> roster = new HashSet<Player>();
+//	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+//	@JoinTable(name="teamseasonplayer", joinColumns={@JoinColumn(name="year"), @JoinColumn(name="teamid")}, inverseJoinColumns=@JoinColumn(name="playerid"))
+//	Set<Player> roster = new HashSet<Player>();
 	
 	@Column
 	Integer gamesPlayed;

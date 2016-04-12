@@ -22,7 +22,7 @@ import dataaccesslayer.HibernateUtil;
 public class Convert {
 
 	static Connection conn;
-	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
+	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.74.129:3306/mlb?user=joel&password=password"; 
 
 	public static void main(String[] args) {
 		try {
@@ -49,20 +49,21 @@ public class Convert {
 	public static void convertTeams() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
-						"franchID, " + 
-						"teamID, " +
-						"name, " + 
+						"t.franchID, " +
+						"franchName as name, " + 
 						"lgID, " +
 						"min(yearID) as yearFounded, " +
 						"max(yearID) as yearLast " +
-						"from Teams group by franchID");
+						"from Teams t, TeamsFranchises f " +
+						"where t.franchID = f.franchID " +
+						"group by t.franchID");
 			ResultSet rs = ps.executeQuery();
 			int count = 0;
 			while(rs.next()) {
 				count++;
 				if (count % 10 == 0) System.out.println(count);
 				String franchId = rs.getString("franchID");
-				String teamId = rs.getString("teamID");
+				//String teamId = rs.getString("teamID");
 				String name = rs.getString("name");
 				String league = rs.getString("lgID");
 				Integer yearFounded = rs.getInt("yearFounded");
@@ -82,7 +83,7 @@ public class Convert {
 				team.setYearLast(yearLast);
 				
 				addSeasons(team, franchId);
-				addRoster(team, teamId);
+				//addRoster(team, teamId);
 				
 				
 				
@@ -132,10 +133,8 @@ public class Convert {
 	
 	public static void addSeasons(Team team, String franchId) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("select " + 
-					"yearID, G, W, L, Rank, attendance " +
-					"from Teams " +
-					"where franchID = ?");
+			PreparedStatement ps = conn.prepareStatement("select name, yearID, G, W, L, Rank, attendance "
+					+ "from Teams t join (select distinct teamID from Teams where franchID=?) f on t.teamId = f.teamID");
 			ps.setString(1, franchId);
 			ResultSet rs = ps.executeQuery();
 			
@@ -155,7 +154,8 @@ public class Convert {
 					season.setTotalAttendance(rs.getInt("attendance"));
 				// set this the consecutive time(s) so it is the total games played regardless of team	
 				} else {
-					season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+					//season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+					System.out.println(rs.getString("yearID") + rs.getString("G")+ rs.getString("W")+ rs.getString("L")+rs.getString("Rank")+rs.getString("attendance"));
 				}
 			}
 			

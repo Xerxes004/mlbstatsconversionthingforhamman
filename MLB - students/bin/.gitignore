@@ -1,3 +1,7 @@
+/bo/
+/controller/
 /conversion/
 /dataaccesslayer/
-/bo/
+/hibernate.cfg.xml
+/view/
+/webserver/
