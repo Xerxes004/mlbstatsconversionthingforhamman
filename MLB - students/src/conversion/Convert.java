@@ -32,7 +32,7 @@ public class Convert {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
-			//convertPlayers();
+			convertPlayers();
 			convertTeams();
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
@@ -87,9 +87,8 @@ public class Convert {
 				
 				addSeasons(team, franchId);	
 				
-				
 				teams.put(franchId, team);
-				//HibernateUtil.persistTeam(team);				
+				HibernateUtil.persistTeam(team);				
 			}
 		}
 		catch (Exception e) {
