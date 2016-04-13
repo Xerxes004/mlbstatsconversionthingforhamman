@@ -14,6 +14,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
@@ -35,11 +36,12 @@ public class Player {
 	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
 	@Fetch(FetchMode.JOIN)
 	Set<PlayerSeason> seasons = new HashSet<PlayerSeason>();
-	
+
+
 	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="roster")
 	@Fetch(FetchMode.JOIN)
 	Set<TeamSeason> teams = new HashSet<TeamSeason>();
-	
+
 	@Column
 	String name;
 	@Column

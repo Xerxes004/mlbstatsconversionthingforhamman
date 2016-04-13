@@ -24,10 +24,11 @@ import dataaccesslayer.HibernateUtil;
 public class Convert {
 
 	static Connection conn;
+
 	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
 	static Map<String, Player> players = new HashMap<String, Player>();
 	static Map<String, Team> teams = new HashMap<String, Team>();
-
+	
 	public static void main(String[] args) {
 		try {
 			long startTime = System.currentTimeMillis();
@@ -53,13 +54,22 @@ public class Convert {
 	public static void convertTeams() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
+<<<<<<< HEAD
 						"t.franchID, " + 
 						"franchName as name, " +
+=======
+						"t.franchID, " +
+						"franchName as name, " + 
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 						"lgID, " +
 						"min(yearID) as yearFounded, " +
 						"max(yearID) as yearLast " +
 						"from Teams t, TeamsFranchises f " +
+<<<<<<< HEAD
 						"where t.franchId = f.franchId " +
+=======
+						"where t.franchID = f.franchID " +
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 						"group by t.franchID");
 			ResultSet rs = ps.executeQuery();
 			int count = 0;
@@ -67,6 +77,10 @@ public class Convert {
 				count++;
 				if (count % 10 == 0) System.out.println(count);
 				String franchId = rs.getString("franchID");
+<<<<<<< HEAD
+=======
+				//String teamId = rs.getString("teamID");
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 				String name = rs.getString("name");
 				String league = rs.getString("lgID");
 				Integer yearFounded = rs.getInt("yearFounded");
@@ -85,7 +99,12 @@ public class Convert {
 				team.setYearFounded(yearFounded);
 				team.setYearLast(yearLast);
 				
+<<<<<<< HEAD
 				addSeasons(team, franchId);	
+=======
+				addSeasons(team, franchId);
+				//addRoster(team, teamId);
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 				
 				teams.put(franchId, team);
 				HibernateUtil.persistTeam(team);				
@@ -134,6 +153,7 @@ public class Convert {
 	
 	public static void addRoster(TeamSeason season, String teamId, Integer year) {
 		try {
+<<<<<<< HEAD
 			PreparedStatement ps = conn.prepareStatement("select " + 
 					"playerId " +
 					"from Appearances " +
@@ -141,14 +161,38 @@ public class Convert {
 			ps.setString(1, teamId);
 			ps.setString(2, year.toString());
 			
+=======
+			PreparedStatement ps = conn.prepareStatement("select name, yearID, G, W, L, Rank, attendance "
+					+ "from Teams t join (select distinct teamID from Teams where franchID=?) f on t.teamId = f.teamID");
+			ps.setString(1, franchId);
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
+<<<<<<< HEAD
 				String playerId = rs.getString("playerId");
 				
 				Player player = players.get(playerId);
 				if (player != null) {
 					season.addPlayerToRoster(player);
+=======
+				int seasonYear = rs.getInt("yearID");
+				season = team.getTeamSeason(seasonYear);
+				// it is possible to see more than one of these per player if he switched teams
+				// set all of these attrs the first time we see this playerseason
+				if (season==null) {
+					season = new TeamSeason(team, seasonYear);
+					team.addTeamSeason(season);
+					season.setGamesPlayed(rs.getInt("G"));
+					season.setWins(rs.getInt("W"));
+					season.setLosses(rs.getInt("L"));
+					season.setRank(rs.getInt("Rank"));
+					season.setTotalAttendance(rs.getInt("attendance"));
+				// set this the consecutive time(s) so it is the total games played regardless of team	
+				} else {
+					//season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+					System.out.println(rs.getString("yearID") + rs.getString("G")+ rs.getString("W")+ rs.getString("L")+rs.getString("Rank")+rs.getString("attendance"));
+>>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 				}
 			}
 			

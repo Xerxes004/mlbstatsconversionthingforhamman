@@ -23,12 +23,8 @@ public class Team {
 	
 	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.team")
 	@Fetch(FetchMode.JOIN)
-	Set<TeamSeason> teamSeasons = new HashSet<TeamSeason>();
+	Set<TeamSeason> seasons = new HashSet<TeamSeason>();
 	
-	/*@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
-	@Fetch(FetchMode.JOIN)
-	Set<TeamSeasonPlayer> teamSeasons = new HashSet<TeamSeasonPlayer>();
-	*/
 	
 	@Column
 	String name;
@@ -41,14 +37,14 @@ public class Team {
 	
 	// utility function
 	public TeamSeason getTeamSeason(Integer year) {
-		for (TeamSeason ts : teamSeasons) {
+		for (TeamSeason ts : seasons) {
 			if (ts.getYear().equals(year)) return ts;
 		}
 		return null;
 	}
 
 	public void addTeamSeason(TeamSeason ts) {
-		this.teamSeasons.add(ts);
+		this.seasons.add(ts);
 	}
 
 	public Integer getTeamId() {

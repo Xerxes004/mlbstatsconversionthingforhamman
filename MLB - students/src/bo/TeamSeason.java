@@ -68,7 +68,7 @@ public class TeamSeason implements Serializable{
 				@JoinColumn(name="year")
 		})
 	Set<Player> roster = new HashSet<Player>();
-	
+
 	@Column
 	Integer gamesPlayed;
 	@Column
