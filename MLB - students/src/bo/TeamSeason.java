@@ -60,13 +60,13 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	/*@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)//, mappedBy="teams")
 	@JoinTable(name = "teamseasonplayer", 
-		joinColumns=@JoinColumn(name="playerid"),
-		inverseJoinColumns = {
+		inverseJoinColumns=@JoinColumn(name="playerid"),
+		joinColumns = {
 				@JoinColumn(name="teamid"),
 				@JoinColumn(name="year")
-		})
+		})*/
 	Set<Player> roster = new HashSet<Player>();
 
 	@Column
@@ -139,11 +139,12 @@ public class TeamSeason implements Serializable{
 	}
 	
 	public Set<Player> getRoster () {
-		return this.roster;
+		//return this.roster;
+		return null;
 	}
 	
 	public void setRoster(Set<Player> roster) {
-		this.roster = roster;
+		//this.roster = roster;
 	}
 	
 	public void setTeam (Team team) {

@@ -38,8 +38,8 @@ public class Player {
 	Set<PlayerSeason> seasons = new HashSet<PlayerSeason>();
 
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="roster")
-	@Fetch(FetchMode.JOIN)
+	/*@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="roster")
+	@Fetch(FetchMode.JOIN)*/
 	Set<TeamSeason> teams = new HashSet<TeamSeason>();
 
 	@Column
@@ -82,8 +82,12 @@ public class Player {
 	public void setPositions(Set<String> positions) {
 		this.positions = positions;
 	}
+	
+	public void addTeamSeason(TeamSeason s) {
+		teams.add(s);
+	}
 
-	public void addSeason(PlayerSeason s) {
+	public void addPlayerSeason(PlayerSeason s) {
 		seasons.add(s);
 	}
 

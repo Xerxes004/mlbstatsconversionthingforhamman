@@ -43,16 +43,18 @@ public class Team {
 		return null;
 	}
 
-	public void addTeamSeason(TeamSeason ts) {
-		this.seasons.add(ts);
+	public Set<TeamSeason> getSeasons() {
+		return seasons;
 	}
 
-	public Integer getTeamId() {
-		return teamId;
+
+	public void setSeasons(Set<TeamSeason> seasons) {
+		this.seasons = seasons;
 	}
-	
-	public void setTeamId(Integer teamId) {
-		this.teamId = teamId;
+
+
+	public void addTeamSeason(TeamSeason ts) {
+		this.seasons.add(ts);
 	}
 	
 	public String getName() {

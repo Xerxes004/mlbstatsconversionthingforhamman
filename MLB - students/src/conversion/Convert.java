@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +36,10 @@ public class Convert {
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
 			convertPlayers();
 			convertTeams();
+			persistPlayers();
+			persistTeams();
+			//Team testTeam = teams.get("WST");
+			//HibernateUtil.persistTeam(testTeam);
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
 			System.out.println("Elapsed time in mins: " + elapsed);
@@ -50,26 +55,46 @@ public class Convert {
 		HibernateUtil.getSessionFactory().close();
 	}
 	
+	private static void persistTeams() {
+		Iterator it = teams.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Team> pair = (Map.Entry)it.next();
+			Team team = (Team)pair.getValue();
+			if (team == null) 
+				System.exit(-100);
+			HibernateUtil.persistTeam((Team)pair.getValue());
+		}
+	}
+	
+	private static void persistPlayers() {
+		Iterator it = players.entrySet().iterator();
+		while (it.hasNext()) {
+			Map.Entry<String, Player> pair = (Map.Entry)it.next();
+			Player player = (Player)pair.getValue();
+			if (player == null) 
+				System.exit(-100);
+			HibernateUtil.persistPlayer(player);
+		}
+	}
+	
+	/*private static void persistPlayers() {
+		players.entrySet().stream().forEach((entry) -> {
+			if (entry != null && entry.getValue() != null) 
+				HibernateUtil.persistPlayer(entry.getValue());
+		});
+	}*/
+	
 	
 	public static void convertTeams() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
-<<<<<<< HEAD
 						"t.franchID, " + 
 						"franchName as name, " +
-=======
-						"t.franchID, " +
-						"franchName as name, " + 
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 						"lgID, " +
 						"min(yearID) as yearFounded, " +
 						"max(yearID) as yearLast " +
 						"from Teams t, TeamsFranchises f " +
-<<<<<<< HEAD
 						"where t.franchId = f.franchId " +
-=======
-						"where t.franchID = f.franchID " +
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 						"group by t.franchID");
 			ResultSet rs = ps.executeQuery();
 			int count = 0;
@@ -77,10 +102,6 @@ public class Convert {
 				count++;
 				if (count % 10 == 0) System.out.println(count);
 				String franchId = rs.getString("franchID");
-<<<<<<< HEAD
-=======
-				//String teamId = rs.getString("teamID");
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 				String name = rs.getString("name");
 				String league = rs.getString("lgID");
 				Integer yearFounded = rs.getInt("yearFounded");
@@ -88,26 +109,25 @@ public class Convert {
 				
 				if (franchId == null || franchId.isEmpty() ||
 					name == null || name.isEmpty() ||
-					league == null || league.isEmpty())
+					league == null || league.isEmpty() ||
+					yearFounded == null || yearFounded.toString().isEmpty() ||
+					yearLast == null || yearLast.toString().isEmpty())
 				{
 					continue;
 				}
 				
 				Team team = new Team();
 				team.setName(name);
+				System.out.println("Added " + team.getName());
 				team.setLeague(league);
 				team.setYearFounded(yearFounded);
 				team.setYearLast(yearLast);
 				
-<<<<<<< HEAD
 				addSeasons(team, franchId);	
-=======
-				addSeasons(team, franchId);
-				//addRoster(team, teamId);
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 				
+				System.out.println(team.getName()+":"+franchId);
 				teams.put(franchId, team);
-				HibernateUtil.persistTeam(team);				
+				//HibernateUtil.persistTeam(team);				
 			}
 		}
 		catch (Exception e) {
@@ -133,14 +153,38 @@ public class Convert {
 				if (season==null) {
 					season = new TeamSeason(team, year);
 					team.addTeamSeason(season);
-					season.setGamesPlayed(rs.getInt("G"));
+					Integer gamesPlayed = rs.getInt("G");
+					Integer wins = rs.getInt("W");
+					Integer losses = rs.getInt("L");
+					Integer rank = rs.getInt("Rank");
+					Integer attend = rs.getInt("attendance");
+					
+					if (gamesPlayed == null || 
+						wins == null ||
+						losses == null ||
+						rank == null ||
+						attend == null)
+						continue;
+					
+					season.setGamesPlayed(gamesPlayed);
+					if (season.getGamesPlayed() > 999) 
+						System.out.println(team.getName()+" had " + season.getGamesPlayed() + " games played.");
 					season.setWins(rs.getInt("W"));
+					if (season.getWins() > 9999) 
+						System.out.println(team.getName()+": too many wins");
 					season.setLosses(rs.getInt("L"));
+					if (season.getLosses() > 9999) 
+						System.out.println(team.getName()+": too many losses");
 					season.setRank(rs.getInt("Rank"));
+					if (season.getRank() > 99) 
+						System.out.println(team.getName()+": too high rank >> "+season.getWins());
 					season.setTotalAttendance(rs.getInt("attendance"));
+					if (season.getTotalAttendance() > 9999999) 
+						System.out.println(team.getName()+": too high attendance");
 					addRoster(season, rs.getString("teamId"), year);
 					
-				// set this the consecutive time(s) so it is the total games played regardless of team	
+					System.out.println(" with season " + season.getYear()+ " having " + season.getRoster().size()+" players.");
+					
 				}
 			}
 			
@@ -153,46 +197,24 @@ public class Convert {
 	
 	public static void addRoster(TeamSeason season, String teamId, Integer year) {
 		try {
-<<<<<<< HEAD
 			PreparedStatement ps = conn.prepareStatement("select " + 
 					"playerId " +
 					"from Appearances " +
 					"where teamId = ? and yearId = ?");
 			ps.setString(1, teamId);
-			ps.setString(2, year.toString());
+			ps.setInt(2, year);
 			
-=======
-			PreparedStatement ps = conn.prepareStatement("select name, yearID, G, W, L, Rank, attendance "
-					+ "from Teams t join (select distinct teamID from Teams where franchID=?) f on t.teamId = f.teamID");
-			ps.setString(1, franchId);
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
-<<<<<<< HEAD
 				String playerId = rs.getString("playerId");
 				
 				Player player = players.get(playerId);
+				
 				if (player != null) {
 					season.addPlayerToRoster(player);
-=======
-				int seasonYear = rs.getInt("yearID");
-				season = team.getTeamSeason(seasonYear);
-				// it is possible to see more than one of these per player if he switched teams
-				// set all of these attrs the first time we see this playerseason
-				if (season==null) {
-					season = new TeamSeason(team, seasonYear);
-					team.addTeamSeason(season);
-					season.setGamesPlayed(rs.getInt("G"));
-					season.setWins(rs.getInt("W"));
-					season.setLosses(rs.getInt("L"));
-					season.setRank(rs.getInt("Rank"));
-					season.setTotalAttendance(rs.getInt("attendance"));
-				// set this the consecutive time(s) so it is the total games played regardless of team	
-				} else {
-					//season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
-					System.out.println(rs.getString("yearID") + rs.getString("G")+ rs.getString("W")+ rs.getString("L")+rs.getString("Rank")+rs.getString("attendance"));
->>>>>>> branch 'master' of git@github.com:Xerxes004/mlbstatsconversionthingforhamman.git
+					player.addTeamSeason(season);
+					System.out.println(player.getName() + ",");
 				}
 			}
 			
@@ -232,6 +254,7 @@ public class Convert {
 				count++;
 				// this just gives us some progress feedback
 				if (count % 1000 == 0) System.out.println("num players: " + count);
+				if (count == 2001) break;
 				String pid = rs.getString("playerID");
 				String firstName = rs.getString("nameFirst");
 				String lastName = rs.getString("nameLast");
@@ -329,7 +352,7 @@ public class Convert {
 				// set all of these attrs the first time we see this playerseason
 				if (s==null) {
 					s = new PlayerSeason(p,yid);
-					p.addSeason(s);
+					p.addPlayerSeason(s);
 					s.setGamesPlayed(rs.getInt("gamesPlayed"));
 					double salary = getSalary(pid, yid);
 					s.setSalary(salary);
