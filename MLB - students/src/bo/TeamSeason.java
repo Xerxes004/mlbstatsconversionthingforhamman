@@ -11,6 +11,7 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
@@ -26,7 +27,7 @@ public class TeamSeason implements Serializable{
 	@Embeddable
 	static class TeamSeasonId implements Serializable {
 		@ManyToOne
-		@JoinColumn(name = "teamid", referencedColumnName = "teamid", insertable = false, updatable = false)
+		@JoinColumn(name="teamid", referencedColumnName = "teamid", insertable = false, updatable = false)
 		Team team;
 		@Column(name="year")
 		Integer seasonYear;
@@ -59,8 +60,13 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
-	@Fetch(FetchMode.JOIN)
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinTable(name = "teamseasonplayer", 
+		joinColumns=@JoinColumn(name="playerid"),
+		inverseJoinColumns = {
+				@JoinColumn(name="teamid"),
+				@JoinColumn(name="year")
+		})
 	Set<Player> roster = new HashSet<Player>();
 	
 	@Column
@@ -126,6 +132,18 @@ public class TeamSeason implements Serializable{
 	
 	public void setTotalAttendance(Integer totalAttendance) {
 		this.totalAttendance = totalAttendance;
+	}
+	
+	public void addPlayerToRoster(Player player) {
+		this.roster.add(player);
+	}
+	
+	public Set<Player> getRoster () {
+		return this.roster;
+	}
+	
+	public void setRoster(Set<Player> roster) {
+		this.roster = roster;
 	}
 	
 	public void setTeam (Team team) {

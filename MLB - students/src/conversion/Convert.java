@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import bo.BattingStats;
@@ -23,6 +25,8 @@ public class Convert {
 
 	static Connection conn;
 	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
+	static Map<String, Player> players = new HashMap<String, Player>();
+	static Map<String, Team> teams = new HashMap<String, Team>();
 
 	public static void main(String[] args) {
 		try {
@@ -49,20 +53,20 @@ public class Convert {
 	public static void convertTeams() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
-						"franchID, " + 
-						"teamID, " +
-						"name, " + 
+						"t.franchID, " + 
+						"franchName as name, " +
 						"lgID, " +
 						"min(yearID) as yearFounded, " +
 						"max(yearID) as yearLast " +
-						"from Teams group by franchID");
+						"from Teams t, TeamsFranchises f " +
+						"where t.franchId = f.franchId " +
+						"group by t.franchID");
 			ResultSet rs = ps.executeQuery();
 			int count = 0;
 			while(rs.next()) {
 				count++;
 				if (count % 10 == 0) System.out.println(count);
 				String franchId = rs.getString("franchID");
-				String teamId = rs.getString("teamID");
 				String name = rs.getString("name");
 				String league = rs.getString("lgID");
 				Integer yearFounded = rs.getInt("yearFounded");
@@ -81,12 +85,11 @@ public class Convert {
 				team.setYearFounded(yearFounded);
 				team.setYearLast(yearLast);
 				
-				addSeasons(team, franchId);
-				addRoster(team, teamId);
+				addSeasons(team, franchId);	
 				
 				
-				
-				HibernateUtil.persistTeam(team);				
+				teams.put(franchId, team);
+				//HibernateUtil.persistTeam(team);				
 			}
 		}
 		catch (Exception e) {
@@ -94,32 +97,32 @@ public class Convert {
 		}
 	}
 	
-	public static void addRoster(Team team, String teamId) {
+	public static void addSeasons(Team team, String franchId) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
-					"yearID, G, W, L, Rank, attendance " +
-					"from Appearances " +
-					"where teamID = ?");
-			ps.setString(1, teamId);
+					"yearID, teamId, G, W, L, Rank, attendance " +
+					"from Teams " +
+					"where franchID = ?");
+			ps.setString(1, franchId);
 			ResultSet rs = ps.executeQuery();
 			
 			TeamSeason season = null;
 			while (rs.next()) {
-				int seasonYear = rs.getInt("yearID");
-				season = team.getTeamSeason(seasonYear);
+				int year = rs.getInt("yearID");
+				season = team.getTeamSeason(year);
 				// it is possible to see more than one of these per player if he switched teams
 				// set all of these attrs the first time we see this playerseason
 				if (season==null) {
-					season = new TeamSeason(team, seasonYear);
+					season = new TeamSeason(team, year);
 					team.addTeamSeason(season);
 					season.setGamesPlayed(rs.getInt("G"));
 					season.setWins(rs.getInt("W"));
 					season.setLosses(rs.getInt("L"));
 					season.setRank(rs.getInt("Rank"));
 					season.setTotalAttendance(rs.getInt("attendance"));
+					addRoster(season, rs.getString("teamId"), year);
+					
 				// set this the consecutive time(s) so it is the total games played regardless of team	
-				} else {
-					season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
 				}
 			}
 			
@@ -130,32 +133,23 @@ public class Convert {
 		}
 	}
 	
-	public static void addSeasons(Team team, String franchId) {
+	public static void addRoster(TeamSeason season, String teamId, Integer year) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
-					"yearID, G, W, L, Rank, attendance " +
-					"from Teams " +
-					"where franchID = ?");
-			ps.setString(1, franchId);
+					"playerId " +
+					"from Appearances " +
+					"where teamId = ? and yearId = ?");
+			ps.setString(1, teamId);
+			ps.setString(2, year.toString());
+			
 			ResultSet rs = ps.executeQuery();
 			
-			TeamSeason season = null;
 			while (rs.next()) {
-				int seasonYear = rs.getInt("yearID");
-				season = team.getTeamSeason(seasonYear);
-				// it is possible to see more than one of these per player if he switched teams
-				// set all of these attrs the first time we see this playerseason
-				if (season==null) {
-					season = new TeamSeason(team, seasonYear);
-					team.addTeamSeason(season);
-					season.setGamesPlayed(rs.getInt("G"));
-					season.setWins(rs.getInt("W"));
-					season.setLosses(rs.getInt("L"));
-					season.setRank(rs.getInt("Rank"));
-					season.setTotalAttendance(rs.getInt("attendance"));
-				// set this the consecutive time(s) so it is the total games played regardless of team	
-				} else {
-					season.setGamesPlayed(rs.getInt("gamesPlayed")+season.getGamesPlayed());
+				String playerId = rs.getString("playerId");
+				
+				Player player = players.get(playerId);
+				if (player != null) {
+					season.addPlayerToRoster(player);
 				}
 			}
 			
@@ -228,8 +222,9 @@ public class Convert {
 				addPositions(p, pid);
 				// players bio collected, now go after stats
 				addSeasons(p, pid);
+				players.put(pid, p);
 				// we can now persist player, and the seasons and stats will cascade
-				HibernateUtil.persistPlayer(p);
+				//HibernateUtil.persistPlayer(p);
 			}
 			rs.close();
 			ps.close();

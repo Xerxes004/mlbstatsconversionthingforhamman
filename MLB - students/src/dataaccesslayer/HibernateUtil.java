@@ -25,6 +25,8 @@ public class HibernateUtil {
 				.addAnnotatedClass(bo.CatchingStats.class)
 				.addAnnotatedClass(bo.FieldingStats.class)
 				.addAnnotatedClass(bo.PitchingStats.class)
+				.addAnnotatedClass(bo.TeamSeason.class)
+				.addAnnotatedClass(bo.Team.class)
 				.configure();
 			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
 			applySettings(cfg.getProperties());
