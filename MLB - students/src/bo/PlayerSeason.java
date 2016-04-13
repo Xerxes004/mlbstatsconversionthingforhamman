@@ -48,7 +48,7 @@ public class PlayerSeason implements Serializable {
 	}
 
 	@Column
-	int gamesPlayed;
+	Integer gamesPlayed;
 	@Column
 	double salary;
 
