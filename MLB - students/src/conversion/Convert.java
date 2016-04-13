@@ -1,5 +1,6 @@
 package conversion;
 
+import java.security.KeyStore.Entry;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -11,6 +12,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import java.sql.CallableStatement;
 
 import bo.BattingStats;
 import bo.CatchingStats;
@@ -36,10 +39,6 @@ public class Convert {
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
 			convertPlayers();
 			convertTeams();
-			persistPlayers();
-			persistTeams();
-			//Team testTeam = teams.get("WST");
-			//HibernateUtil.persistTeam(testTeam);
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
 			System.out.println("Elapsed time in mins: " + elapsed);
@@ -54,36 +53,6 @@ public class Convert {
 		}
 		HibernateUtil.getSessionFactory().close();
 	}
-	
-	private static void persistTeams() {
-		Iterator it = teams.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, Team> pair = (Map.Entry)it.next();
-			Team team = (Team)pair.getValue();
-			if (team == null) 
-				System.exit(-100);
-			HibernateUtil.persistTeam((Team)pair.getValue());
-		}
-	}
-	
-	private static void persistPlayers() {
-		Iterator it = players.entrySet().iterator();
-		while (it.hasNext()) {
-			Map.Entry<String, Player> pair = (Map.Entry)it.next();
-			Player player = (Player)pair.getValue();
-			if (player == null) 
-				System.exit(-100);
-			HibernateUtil.persistPlayer(player);
-		}
-	}
-	
-	/*private static void persistPlayers() {
-		players.entrySet().stream().forEach((entry) -> {
-			if (entry != null && entry.getValue() != null) 
-				HibernateUtil.persistPlayer(entry.getValue());
-		});
-	}*/
-	
 	
 	public static void convertTeams() {
 		try {
@@ -127,7 +96,7 @@ public class Convert {
 				
 				System.out.println(team.getName()+":"+franchId);
 				teams.put(franchId, team);
-				//HibernateUtil.persistTeam(team);				
+				HibernateUtil.persistTeam(team);				
 			}
 		}
 		catch (Exception e) {
@@ -137,12 +106,22 @@ public class Convert {
 	
 	public static void addSeasons(Team team, String franchId) {
 		try {
-			PreparedStatement ps = conn.prepareStatement("select " + 
+			// We prepared this statement:
+			//
+			// prepare seasonInfo from 
+			// 'select yearId, teamId, G, W, L, Rank, attendance 
+			//  from Teams where franchId = ?';
+
+			CallableStatement cs = conn.prepareCall("{call mlb.getSeasonInfo(?)}");
+			cs.setString(1, franchId);
+			ResultSet rs = cs.executeQuery();
+			
+			/*PreparedStatement ps = conn.prepareStatement("select " + 
 					"yearID, teamId, G, W, L, Rank, attendance " +
 					"from Teams " +
 					"where franchID = ?");
 			ps.setString(1, franchId);
-			ResultSet rs = ps.executeQuery();
+			ResultSet rs = ps.executeQuery();*/
 			
 			TeamSeason season = null;
 			while (rs.next()) {
@@ -182,14 +161,14 @@ public class Convert {
 					if (season.getTotalAttendance() > 9999999) 
 						System.out.println(team.getName()+": too high attendance");
 					addRoster(season, rs.getString("teamId"), year);
-					
-					System.out.println(" with season " + season.getYear()+ " having " + season.getRoster().size()+" players.");
-					
+					team.addTeamSeason(season);
+				// set this the consecutive time(s) so it is the total games played regardless of team	
 				}
 			}
 			
 			rs.close();
-			ps.close();
+			//ps.close();
+			cs.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -202,8 +181,8 @@ public class Convert {
 					"from Appearances " +
 					"where teamId = ? and yearId = ?");
 			ps.setString(1, teamId);
-			ps.setInt(2, year);
-			
+			ps.setString(2, year.toString());
+
 			ResultSet rs = ps.executeQuery();
 			
 			while (rs.next()) {
@@ -213,7 +192,7 @@ public class Convert {
 				
 				if (player != null) {
 					season.addPlayerToRoster(player);
-					player.addTeamSeason(season);
+					//player.addTeamSeason(season);
 					System.out.println(player.getName() + ",");
 				}
 			}
@@ -254,7 +233,7 @@ public class Convert {
 				count++;
 				// this just gives us some progress feedback
 				if (count % 1000 == 0) System.out.println("num players: " + count);
-				if (count == 2001) break;
+				//if (count == 2001) break;
 				String pid = rs.getString("playerID");
 				String firstName = rs.getString("nameFirst");
 				String lastName = rs.getString("nameLast");
@@ -289,8 +268,9 @@ public class Convert {
 				// players bio collected, now go after stats
 				addSeasons(p, pid);
 				players.put(pid, p);
+				// This should be unnecessary because everything will cascade when team is populated
 				// we can now persist player, and the seasons and stats will cascade
-				//HibernateUtil.persistPlayer(p);
+				HibernateUtil.persistPlayer(p);
 			}
 			rs.close();
 			ps.close();

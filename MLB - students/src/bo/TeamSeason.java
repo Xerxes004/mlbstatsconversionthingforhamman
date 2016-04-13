@@ -15,9 +15,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-
 @SuppressWarnings("serial")
 @Entity(name = "teamseason")
 public class TeamSeason implements Serializable{
@@ -60,13 +57,14 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
-	/*@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)//, mappedBy="teams")
-	@JoinTable(name = "teamseasonplayer", 
-		inverseJoinColumns=@JoinColumn(name="playerid"),
-		joinColumns = {
-				@JoinColumn(name="teamid"),
-				@JoinColumn(name="year")
-		})*/
+	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@JoinTable(name = "teamseasonplayer",
+	joinColumns = {
+					@JoinColumn(name="teamid", referencedColumnName="teamid"),
+					@JoinColumn(name="year", referencedColumnName="year")
+			},
+		inverseJoinColumns={@JoinColumn(name="playerid", referencedColumnName="playerid")}
+	)
 	Set<Player> roster = new HashSet<Player>();
 
 	@Column
