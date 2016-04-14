@@ -15,6 +15,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 
+/**
+ * TeamSeason contains the necessary fields and the mapping
+ * of those fields to the database.
+ * @author Wesley Kelly
+ * @author Joel D. Sabol
+ *
+ */
 @SuppressWarnings("serial")
 @Entity(name = "teamseason")
 public class TeamSeason implements Serializable{
@@ -28,8 +35,7 @@ public class TeamSeason implements Serializable{
 		Team team;
 		@Column(name="year")
 		Integer seasonYear;
-		
-		// hibernate complains if there is no default constructor
+
 		TeamSeasonId () {}
 		
 		TeamSeasonId (Team team, Integer season) {
@@ -58,13 +64,13 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
-	// many to many relationship which defines teamseasonplayer in MLB
+	// Maps the many to many relationship which defines teamseasonplayer in MLB DB
 	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name = "teamseasonplayer",
-	joinColumns = {
-					@JoinColumn(name="teamid", referencedColumnName="teamid"),
-					@JoinColumn(name="year", referencedColumnName="year")
-			},
+		joinColumns = {
+			@JoinColumn(name="teamid", referencedColumnName="teamid"),
+			@JoinColumn(name="year", referencedColumnName="year")
+		},
 		inverseJoinColumns={@JoinColumn(name="playerid", referencedColumnName="playerid")}
 	)
 	Set<Player> roster = new HashSet<Player>();

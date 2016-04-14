@@ -21,7 +21,6 @@ public class HibernateUtil {
 			Configuration cfg = new Configuration()
 				.addAnnotatedClass(bo.Player.class)
 				.addAnnotatedClass(bo.TeamSeason.class)
-				.addAnnotatedClass(bo.Team.class)
 				.addAnnotatedClass(bo.PlayerSeason.class)
 				.addAnnotatedClass(bo.BattingStats.class)
 				.addAnnotatedClass(bo.CatchingStats.class)
@@ -92,12 +91,17 @@ public class HibernateUtil {
 		return list;
 	}
 	
-	public static boolean persistPlayer(Player p) {
+	/**
+	 * Persists a player to the database
+	 * @param player The player to persist to the database.
+	 * @return True if the player was persisted to the database, false otherwise
+	 */
+	public static boolean persistPlayer(Player player) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
 			tx.begin();
-			session.save(p);
+			session.save(player);
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
@@ -109,12 +113,17 @@ public class HibernateUtil {
 		return true;
 	}
 	
-	public static boolean persistTeam(Team t) {
+	/**
+	 * Persists a team to the database
+	 * @param team The team to persist to the database.
+	 * @return True if the team was persisted to the database, false otherwise
+	 */
+	public static boolean persistTeam(Team team) {
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
 			tx.begin();
-			session.save(t);
+			session.save(team);
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();

@@ -1,6 +1,5 @@
 package conversion;
 
-import java.security.KeyStore.Entry;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +8,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -38,7 +36,7 @@ public class Convert {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
-			
+			// Converts players and seasons
 			convertPlayers();
 			convertTeams();
 			
@@ -57,8 +55,13 @@ public class Convert {
 		HibernateUtil.getSessionFactory().close();
 	}
 	
+	/**
+	 * Converts all teams by creating teams and hydrating them from the 
+	 * old database and persisting them to the new one.
+	 */
 	public static void convertTeams() {
 		try {
+			// Select all teams in the database along with pertinent information
 			PreparedStatement ps = conn.prepareStatement("select " +
 						"t.franchID, " + 
 						"franchName as name, " +
@@ -69,10 +72,13 @@ public class Convert {
 						"where t.franchId = f.franchId " +
 						"group by t.franchID");
 			ResultSet rs = ps.executeQuery();
+			
 			int count = 0;
 			while(rs.next()) {
-				count++;
-				if (count % 10 == 0) System.out.println(count);
+				// Provides some feedback to the user
+				if (count++ % 10 == 0) System.out.println(count);
+				
+				// Extracts data from the results
 				String franchId = rs.getString("franchID");
 				String name = rs.getString("name");
 				String league = rs.getString("lgID");
@@ -88,14 +94,18 @@ public class Convert {
 					continue;
 				}
 				
+				// Create a new team and populate fields
 				Team team = new Team();
 				team.setName(name);
 				team.setLeague(league);
 				team.setYearFounded(yearFounded);
 				team.setYearLast(yearLast);
 				
+				// Adds all seasons to the current team
 				addSeasons(team, franchId);	
 				
+				// Persist the team to the new database
+				// TeamSeason and TeamSeasonPlayer entries all cascade
 				HibernateUtil.persistTeam(team);				
 			}
 		}
@@ -104,6 +114,11 @@ public class Convert {
 		}
 	}
 	
+	/**
+	 * Adds seasons to the team provided.
+	 * @param team The team to add a season to.
+	 * @param franchId The id that uniquely identifies a team.
+	 */
 	public static void addSeasons(Team team, String franchId) {
 		try {
 			//  We prepared this statement:
@@ -143,16 +158,17 @@ public class Convert {
 						attend == null)
 						continue;
 					
+					// Populates the season with appropriate data
 					season.setGamesPlayed(gamesPlayed);
 					season.setWins(wins);
 					season.setLosses(losses);
 					season.setRank(rank);
 					season.setTotalAttendance(attend);
 
-					// add the roster of players for this particular team this season
+					// Add the roster of players for this particular team this season
 					addRoster(season, teamId, year);
 					
-					// add this season to the team's TeamSeasons
+					// Add this season to the team's TeamSeasons
 					team.addTeamSeason(season);
 				}
 			}
@@ -164,8 +180,15 @@ public class Convert {
 		}
 	}
 	
+	/**
+	 * Adds a roster to the team provided.
+	 * @param season The season to add a roster to.
+	 * @param teamId The id of the team whose roster is being populated.
+	 * @param year The year corresponding to the season.
+	 */
 	public static void addRoster(TeamSeason season, String teamId, Integer year) {
 		try {
+			// Selects all players are players associated with a team during a specific season 
 			PreparedStatement ps = conn.prepareStatement("select " + 
 					"playerId " +
 					"from Appearances " +
@@ -175,6 +198,7 @@ public class Convert {
 
 			ResultSet rs = ps.executeQuery();
 			
+			// Adds all players in the result to the roster
 			while (rs.next()) {
 				String playerId = rs.getString("playerId");
 				
@@ -191,7 +215,11 @@ public class Convert {
 			e.printStackTrace();
 		}
 	}
-		
+	
+	/**
+	 * Converts all players by creating teams and hydrating them from the 
+	 * old database and persisting them to the new one.
+	 */
 	public static void convertPlayers() {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
@@ -212,8 +240,7 @@ public class Convert {
 						"debut, " + 
 						"finalGame " +
 						"from Master");
-						// for debugging comment previous line, uncomment next line
-						//"from Master where playerID = 'bondsba01' or playerID = 'youklke01';");
+			
 			ResultSet rs = ps.executeQuery();
 			int count=0; // for progress feedback only
 			while (rs.next()) {
@@ -250,11 +277,16 @@ public class Convert {
 				if (firstGame!=null) p.setFirstGame(firstGame);
 				java.util.Date lastGame = rs.getDate("finalGame");
 				if (lastGame!=null) p.setLastGame(lastGame);
+				
+				// Add all positions to the current player
 				addPositions(p, pid);
+				
 				// players bio collected, now go after stats
 				addSeasons(p, pid);
+				
 				// add this player to the map in order to build rosters later
 				players.put(pid, p);
+				
 				// This should be unnecessary because everything will cascade when team is populated
 				// we can now persist player, and the seasons and stats will cascade
 				HibernateUtil.persistPlayer(p);
@@ -264,9 +296,15 @@ public class Convert {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 	
+	/**
+	 * Creates a new date from the year month and day provided.
+	 * @param year The year component of the date.
+	 * @param month The month component of the date.
+	 * @param day The day component of the date.
+	 * @return A date comprised of the year, month, and day provided.
+	 */
 	private static java.util.Date convertIntsToDate(int year, int month, int day) {
 		Calendar c = new GregorianCalendar();
 		java.util.Date d=null;
@@ -278,6 +316,11 @@ public class Convert {
 		return d;
 	}
 	
+	/**
+	 * Adds positions to players
+	 * @param p The player to add positions to.
+	 * @param pid The playerID used to select player positions.
+	 */
 	public static void addPositions(Player p, String pid) {
 		Set<String> positions = new HashSet<String>();
 		try {
@@ -299,7 +342,12 @@ public class Convert {
 		p.setPositions(positions);
 	}
 
-	public static void addSeasons(Player p, String pid) {
+	/**
+	 * Adds seasons to players.
+	 * @param player The player to add seasons to.
+	 * @param playerId The playerID of the player provided.
+	 */
+	public static void addSeasons(Player player, String playerId) {
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
 					"yearID, " + 
@@ -309,27 +357,27 @@ public class Convert {
 					"from Batting " + 
 					"where playerID = ? " + 
 					"group by yearID, teamID, lgID;");
-			ps.setString(1, pid);
+			ps.setString(1, playerId);
 			ResultSet rs = ps.executeQuery();
 			PlayerSeason s = null;
 			while (rs.next()) {
 				int yid = rs.getInt("yearID");
-				s = p.getPlayerSeason(yid);
+				s = player.getPlayerSeason(yid);
 				// it is possible to see more than one of these per player if he switched teams
 				// set all of these attrs the first time we see this playerseason
 				if (s==null) {
-					s = new PlayerSeason(p,yid);
-					p.addPlayerSeason(s);
+					s = new PlayerSeason(player,yid);
+					player.addPlayerSeason(s);
 					s.setGamesPlayed(rs.getInt("gamesPlayed"));
-					double salary = getSalary(pid, yid);
+					double salary = getSalary(playerId, yid);
 					s.setSalary(salary);
-					BattingStats batting = getBatting(s,pid,yid);
+					BattingStats batting = getBatting(s,playerId,yid);
 					s.setBattingStats(batting);
-					FieldingStats fielding = getFielding(s,pid,yid);
+					FieldingStats fielding = getFielding(s,playerId,yid);
 					s.setFieldingStats(fielding);
-					PitchingStats pitching = getPitching(s,pid,yid);
+					PitchingStats pitching = getPitching(s,playerId,yid);
 					s.setPitchingStats(pitching);
-					CatchingStats catching = getCatching(s,pid,yid);
+					CatchingStats catching = getCatching(s,playerId,yid);
 					s.setCatchingStats(catching);
 				// set this the consecutive time(s) so it is the total games played regardless of team	
 				} else {
@@ -344,7 +392,13 @@ public class Convert {
 
 	}
 
-	public static double getSalary(String pid, Integer yid) {
+	/**
+	 * Gets the salary of the specified player.
+	 * @param playerID The playerID of the current player.
+	 * @param yearID The year used to uniquely identify the salary.
+	 * @return The salary of the current player.
+	 */
+	public static double getSalary(String playerID, Integer yid) {
 		double salary = 0;
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " + 
@@ -352,7 +406,7 @@ public class Convert {
 					"from Salaries " + 
 					"where playerID = ? " + 
 					"and yearID = ? ;");
-			ps.setString(1, pid);
+			ps.setString(1, playerID);
 			ps.setInt(2, yid);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
@@ -366,7 +420,14 @@ public class Convert {
 		return salary;
 	}
 
-	public static BattingStats getBatting(PlayerSeason psi, String pid, Integer yid) {
+	/**
+	 * Gets the batting statistics of the specified player.
+	 * @param playerSeason The player season to insert the stats into.
+	 * @param playerID The unique id of the player.
+	 * @param yearID The year defining the season to get stats for.
+	 * @return The batting stats of a player for a given season.
+	 */
+	public static BattingStats getBatting(PlayerSeason playerSeason, String playerID, Integer yearID) {
 		BattingStats s = new BattingStats();
 		try {
 			PreparedStatement ps = conn.prepareStatement("select "	+ "" +
@@ -385,11 +446,11 @@ public class Convert {
 					"from Batting " + 
 					"where playerID = ? " + 
 					"and yearID = ? ;");
-			ps.setString(1, pid);
-			ps.setInt(2, yid);
+			ps.setString(1, playerID);
+			ps.setInt(2, yearID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				s.setId(psi);
+				s.setId(playerSeason);
 				s.setAtBats(rs.getInt("atBats"));
 				s.setHits(rs.getInt("hits"));
 				s.setDoubles(rs.getInt("doubles"));
@@ -411,7 +472,14 @@ public class Convert {
 		return s;
 	}
 	
-	public static FieldingStats getFielding(PlayerSeason psi, String pid, Integer yid) {
+	/**
+	 * Gets the fielding statistics of the specified player.
+	 * @param playerSeason The player season to insert the stats into.
+	 * @param playerID The unique id of the player.
+	 * @param yearID The year defining the season to get stats for.
+	 * @return The fielding stats of the player.
+	 */
+	public static FieldingStats getFielding(PlayerSeason playerSeason, String playerID, Integer yearID) {
 		FieldingStats s = new FieldingStats();
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
@@ -420,11 +488,11 @@ public class Convert {
 					"from Fielding " +
 					"where playerID = ? " + 
 					"and yearID = ? ;");
-			ps.setString(1, pid);
-			ps.setInt(2, yid);
+			ps.setString(1, playerID);
+			ps.setInt(2, yearID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				s.setId(psi);
+				s.setId(playerSeason);
 				s.setErrors(rs.getInt("errors"));
 				s.setPutOuts(rs.getInt("putOuts"));
 			}
@@ -436,7 +504,14 @@ public class Convert {
 		return s;
 	}
 	
-	public static PitchingStats getPitching(PlayerSeason psi, String pid, Integer yid) {
+	/**
+	 * Gets the pitching statistics of the specified player.
+	 * @param playerSeason The player season to insert the stats into.
+	 * @param playerID The unique id of the player.
+	 * @param yearID The year defining the season to get stats for.
+	 * @return The pitching stats of the player.
+	 */
+	public static PitchingStats getPitching(PlayerSeason playerSeason, String playerID, Integer yearID) {
 		PitchingStats s = new PitchingStats();
 		try {
 			PreparedStatement ps = conn.prepareStatement("select " +
@@ -454,11 +529,11 @@ public class Convert {
 					"from Pitching " +
 					"where playerID = ? " + 
 					"and yearID = ? ;");
-			ps.setString(1, pid);
-			ps.setInt(2, yid);
+			ps.setString(1, playerID);
+			ps.setInt(2, yearID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				s.setId(psi);
+				s.setId(playerSeason);
 				s.setOutsPitched(rs.getInt("outsPitched"));
 				s.setEarnedRunsAllowed(rs.getInt("earnedRunsAllowed"));
 				s.setHomeRunsAllowed(rs.getInt("homeRunsAllowed"));
@@ -479,7 +554,14 @@ public class Convert {
 		return s;
 	}
 	
-	public static CatchingStats getCatching(PlayerSeason psi, String pid, Integer yid) {
+	/**
+	 * Gets the catching statistics of the specified player.
+	 * @param playerSeason The player season to insert the stats into.
+	 * @param playerID The unique id of the player.
+	 * @param yearID The year defining the season to get stats for.
+	 * @return The catching stats of the player.
+	 */
+	public static CatchingStats getCatching(PlayerSeason playerSeason, String playerID, Integer yearID) {
 		CatchingStats s = new CatchingStats();
 		PreparedStatement ps = null;
 		try {
@@ -491,11 +573,11 @@ public class Convert {
 					"from Fielding " +
 					"where playerID = ? " + 
 					"and yearID = ? ;");
-			ps.setString(1, pid);
-			ps.setInt(2, yid);
+			ps.setString(1, playerID);
+			ps.setInt(2, yearID);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				s.setId(psi);
+				s.setId(playerSeason);
 				s.setPassedBalls(rs.getInt("passedBalls"));
 				s.setWildPitches(rs.getInt("wildPitches"));
 				s.setStealsAllowed(rs.getInt("stealsAllowed"));
