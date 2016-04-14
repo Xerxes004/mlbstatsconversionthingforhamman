@@ -25,7 +25,6 @@ public class Team {
 	@Fetch(FetchMode.JOIN)
 	Set<TeamSeason> seasons = new HashSet<TeamSeason>();
 	
-	
 	@Column
 	String name;
 	@Column
@@ -35,10 +34,11 @@ public class Team {
 	@Column
 	Integer yearLast;
 	
-	// utility function
 	public TeamSeason getTeamSeason(Integer year) {
 		for (TeamSeason ts : seasons) {
-			if (ts.getYear().equals(year)) return ts;
+			if (ts.getYear().equals(year)) {
+				return ts;
+			}
 		}
 		return null;
 	}
@@ -47,11 +47,9 @@ public class Team {
 		return seasons;
 	}
 
-
 	public void setSeasons(Set<TeamSeason> seasons) {
 		this.seasons = seasons;
 	}
-
 
 	public void addTeamSeason(TeamSeason ts) {
 		this.seasons.add(ts);

@@ -30,15 +30,18 @@ public class Convert {
 	static Connection conn;
 
 	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
+	
+	// This map of players is used when creating rosters.
 	static Map<String, Player> players = new HashMap<String, Player>();
-	static Map<String, Team> teams = new HashMap<String, Team>();
 	
 	public static void main(String[] args) {
 		try {
 			long startTime = System.currentTimeMillis();
 			conn = DriverManager.getConnection(MYSQL_CONN_URL);
+			
 			convertPlayers();
 			convertTeams();
+			
 			long endTime = System.currentTimeMillis();
 			long elapsed = (endTime - startTime) / (1000*60);
 			System.out.println("Elapsed time in mins: " + elapsed);
@@ -87,15 +90,12 @@ public class Convert {
 				
 				Team team = new Team();
 				team.setName(name);
-				System.out.println("Added " + team.getName());
 				team.setLeague(league);
 				team.setYearFounded(yearFounded);
 				team.setYearLast(yearLast);
 				
 				addSeasons(team, franchId);	
 				
-				System.out.println(team.getName()+":"+franchId);
-				teams.put(franchId, team);
 				HibernateUtil.persistTeam(team);				
 			}
 		}
@@ -106,33 +106,31 @@ public class Convert {
 	
 	public static void addSeasons(Team team, String franchId) {
 		try {
-			// We prepared this statement:
+			//  We prepared this statement:
 			//
-			// prepare seasonInfo from 
-			// 'select yearId, teamId, G, W, L, Rank, attendance 
-			//  from Teams where franchId = ?';
-
+			//	DELIMITER //
+			//  CREATE PROCEDURE getSeasonInfo(IN f VARCHAR(3))
+			//	BEGIN
+			//		SELECT yearId, teamId, G, W, L, Rank, Attendance
+			//		FROM Teams
+			//		WHERE franchId = f;
+			// 	END // 
+			//	DELIMITER ;
+			
 			CallableStatement cs = conn.prepareCall("{call mlb.getSeasonInfo(?)}");
 			cs.setString(1, franchId);
 			ResultSet rs = cs.executeQuery();
-			
-			/*PreparedStatement ps = conn.prepareStatement("select " + 
-					"yearID, teamId, G, W, L, Rank, attendance " +
-					"from Teams " +
-					"where franchID = ?");
-			ps.setString(1, franchId);
-			ResultSet rs = ps.executeQuery();*/
 			
 			TeamSeason season = null;
 			while (rs.next()) {
 				int year = rs.getInt("yearID");
 				season = team.getTeamSeason(year);
-				// it is possible to see more than one of these per player if he switched teams
-				// set all of these attrs the first time we see this playerseason
+
 				if (season==null) {
 					season = new TeamSeason(team, year);
 					team.addTeamSeason(season);
 					Integer gamesPlayed = rs.getInt("G");
+					String teamId = rs.getString("teamId");
 					Integer wins = rs.getInt("W");
 					Integer losses = rs.getInt("L");
 					Integer rank = rs.getInt("Rank");
@@ -146,28 +144,20 @@ public class Convert {
 						continue;
 					
 					season.setGamesPlayed(gamesPlayed);
-					if (season.getGamesPlayed() > 999) 
-						System.out.println(team.getName()+" had " + season.getGamesPlayed() + " games played.");
-					season.setWins(rs.getInt("W"));
-					if (season.getWins() > 9999) 
-						System.out.println(team.getName()+": too many wins");
-					season.setLosses(rs.getInt("L"));
-					if (season.getLosses() > 9999) 
-						System.out.println(team.getName()+": too many losses");
-					season.setRank(rs.getInt("Rank"));
-					if (season.getRank() > 99) 
-						System.out.println(team.getName()+": too high rank >> "+season.getWins());
-					season.setTotalAttendance(rs.getInt("attendance"));
-					if (season.getTotalAttendance() > 9999999) 
-						System.out.println(team.getName()+": too high attendance");
-					addRoster(season, rs.getString("teamId"), year);
+					season.setWins(wins);
+					season.setLosses(losses);
+					season.setRank(rank);
+					season.setTotalAttendance(attend);
+
+					// add the roster of players for this particular team this season
+					addRoster(season, teamId, year);
+					
+					// add this season to the team's TeamSeasons
 					team.addTeamSeason(season);
-				// set this the consecutive time(s) so it is the total games played regardless of team	
 				}
 			}
 			
 			rs.close();
-			//ps.close();
 			cs.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -192,8 +182,6 @@ public class Convert {
 				
 				if (player != null) {
 					season.addPlayerToRoster(player);
-					//player.addTeamSeason(season);
-					System.out.println(player.getName() + ",");
 				}
 			}
 			
@@ -203,7 +191,6 @@ public class Convert {
 			e.printStackTrace();
 		}
 	}
-	
 		
 	public static void convertPlayers() {
 		try {
@@ -233,7 +220,6 @@ public class Convert {
 				count++;
 				// this just gives us some progress feedback
 				if (count % 1000 == 0) System.out.println("num players: " + count);
-				//if (count == 2001) break;
 				String pid = rs.getString("playerID");
 				String firstName = rs.getString("nameFirst");
 				String lastName = rs.getString("nameLast");
@@ -267,6 +253,7 @@ public class Convert {
 				addPositions(p, pid);
 				// players bio collected, now go after stats
 				addSeasons(p, pid);
+				// add this player to the map in order to build rosters later
 				players.put(pid, p);
 				// This should be unnecessary because everything will cascade when team is populated
 				// we can now persist player, and the seasons and stats will cascade

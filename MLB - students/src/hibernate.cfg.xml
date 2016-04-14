@@ -28,4 +28,3 @@
 <mapping class="bo.PitchingStats" />
 </session-factory>
 </hibernate-configuration>
-

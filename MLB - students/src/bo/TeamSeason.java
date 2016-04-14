@@ -29,6 +29,7 @@ public class TeamSeason implements Serializable{
 		@Column(name="year")
 		Integer seasonYear;
 		
+		// hibernate complains if there is no default constructor
 		TeamSeasonId () {}
 		
 		TeamSeasonId (Team team, Integer season) {
@@ -43,7 +44,7 @@ public class TeamSeason implements Serializable{
 			}
 			TeamSeasonId other = (TeamSeasonId)obj;
 			// in order for two different object of this type to be equal,
-			// they must be for the same year and for the same player
+			// they must be for the same team and for the same year
 			return (this.team==other.team &&
 					this.seasonYear==other.seasonYear);
 		}
@@ -57,6 +58,7 @@ public class TeamSeason implements Serializable{
 		}
 	}
 	
+	// many to many relationship which defines teamseasonplayer in MLB
 	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinTable(name = "teamseasonplayer",
 	joinColumns = {
@@ -137,12 +139,11 @@ public class TeamSeason implements Serializable{
 	}
 	
 	public Set<Player> getRoster () {
-		//return this.roster;
-		return null;
+		return this.roster;
 	}
 	
 	public void setRoster(Set<Player> roster) {
-		//this.roster = roster;
+		this.roster = roster;
 	}
 	
 	public void setTeam (Team team) {
