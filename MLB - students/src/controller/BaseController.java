@@ -17,11 +17,11 @@ public abstract class BaseController {
     protected DecimalFormat INTEGER_FORMAT = new DecimalFormat("#,###");
     protected Map<String, String> keyVals = new HashMap<String, String>();
     protected BaseView view;
-    protected String ACT_SEARCHFORM = "searchform";
-    protected String ACT_SEARCH = "search";
-    protected String ACT_DETAIL = "details";
-    protected String ACT_ROSTER = "roster";
-    protected String SSP_PLAYER = "player";
+    protected static final String ACT_SEARCHFORM = "searchform";
+    protected static final String ACT_SEARCH = "search";
+    protected static final String ACT_DETAIL = "details";
+    protected static final String ACT_ROSTER = "roster";
+    protected static final String SSP_PLAYER = "player";
 
     protected final void process(String query) {
         String q = decodeURL(query);

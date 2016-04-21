@@ -9,7 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 class SimpleWebServer{
-    public static int SERVER_PORT = 8080;    
+    public static int SERVER_PORT = 5555;    
     public static String WWW_ROOT = "www/";
    
     public static void main(String args[]) throws Exception  {

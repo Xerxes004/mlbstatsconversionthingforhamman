@@ -10,13 +10,23 @@ package controller;
  */
 public class ControllerFactory {
 
-    private static String SSP_PLAYER = "player";
+    private static final String SSP_PLAYER = "player";
+    private static final String SSP_TEAM = "team";
 
     public static BaseController getServerApp(String name) {
         BaseController bsa = null;
-        if (name.equalsIgnoreCase(SSP_PLAYER)) {
-            bsa = new PlayerController();
-        }
+        switch (name.toLowerCase()) {
+		case SSP_PLAYER:
+			bsa = new PlayerController();
+			break;
+		
+		case SSP_TEAM:
+			bsa = new TeamController();
+			break;
+		default:
+			System.out.println("Unknown Controller");
+			break;
+		}
         return bsa;
     }
 }
