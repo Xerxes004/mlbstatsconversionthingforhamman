@@ -61,6 +61,10 @@ public class Team {
 		}
 		return null;
 	}
+	
+	public Integer getId(){
+		return teamId;
+	}
 
 	public Set<TeamSeason> getSeasons() {
 		return seasons;

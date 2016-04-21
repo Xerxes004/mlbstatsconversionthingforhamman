@@ -22,6 +22,7 @@ public abstract class BaseController {
     protected static final String ACT_DETAIL = "details";
     protected static final String ACT_ROSTER = "roster";
     protected static final String SSP_PLAYER = "player";
+    protected static final String SSP_TEAM = "team";
 
     protected final void process(String query) {
         String q = decodeURL(query);
