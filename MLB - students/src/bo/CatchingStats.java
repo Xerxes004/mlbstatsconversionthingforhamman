@@ -12,7 +12,19 @@ import javax.persistence.OneToOne;
 @SuppressWarnings("serial")
 @Entity(name="catchingstats")
 public class CatchingStats implements Serializable {
+	public CatchingStats(){}
 	
+	
+	public CatchingStats(PlayerSeason id, Integer passedBalls, Integer wildPitches, Integer stealsAllowed,
+			Integer stealsCaught) {
+		this.id = id;
+		this.passedBalls = passedBalls;
+		this.wildPitches = wildPitches;
+		this.stealsAllowed = stealsAllowed;
+		this.stealsCaught = stealsCaught;
+	}
+
+
 	@Id
 	@OneToOne
 	@JoinColumns({

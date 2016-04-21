@@ -12,6 +12,24 @@ import javax.persistence.OneToOne;
 @SuppressWarnings("serial")
 @Entity(name="pitchingstats")
 public class PitchingStats implements Serializable{
+	public PitchingStats(){}
+	
+	public PitchingStats(PlayerSeason id, Integer outsPitched, Integer earnedRunsAllowed, Integer homeRunsAllowed,
+			Integer strikeouts, Integer walks, Integer wins, Integer losses, Integer wildPitches, Integer battersFaced,
+			Integer hitBatters, Integer saves) {
+		this.id = id;
+		this.outsPitched = outsPitched;
+		this.earnedRunsAllowed = earnedRunsAllowed;
+		this.homeRunsAllowed = homeRunsAllowed;
+		this.strikeouts = strikeouts;
+		this.walks = walks;
+		this.wins = wins;
+		this.losses = losses;
+		this.wildPitches = wildPitches;
+		this.battersFaced = battersFaced;
+		this.hitBatters = hitBatters;
+		this.saves = saves;
+	}
 
 	@Id
 	@OneToOne

@@ -18,6 +18,18 @@ import javax.persistence.ManyToOne;
 @SuppressWarnings("serial")
 @Entity(name = "teamseason")
 public class TeamSeason implements Serializable{
+	public TeamSeason() {}
+	public TeamSeason(TeamSeasonId id, Set<Player> roster, Integer gamesPlayed, Integer wins, Integer losses,
+			Integer rank, Integer totalAttendance) {
+		this.id = id;
+		this.roster = roster;
+		this.gamesPlayed = gamesPlayed;
+		this.wins = wins;
+		this.losses = losses;
+		this.rank = rank;
+		this.totalAttendance = totalAttendance;
+	}
+
 	@EmbeddedId
 	TeamSeasonId id;
 	
@@ -59,7 +71,7 @@ public class TeamSeason implements Serializable{
 	}
 	
 	// many to many relationship which defines teamseasonplayer in MLB
-	@ManyToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY , cascade=CascadeType.ALL)
 	@JoinTable(name = "teamseasonplayer",
 	joinColumns = {
 					@JoinColumn(name="teamid", referencedColumnName="teamid"),
@@ -79,8 +91,6 @@ public class TeamSeason implements Serializable{
 	Integer rank;
 	@Column
 	Integer totalAttendance;
-	
-	public TeamSeason() {}
 	
 	public TeamSeason (Team team, Integer year) {
 		this.id = new TeamSeasonId(team, year);

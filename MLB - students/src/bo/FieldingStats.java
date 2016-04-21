@@ -12,6 +12,15 @@ import javax.persistence.OneToOne;
 @SuppressWarnings("serial")
 @Entity(name="fieldingstats")
 public class FieldingStats implements Serializable {
+	public FieldingStats() {}
+	
+	
+	public FieldingStats(PlayerSeason id, Integer errors, Integer putOuts) {
+		this.id = id;
+		this.errors = errors;
+		this.putOuts = putOuts;
+	}
+
 
 	@Id
 	@OneToOne

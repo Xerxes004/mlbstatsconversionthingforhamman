@@ -15,6 +15,20 @@ import javax.persistence.OneToOne;
 @SuppressWarnings("serial")
 @Entity(name = "playerseason")
 public class PlayerSeason implements Serializable {
+	
+	public PlayerSeason(){}
+	
+	public PlayerSeason(PlayerSeasonId id, Integer gamesPlayed, double salary, BattingStats battingStats,
+			FieldingStats fieldingStats, PitchingStats pitchingStats, CatchingStats catchingStats) {
+		this.id = id;
+		this.gamesPlayed = gamesPlayed;
+		this.salary = salary;
+		this.battingStats = battingStats;
+		this.fieldingStats = fieldingStats;
+		this.pitchingStats = pitchingStats;
+		this.catchingStats = catchingStats;
+	}
+
 
 	@EmbeddedId
 	PlayerSeasonId id;
@@ -60,9 +74,6 @@ public class PlayerSeason implements Serializable {
 	PitchingStats pitchingStats;
 	@OneToOne(cascade=CascadeType.ALL, mappedBy="id")
 	CatchingStats catchingStats;
-	
-	// Hibernate needs a default constructor
-	public PlayerSeason() {}
 	
 	public PlayerSeason(Player p, Integer year) {
 		PlayerSeasonId psi = new PlayerSeasonId();

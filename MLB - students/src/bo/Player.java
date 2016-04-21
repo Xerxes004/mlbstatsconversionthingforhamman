@@ -23,6 +23,28 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = "player")
 public class Player {
+	
+	public Player(){}
+	
+	public Player(Integer playerId, Set<String> positions, Set<PlayerSeason> seasons, Set<TeamSeason> teams,
+			String name, String givenName, Date birthDay, Date deathDay, String battingHand, String throwingHand,
+			String birthCity, String birthState, Date firstGame, Date lastGame) {
+		this.playerId = playerId;
+		this.positions = positions;
+		this.seasons = seasons;
+		this.teams = teams;
+		this.name = name;
+		this.givenName = givenName;
+		this.birthDay = birthDay;
+		this.deathDay = deathDay;
+		this.battingHand = battingHand;
+		this.throwingHand = throwingHand;
+		this.birthCity = birthCity;
+		this.birthState = birthState;
+		this.firstGame = firstGame;
+		this.lastGame = lastGame;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer playerId;
@@ -33,12 +55,12 @@ public class Player {
 	@Fetch(FetchMode.JOIN)
 	Set<String> positions = new HashSet<String>();
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.player")
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="id.player")
 	@Fetch(FetchMode.JOIN)
 	Set<PlayerSeason> seasons = new HashSet<PlayerSeason>();
 
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="roster")
+	@ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="roster")
 	@Fetch(FetchMode.JOIN)
 	Set<TeamSeason> teams = new HashSet<TeamSeason>();
 

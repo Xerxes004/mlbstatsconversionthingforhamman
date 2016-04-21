@@ -17,11 +17,23 @@ import org.hibernate.annotations.FetchMode;
 
 @Entity(name = "team")
 public class Team {
+	public Team(){}
+	
+	public Team(Integer teamId, Set<TeamSeason> seasons, String name, String league, Integer yearFounded,
+			Integer yearLast) {
+		this.teamId = teamId;
+		this.seasons = seasons;
+		this.name = name;
+		this.league = league;
+		this.yearFounded = yearFounded;
+		this.yearLast = yearLast;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	Integer teamId;
 	
-	@OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="id.team")
+	@OneToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL, mappedBy="id.team")
 	@Fetch(FetchMode.JOIN)
 	Set<TeamSeason> seasons = new HashSet<TeamSeason>();
 	

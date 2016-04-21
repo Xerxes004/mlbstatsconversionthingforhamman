@@ -5,6 +5,53 @@ import java.util.Set;
 
 public class PlayerCareerStats {
 
+	public PlayerCareerStats() {}
+	
+	
+	public PlayerCareerStats(Player player, Set<PlayerSeason> seasons, Integer gamesPlayed, Double salary,
+			Integer atBats, Integer hits, Integer doubles, Integer triples, Integer homeRuns, Integer runsBattedIn,
+			Integer strikeoutsBatting, Integer walksBatting, Integer hitByPitch, Integer intentionalWalks,
+			Integer steals, Integer stealsAttempted, Integer passedBalls, Integer wildPitchesCatching,
+			Integer stealsAllowed, Integer stealsCaught, Integer errors, Integer putOuts, Integer outsPitched,
+			Integer earnedRunsAllowed, Integer homeRunsAllowed, Integer strikeoutsPitching, Integer walksPitching,
+			Integer wins, Integer losses, Integer wildPitchesPitching, Integer battersFaced, Integer hitBatters,
+			Integer saves) {
+		this.player = player;
+		this.seasons = seasons;
+		this.gamesPlayed = gamesPlayed;
+		this.salary = salary;
+		this.atBats = atBats;
+		this.hits = hits;
+		this.doubles = doubles;
+		this.triples = triples;
+		this.homeRuns = homeRuns;
+		this.runsBattedIn = runsBattedIn;
+		this.strikeoutsBatting = strikeoutsBatting;
+		this.walksBatting = walksBatting;
+		this.hitByPitch = hitByPitch;
+		this.intentionalWalks = intentionalWalks;
+		this.steals = steals;
+		this.stealsAttempted = stealsAttempted;
+		this.passedBalls = passedBalls;
+		this.wildPitchesCatching = wildPitchesCatching;
+		this.stealsAllowed = stealsAllowed;
+		this.stealsCaught = stealsCaught;
+		this.errors = errors;
+		this.putOuts = putOuts;
+		this.outsPitched = outsPitched;
+		this.earnedRunsAllowed = earnedRunsAllowed;
+		this.homeRunsAllowed = homeRunsAllowed;
+		this.strikeoutsPitching = strikeoutsPitching;
+		this.walksPitching = walksPitching;
+		this.wins = wins;
+		this.losses = losses;
+		this.wildPitchesPitching = wildPitchesPitching;
+		this.battersFaced = battersFaced;
+		this.hitBatters = hitBatters;
+		this.saves = saves;
+	}
+
+
 	Player player;
 	Set<PlayerSeason> seasons = new HashSet<PlayerSeason>();
 	// general info
