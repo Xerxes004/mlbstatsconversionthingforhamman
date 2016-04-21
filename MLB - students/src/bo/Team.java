@@ -15,6 +15,13 @@ import javax.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
+/**
+ * Team contains the necessary fields and the mapping
+ * of those fields to the database.
+ * @author Wesley Kelly
+ * @author Joel D. Sabol
+ *
+ */
 @Entity(name = "team")
 public class Team {
 	public Team(){}
