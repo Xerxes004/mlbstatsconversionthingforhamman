@@ -11,6 +11,7 @@ import org.hibernate.cfg.Configuration;
 
 import bo.Player;
 import bo.Team;
+import bo.TeamSeason;
 
 public class HibernateUtil {
 
@@ -18,19 +19,13 @@ public class HibernateUtil {
 
 	static {
 		try {
-			Configuration cfg = new Configuration()
-				.addAnnotatedClass(bo.Player.class)
-				.addAnnotatedClass(bo.TeamSeason.class)
-				.addAnnotatedClass(bo.PlayerSeason.class)
-				.addAnnotatedClass(bo.BattingStats.class)
-				.addAnnotatedClass(bo.CatchingStats.class)
-				.addAnnotatedClass(bo.FieldingStats.class)
-				.addAnnotatedClass(bo.PitchingStats.class)
-				.addAnnotatedClass(bo.TeamSeason.class)
-				.addAnnotatedClass(bo.Team.class)
-				.configure();
-			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().
-			applySettings(cfg.getProperties());
+			Configuration cfg = new Configuration().addAnnotatedClass(bo.Player.class)
+					.addAnnotatedClass(bo.TeamSeason.class).addAnnotatedClass(bo.PlayerSeason.class)
+					.addAnnotatedClass(bo.BattingStats.class).addAnnotatedClass(bo.CatchingStats.class)
+					.addAnnotatedClass(bo.FieldingStats.class).addAnnotatedClass(bo.PitchingStats.class)
+					.addAnnotatedClass(bo.TeamSeason.class).addAnnotatedClass(bo.Team.class).configure();
+			StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+					.applySettings(cfg.getProperties());
 			sessionFactory = cfg.buildSessionFactory(builder.build());
 		} catch (Throwable ex) {
 			System.err.println("Initial SessionFactory creation failed." + ex);
@@ -41,34 +36,35 @@ public class HibernateUtil {
 	public static SessionFactory getSessionFactory() {
 		return sessionFactory;
 	}
-	
+
 	public static Player retrievePlayerById(Integer id) {
-        Player p=null;
+		Player p = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
 			tx.begin();
 			org.hibernate.Query query;
 			query = session.createQuery("from bo.Player where id = :id ");
-		    query.setParameter("id", id);
-		    if (query.list().size()>0) {
-		    	p = (Player) query.list().get(0);
-		    	Hibernate.initialize(p.getSeasons());
-		    }
+			query.setParameter("id", id);
+			if (!query.list().isEmpty()) {
+				p = (Player) query.list().get(0);
+				Hibernate.initialize(p.getSeasons());
+				Hibernate.initialize(p.getTeams());
+			}
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
 			e.printStackTrace();
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return p;
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<Player> retrievePlayersByName(String nameQuery, Boolean exactMatch) {
-        List<Player> list=null;
+		List<Player> list = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
@@ -79,21 +75,24 @@ public class HibernateUtil {
 			} else {
 				query = session.createQuery("from bo.Player where name like '%' + :name + '%' ");
 			}
-		    query.setParameter("name", nameQuery);
-		    list = query.list();
+			query.setParameter("name", nameQuery);
+			list = query.list();
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
 			e.printStackTrace();
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Persists a player to the database
-	 * @param player The player to persist to the database.
+	 * 
+	 * @param player
+	 *            The player to persist to the database.
 	 * @return True if the player was persisted to the database, false otherwise
 	 */
 	public static boolean persistPlayer(Player player) {
@@ -108,14 +107,17 @@ public class HibernateUtil {
 			e.printStackTrace();
 			return false;
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Persists a team to the database
-	 * @param team The team to persist to the database.
+	 * 
+	 * @param team
+	 *            The team to persist to the database.
 	 * @return True if the team was persisted to the database, false otherwise
 	 */
 	public static boolean persistTeam(Team team) {
@@ -130,11 +132,12 @@ public class HibernateUtil {
 			e.printStackTrace();
 			return false;
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return true;
 	}
-	
+
 	public static Team retrieveTeamById(Integer id) {
 		Team team = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
@@ -143,23 +146,24 @@ public class HibernateUtil {
 			tx.begin();
 			org.hibernate.Query query;
 			query = session.createQuery("from bo.Team where id = :id ");
-		    query.setParameter("id", id);
-		    if (query.list().size()>0) {
-		    	team = (Team) query.list().get(0);
-		    	Hibernate.initialize(team.getSeasons());
-		    }
+			query.setParameter("id", id);
+			if (!query.list().isEmpty()) {
+				team = (Team) query.list().get(0);
+				Hibernate.initialize(team.getSeasons());
+			}
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
 			e.printStackTrace();
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return team;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch){
+	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch) {
 		List<Team> list = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
@@ -171,15 +175,48 @@ public class HibernateUtil {
 			} else {
 				query = session.createQuery("from bo.Team where name like '%' + :name + '%' ");
 			}
-		    query.setParameter("name", nameQuery);
-		    list = query.list();
+			query.setParameter("name", nameQuery);
+			list = query.list();
 			tx.commit();
 		} catch (Exception e) {
 			tx.rollback();
 			e.printStackTrace();
 		} finally {
-			if (session.isOpen()) session.close();
+			if (session.isOpen())
+				session.close();
 		}
 		return list;
+	}
+
+	public static TeamSeason retrieveTeamSeason(Integer teamId, Integer year) {
+		TeamSeason teamSeason = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+
+		try {
+			tx.begin();
+			System.out.println("Querying DB");
+			org.hibernate.Query query = session
+					.createQuery("from bo.TeamSeason t where t.id.team.teamId = :teamId and t.id.seasonYear= :year");
+			query.setParameter("teamId", teamId);
+			query.setParameter("year", year);
+
+			if (!query.list().isEmpty()) {
+				teamSeason = (TeamSeason) query.list().get(0);
+				Hibernate.initialize(teamSeason.getRoster());
+			}
+
+			tx.commit();
+			System.out.println("Committing Transaction");
+		} catch (Exception e) {
+			System.out.println("Rolling Back Transaction");
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen()) {
+				session.close();
+			}
+		}
+		return teamSeason;
 	}
 }

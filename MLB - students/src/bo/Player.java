@@ -1,7 +1,9 @@
 package bo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -91,6 +93,16 @@ public class Player {
 			if (ps.getYear().equals(year)) return ps;
 		}
 		return null;
+	}
+	
+	public List<TeamSeason> getTeamSeason(Integer year) {
+		List<TeamSeason> list = new ArrayList<>();
+		for(TeamSeason teamSeason : teams){
+			if(teamSeason.getYear().equals(year)){
+				list.add(teamSeason);
+			}
+		}
+		return list;
 	}
 	
 	public void addPosition(String p) {
@@ -206,6 +218,14 @@ public class Player {
 
 	public void setDeathDay(Date deathDay) {
 		this.deathDay = deathDay;
+	}
+	
+	public Set<TeamSeason> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(Set<TeamSeason> teams) {
+		this.teams = teams;
 	}
 
 	@Override
