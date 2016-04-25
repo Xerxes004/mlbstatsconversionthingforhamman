@@ -119,7 +119,11 @@ public class TeamController extends BaseController {
 		StringBuilder header = new StringBuilder();
 		header.append("<img id='logo' src='")
 		  	  .append(view.getLogo(team.getName()))
-		  	  .append("' />")
+		  	  .append("'")
+		  	  .append(" alt='")
+		  	  .append(team.getName())
+		  	  .append("'")
+		  	  .append(" />")
 			  .append("<h1>")
 			  .append(team.getName())
 			  .append("</h1>")

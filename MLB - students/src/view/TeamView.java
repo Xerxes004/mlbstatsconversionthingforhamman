@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class TeamView extends BaseView {
 		public TeamView() {
-		title = "Team Overview";
+		title = "Team";
 		
 		teamLogos = new HashMap<>();
 		teamLogos.put("Boston Red Sox", "images/redsox.png");
