@@ -1,11 +1,1 @@
-/bo/
-/controller/
-/conversion/
-/dataaccesslayer/
 /view/
-<<<<<<< HEAD
-/webserver/
-=======
-/dataaccesslayer/
->>>>>>> branch 'master' of https://github.com/Xerxes004/mlbstatsconversionthingforhamman.git
-/hibernate.cfg.xml

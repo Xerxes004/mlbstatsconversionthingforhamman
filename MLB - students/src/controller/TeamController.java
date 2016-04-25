@@ -440,12 +440,12 @@ public class TeamController extends BaseController {
 		ArrayList<TeamSeason> entries = new ArrayList<>(ts);
 		String[][] seasonTable = new String[ts.size() + 1][7];
 
-		seasonTable[0][0] = "Year";
+		seasonTable[0][0] = "Season";
+		seasonTable[0][5] = "Rank";	
 		seasonTable[0][1] = "Games Played";
 		seasonTable[0][2] = "Roster";
 		seasonTable[0][3] = "Wins";
 		seasonTable[0][4] = "Losses";
-		seasonTable[0][5] = "Rank";
 		seasonTable[0][6] = "Attendance";
 
 		int i = 1;
@@ -467,6 +467,7 @@ public class TeamController extends BaseController {
 		view.buildTable(seasonTable);
 	}
 	
+	// build header for specific team season
 	private void buildHeader(TeamSeason teamSeason)
     {
         Team team = teamSeason.getTeam();
@@ -483,18 +484,29 @@ public class TeamController extends BaseController {
                 .append("'")
                 .append(" />");
         }
+        String league = team.getLeague();
+        if (league.equals("NL"))
+        {
+        	league = "National League";
+        } 
+        else if (league.equals("AL"))
+        {
+        	league = "American League";
+        }
         header.append("<h1>")
+        	.append(year)
+        	.append(" ")
             .append(team.getName())
             .append("</h1>")
-            .append("<h3>League - ")
-            .append(team.getLeague())
-            .append("</h3>")
-            .append(year)
-            .append(" Season Roster");
+            .append("<h2>")
+            .append(league)
+            .append("</h2>")
+            .append("<h3>Roster</h3>");
 
         view.setHeader(header.toString());
     }
 	
+	// build header for team overview
 	private void buildHeader(Team team)
     {
         StringBuilder header = new StringBuilder();
@@ -509,15 +521,22 @@ public class TeamController extends BaseController {
                 .append("'")
                 .append(" />");
         }
+        String league = team.getLeague();
+        if (league.equals("NL"))
+        {
+        	league = "National League";
+        } 
+        else if (league.equals("AL"))
+        {
+        	league = "American League";
+        }
         header.append("<h1>")
             .append(team.getName())
             .append("</h1>")
-            .append("<h3>League - ")
-            .append(team.getLeague())
-            .append("</h3>")
-            .append(team.getYearFounded())
-            .append(" - ")
-            .append(team.getYearLast());
+            .append("<h2>")
+            .append(league)
+            .append("</h2>")
+            .append("<h3>Roster</h3>");
 
         view.setHeader(header.toString());
     }
@@ -584,7 +603,7 @@ public class TeamController extends BaseController {
 			i++;
 		}
 
-		view.buildTable(rosterTable);
+		view.buildTable(rosterTable, "roster-table");
 	}
 
 }

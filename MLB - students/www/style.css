@@ -7,7 +7,7 @@ header {
     background-color: #000088;
     color: white;
     padding: 10px;
-    text-align: right;
+    text-align: left;
     border-radius: 5px;
 }
 
@@ -18,9 +18,17 @@ header > h1 {
 
 header > #logo {
     height: 110px;
-    float: left;
-    margin-left: 10px;
-
+    float: right;
+    margin-right: 10px;
+    /* adds a white border around logos */
+    -webkit-filter: drop-shadow(1px 1px 0 #fff) 
+    			    drop-shadow(-1px -1px 0 #fff)
+    			    drop-shadow(1px -1px 0 #fff)
+    			    drop-shadow(-1px 1px 0 #fff);
+    filter: drop-shadow(1px 1px 0 #fff) 
+		    drop-shadow(-1px -1px 0 #fff)
+		    drop-shadow(1px -1px 0 #fff)
+		    drop-shadow(-1px 1px 0 #fff);
 }
 
 table {
