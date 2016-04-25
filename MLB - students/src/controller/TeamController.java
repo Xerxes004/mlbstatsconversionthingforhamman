@@ -126,20 +126,6 @@ public class TeamController
     // individual team result
     private void buildSearchResultsTableTeamDetail(Team team)
     {
-        /*String[][] table = new String[2][4];
-		//table[0][0] = "Id";
-		table[0][0] = "Name";
-		table[0][1] = "League";
-		table[0][2] = "Year Founded";
-		table[0][3] = "Year Last";
-
-		//table[1][0] = team.getId().toString();
-		table[1][0] = team.getName();
-		table[1][1] = team.getLeague();
-		table[1][2] = team.getYearFounded().toString();
-		table[1][3] = team.getYearLast().toString();
-		view.buildTable(table);*/
-
         buildHeader(team);
 
         Set<TeamSeason> ts = team.getSeasons();
@@ -173,7 +159,8 @@ public class TeamController
             seasonTable[i][3] = entry.getWins().toString();
             seasonTable[i][4] = entry.getLosses().toString();
             seasonTable[i][5] = entry.getRank().toString();
-            seasonTable[i][6] = entry.getTotalAttendance().toString();
+            String attendance = INTEGER_FORMAT.format(entry.getTotalAttendance());
+            seasonTable[i][6] = attendance.toString();
             i++;
         }
 
@@ -238,20 +225,6 @@ public class TeamController
     // search results
     private void buildRosterTable(TeamSeason teamSeason)
     {
-        /*String[][] teamTable = new String[2][4];
-        Team team = teamSeason.getTeam();
-        Integer year = teamSeason.getYear();
-        teamTable[0][0] = "Name";
-        teamTable[0][1] = "League";
-        teamTable[0][2] = "Year";
-        teamTable[0][3] = "Player Payroll";
-        teamTable[1][0] = team.getName();
-        teamTable[1][1] = team.getLeague();
-        teamTable[1][2] = year.toString();
-        teamTable[1][3] = "@TODO";
-
-        view.buildTable(teamTable);*/
-
         buildHeader(teamSeason);
         
         ArrayList<Player> roster = new ArrayList<>(teamSeason.getRoster());
@@ -276,7 +249,7 @@ public class TeamController
             i++;
         }
 
-        view.buildTable(rosterTable);
+        view.buildTable(rosterTable, "roster-table");
     }
 
 }

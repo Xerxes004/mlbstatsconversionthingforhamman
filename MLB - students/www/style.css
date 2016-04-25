@@ -1,67 +1,82 @@
 body {
-	font-family: "Helvetica Neue", sans-serif;
-	font-size: 11pt;
+    font-family: "Helvetica Neue", sans-serif;
+    font-size: 11pt;
 }
 
 header {
-	background-color: #000088;
-	color: white;
-	padding: 10px;
-	text-align: right;
-	border-radius: 5px;
+    background-color: #000088;
+    color: white;
+    padding: 10px;
+    text-align: right;
+    border-radius: 5px;
 }
 
 header > h1 {
-	padding: 0;
-	margin: 0;
+    padding: 0;
+    margin: 0;
 }
 
 header > #logo {
-	width: 100px;
-	float: left;
+    height: 110px;
+    float: left;
+    margin-left: 10px;
 
 }
 
 table {
-	border-radius: 5px;
-	border: 0;
-	width: 100%;
-	background-color: #CC0000;
-	table-layout: fixed;
-
-	border-collapse: collapse;
+    border-radius: 5px;
+    width: 100%;
+    background-color: #CC0000;
+    table-layout: auto;
+    border-collapse: collapse;
 }
 
 th {
-	border: 0;
-	padding: 10px 0;
-	color: white;
+    border: 0;
+    padding: 10px 0;
+    color: white;
 }
 
 td {
-	text-align: center;
-	color: #000088;
-	background-color: white;
-	padding: 3px;
-	margin: 0;
-	border: 0;
-	opacity: .9;
+    text-align: center;
+    color: #000088;
+    padding: 2px 10px;
+    opacity: .9;
 }
 
 td a {
-	color: #000088;
+    color: #000088;
 }
 
-tr {
-	border-top: 1px solid #db4c4c;
+.dr {
+    background-color: white;
+}
+
+.lr {
+    background-color: #f9e1e1;
+}
+
+.dr, .lr {
+    border-left: 1px solid #f9e1e1;
+    border-right: 1px solid #f9e1e1;
 }
 
 tr:hover td,
 tr:hover td a {
-	color: white;
-	background-color: #db4c4c;
+    color: white;
+    background-color: #db4c4c;
+}
+
+#roster-table {
+    width: 50%;
+    table-layout: fixed;
+}
+
+#roster-table td,
+#roster-table .lr {
+    text-align: left;
 }
 
 #wrapper {
-	margin: 0 15vw;
+    margin: 0 15vw;
 }

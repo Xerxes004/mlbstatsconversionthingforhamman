@@ -128,6 +128,36 @@ public abstract class BaseView
         }
         body.append("</table>\r\n");
     }
+    
+    public final void buildTable(String[][] table, String tableId)
+    {
+        body.append("<table id='")
+        	.append(tableId)
+        	.append("'>\r\n");
+        // print table header row
+        body.append("<tr>");
+        for (int i = 0; i < table[0].length; i++)
+        {
+            body.append("<th>");
+            body.append(table[0][i]);
+            body.append("</th>\r\n");
+        }
+        body.append("</tr>\r\n");
+        // print table rows
+        for (int row = 1; row < table.length; row++)
+        {
+            body.append("<tr class='")
+                .append(row % 2 == 0 ? "dr'>\r\n" : "lr'>\r\n");
+            for (int col = 0; col < table[row].length; col++)
+            {
+                body.append("<td>")
+                    .append(table[row][col])
+                    .append("</td>\r\n");
+            }
+            body.append("</tr>\r\n");
+        }
+        body.append("</table>\r\n");
+    }
 
     /**
      * Encode a link in the proper format.
