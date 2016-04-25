@@ -15,11 +15,20 @@ import dataaccesslayer.HibernateUtil;
 public class PlayerController extends BaseController {
 
 	@Override
-	public void init(String query) {
+	public void initSSP(String query) {
 		System.out.println("building dynamic html for player");
 		view = new PlayerView();
-		process(query);
+		processSSP(query);
 	}
+	
+	@Override
+	public void initJSON(String query){
+		System.out.println("Building JSON for player");
+		view = new PlayerView();
+		processJSON(query);
+	}
+	
+	protected void performJSONAction() {};
 
 	@Override
 	protected void performAction() {
@@ -64,31 +73,30 @@ public class PlayerController extends BaseController {
 
 	private void buildSearchResultsTablePlayer(List<Player> bos) {
 		// need a row for the table headers
-		String[][] table = new String[bos.size() + 1][10];
-		table[0][0] = "Id";
-		table[0][1] = "Name";
-		table[0][2] = "Lifetime Salary";
-		table[0][3] = "Games Played";
-		table[0][4] = "First Game";
-		table[0][5] = "Last Game";
-		table[0][6] = "Career Home Runs";
-		table[0][7] = "Career Hits";
-		table[0][8] = "Career Batting Average";
-		table[0][9] = "Career Steals";
+		String[][] table = new String[bos.size() + 1][9];
+
+		table[0][0] = "Name";
+		table[0][1] = "Lifetime Salary";
+		table[0][2] = "Games Played";
+		table[0][3] = "First Game";
+		table[0][4] = "Last Game";
+		table[0][5] = "Career Home Runs";
+		table[0][6] = "Career Hits";
+		table[0][7] = "Career Batting Average";
+		table[0][8] = "Career Steals";
 		for (int i = 0; i < bos.size(); i++) {
 			Player p = bos.get(i);
 			PlayerCareerStats stats = new PlayerCareerStats(p);
 			String pid = p.getId().toString();
-			table[i + 1][0] = view.encodeLink(new String[]{"id"}, new String[]{pid}, pid, ACT_DETAIL, SSP_PLAYER);
-			table[i + 1][1] = p.getName();
-			table[i + 1][2] = DOLLAR_FORMAT.format(stats.getSalary());
-			table[i + 1][3] = stats.getGamesPlayed().toString();
-			table[i + 1][4] = formatDate(p.getFirstGame());
-			table[i + 1][5] = formatDate(p.getLastGame());
-			table[i + 1][6] = stats.getHomeRuns().toString();
-			table[i + 1][7] = stats.getHits().toString();
-			table[i + 1][8] = DOUBLE_FORMAT.format(stats.getBattingAverage());
-			table[i + 1][9] = stats.getSteals().toString();
+			table[i + 1][0] = view.encodeLink(new String[]{"id"}, new String[]{pid}, p.getName(), ACT_DETAIL, SSP_PLAYER);
+			table[i + 1][1] = DOLLAR_FORMAT.format(stats.getSalary());
+			table[i + 1][2] = stats.getGamesPlayed().toString();
+			table[i + 1][3] = formatDate(p.getFirstGame());
+			table[i + 1][4] = formatDate(p.getLastGame());
+			table[i + 1][5] = stats.getHomeRuns().toString();
+			table[i + 1][6] = stats.getHits().toString();
+			table[i + 1][7] = DOUBLE_FORMAT.format(stats.getBattingAverage());
+			table[i + 1][8] = stats.getSteals().toString();
 		}
 		view.buildTable(table);
 	}

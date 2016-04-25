@@ -21,18 +21,29 @@ public abstract class BaseController {
     protected static final String ACT_SEARCH = "search";
     protected static final String ACT_DETAIL = "details";
     protected static final String ACT_ROSTER = "roster";
+    protected static final String DATA_JSON = "json";
     protected static final String SSP_PLAYER = "player";
     protected static final String SSP_TEAM = "team";
 
-    protected final void process(String query) {
+    protected final void processSSP(String query) {
         String q = decodeURL(query);
         parseQuery(q);
         performAction();
     }
     
+    protected final void processJSON(String query){
+    	String q = decodeURL(query);
+    	parseQuery(q);
+    	performJSONAction();
+    }
+    
     protected abstract void performAction();
     
-    public abstract void init(String query);
+    protected abstract void performJSONAction();
+    
+    public abstract void initSSP(String query);
+    
+    public abstract void initJSON(String query);
     	
 	protected final String decodeURL(String s) {
         // spaces are replaced by '+' in textfields
@@ -62,6 +73,10 @@ public abstract class BaseController {
     public String response() {
         System.out.println("returning the dynamic webpage");
         return view.buildPage();
+    }
+    
+    public String jsonResponse(){
+    	return view.buildJSONResponse();
     }
     
     protected String formatDate(Date d) {

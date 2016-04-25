@@ -39,9 +39,9 @@ public abstract class BaseView
                 .append(header)
                 .append("</header>\r\n");
         }
-        sb.append("<h2>")
+        sb.append("<h2>MLB - ")
             .append(title)
-            .append("</h2>\r\n")
+            .append(" Search</h2>\r\n")
             .append(body)
             .append("<br/><br/>\r\n")
             .append("<a href=\"index.htm\">Home</a>\r\n")
@@ -49,6 +49,10 @@ public abstract class BaseView
             .append("</BODY>\r\n")
             .append("</HTML>\r\n");
         return sb.toString();
+    }
+    
+    public final String buildJSONResponse(){
+    	return body.toString();
     }
 
     public final void setHeader(String header)
@@ -195,5 +199,9 @@ public abstract class BaseView
     {
         s = s.replace(" ", "+");
         return s;
+    }
+    
+    public final void buildJSON(String s){
+    	body.append(s);
     }
 }
