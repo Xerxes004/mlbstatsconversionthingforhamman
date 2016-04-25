@@ -10,16 +10,18 @@ import java.util.Map;
  *
  * @author user
  */
-public abstract class BaseView {
-    
+public abstract class BaseView
+{
+
     protected String title;
     protected String header;
-	protected Map<String, String> teamLogos;
+    protected Map<String, String> teamLogos;
     protected StringBuffer body = new StringBuffer();
 
     public abstract void buildSearchForm();
-    
-    public final String buildPage() {
+
+    public final String buildPage()
+    {
         StringBuilder sb = new StringBuilder();
         sb.append("<!DOCTYPE html>\r\n")
         	.append("<HTML>\r\n")
@@ -59,94 +61,138 @@ public abstract class BaseView {
     public final String buildJSONResponse(){
     	return body.toString();
     }
-    
+
     public final void setHeader(String header)
-	{
-		this.header = header;
-	}
-    
+    {
+        this.header = header;
+    }
+
     public final String getLogo(String teamName)
     {
-    	if (teamLogos != null)
-    	{
-    		return teamLogos.get(teamName);
-    	}
-    	else
-    	{
-    		return "";
-    	}
+        if (teamLogos != null)
+        {
+            return teamLogos.get(teamName);
+        }
+        else
+        {
+            return "";
+        }
     }
-    
-    public final void buildLinkToSearch() {
+
+    public final void buildLinkToSearch()
+    {
         body.append("<br/><br/>\r\n");
         body.append("<a href=\"");
         body.append(title.toLowerCase());
         body.append(".ssp?action=searchform\">Search for a ");
         body.append(title);
-        body.append("</a>\r\n");  
+        body.append("</a>\r\n");
     }
-    
-    public final void printMessage(String msg) {
+
+    public final void printMessage(String msg)
+    {
         body.append("<p>");
         body.append(msg);
         body.append("</p>\r\n");
     }
-    
-    public final void printSearchResultsMessage(String name, boolean exact) {
+
+    public final void printSearchResultsMessage(String name, boolean exact)
+    {
         body.append("<p>");
         body.append(title);
-        if (exact) {
+        if (exact)
+        {
             body.append("s with name matching '");
-        } else {
+        }
+        else
+        {
             body.append("s with name containing '");
-        } 
+        }
         body.append(name);
         body.append("':</p>\r\n");
-        
     }
 
-    public final void buildTable(String[][] table) {
-        body.append("<table border=1>\r\n");
+    public final void buildTable(String[][] table)
+    {
+        body.append("<table>\r\n");
         // print table header row
         body.append("<tr>");
-        for (int i = 0; i < table[0].length; i++) {
+        for (int i = 0; i < table[0].length; i++)
+        {
             body.append("<th>");
             body.append(table[0][i]);
             body.append("</th>\r\n");
         }
         body.append("</tr>\r\n");
         // print table rows
-        for (int row = 1; row < table.length; row++) {
-            body.append("<tr>\r\n");
-            for (int col = 0; col < table[row].length; col++) {
-                body.append("<td>");
-                body.append(table[row][col]);
-                body.append("</td>\r\n");
+        for (int row = 1; row < table.length; row++)
+        {
+            body.append("<tr class='")
+                .append(row % 2 == 0 ? "dr'>\r\n" : "lr'>\r\n");
+            for (int col = 0; col < table[row].length; col++)
+            {
+                body.append("<td>")
+                    .append(table[row][col])
+                    .append("</td>\r\n");
             }
             body.append("</tr>\r\n");
         }
         body.append("</table>\r\n");
     }
     
-    /** 
+    public final void buildTable(String[][] table, String tableId)
+    {
+        body.append("<table id='")
+        	.append(tableId)
+        	.append("'>\r\n");
+        // print table header row
+        body.append("<tr>");
+        for (int i = 0; i < table[0].length; i++)
+        {
+            body.append("<th>");
+            body.append(table[0][i]);
+            body.append("</th>\r\n");
+        }
+        body.append("</tr>\r\n");
+        // print table rows
+        for (int row = 1; row < table.length; row++)
+        {
+            body.append("<tr class='")
+                .append(row % 2 == 0 ? "dr'>\r\n" : "lr'>\r\n");
+            for (int col = 0; col < table[row].length; col++)
+            {
+                body.append("<td>")
+                    .append(table[row][col])
+                    .append("</td>\r\n");
+            }
+            body.append("</tr>\r\n");
+        }
+        body.append("</table>\r\n");
+    }
+
+    /**
      * Encode a link in the proper format.
-     * 
-     * @param key String[] of keys of the different args--length must match val[]
-     * @param val String[] of vals of the different args--length must match key[]
+     *
+     * @param key String[] of keys of the different args--length must match
+     * val[]
+     * @param val String[] of vals of the different args--length must match
+     * key[]
      * @param display is what will be displayed as the link to click on
      * @param action is the action to take
      * @param ssp is either 'player' or 'team'
      */
-    public final String encodeLink(String[] key, String[] val, String display, String action, String ssp) {
+    public final String encodeLink(String[] key, String[] val, String display, String action, String ssp)
+    {
         StringBuilder sb = new StringBuilder();
         sb.append("<a href=\"");
         sb.append(ssp);
         sb.append(".ssp?");
-        for (int i=0; i<key.length; i++) {
-        	sb.append(key[i]);
-        	sb.append("=");
-        	sb.append(encodeURL(val[i]));
-        	sb.append("&");
+        for (int i = 0; i < key.length; i++)
+        {
+            sb.append(key[i]);
+            sb.append("=");
+            sb.append(encodeURL(val[i]));
+            sb.append("&");
         }
         sb.append("action=");
         sb.append(action);
@@ -155,8 +201,9 @@ public abstract class BaseView {
         sb.append("</a>");
         return sb.toString();
     }
-   
-    protected final String encodeURL(String s) {
+
+    protected final String encodeURL(String s)
+    {
         s = s.replace(" ", "+");
         return s;
     }
