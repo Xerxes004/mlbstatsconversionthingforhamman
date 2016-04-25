@@ -163,19 +163,22 @@ public class HibernateUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch) {
+	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch, Integer page) {
 		List<Team> list = null;
+		final int RESULTS_PER_PAGE = 10;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
 			tx.begin();
 			org.hibernate.Query query;
 			if (exactMatch) {
-				query = session.createQuery("from bo.Team where name = :name ");
+				query = session.createQuery("from bo.Team t where name = :name order by t.name");
 			} else {
-				query = session.createQuery("from bo.Team where name like '%' + :name + '%' ");
+				query = session.createQuery("from bo.Team t where name like '%' + :name + '%' order by t.name");
 			}
 			query.setParameter("name", nameQuery);
+			query.setFirstResult(page * RESULTS_PER_PAGE);
+			query.setMaxResults(RESULTS_PER_PAGE);
 			list = query.list();
 			tx.commit();
 		} catch (Exception e) {
@@ -186,6 +189,31 @@ public class HibernateUtil {
 				session.close();
 		}
 		return list;
+	}
+	
+	public static Integer retrieveTeamsByNameCount(String nameQuery, Boolean exactMatch) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		Integer count = null;
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			if (exactMatch) {
+				query = session.createQuery("select count(*) from bo.Team t where name = :name");
+			} else {
+				query = session.createQuery("select count(*) from bo.Team t where name like '%' + :name + '%'");
+			}
+			query.setParameter("name", nameQuery);
+			count = java.lang.Math.toIntExact((Long)query.uniqueResult());
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen())
+				session.close();
+		}
+		return count;
 	}
 
 	public static TeamSeason retrieveTeamSeason(Integer teamId, Integer year) {
@@ -201,8 +229,8 @@ public class HibernateUtil {
 			query.setParameter("teamId", teamId);
 			query.setParameter("year", year);
 
-			if (!query.list().isEmpty()) {
-				teamSeason = (TeamSeason) query.list().get(0);
+			teamSeason = (TeamSeason) query.uniqueResult();
+			if(teamSeason != null){
 				Hibernate.initialize(teamSeason.getRoster());
 			}
 

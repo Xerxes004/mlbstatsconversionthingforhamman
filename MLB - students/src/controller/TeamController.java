@@ -270,7 +270,7 @@ public class TeamController extends BaseController {
 		}
 		String valExact = keyVals.get("on");
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
-		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch);
+		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, 0);
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildSearchResultsTableTeam(teams);
 		view.buildLinkToSearch();
@@ -281,10 +281,22 @@ public class TeamController extends BaseController {
 		if (teamName == null) {
 			return;
 		}
+		String page = keyVals.get("page");
+		Integer pageNum;
+		if(page != null){
+			pageNum = new Integer(page);
+		}else{
+			pageNum = new Integer(0);
+		}
 		String valExact = keyVals.get("on");
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
-		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch);
-		buildJSONSearchResults(teams);
+		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, pageNum);
+		Integer count = HibernateUtil.retrieveTeamsByNameCount(teamName, exactMatch);
+		try {
+			buildJSONSearchResults(teams, count);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected void processDetails() {
@@ -338,24 +350,26 @@ public class TeamController extends BaseController {
 		}
 	}
 
-	private JSONArray buildJSONSearchResults(List<Team> teams) {
+	private JSONObject buildJSONSearchResults(List<Team> teams, Integer count) throws JSONException {
+		JSONObject teamList = new JSONObject();
+		teamList.put("count", count);
 		JSONArray teamArray = new JSONArray();
 		teams.forEach((entry) -> {
 			JSONObject to = new JSONObject();
 			try {
 				to.put("name", entry.getName());
 				to.put("league", entry.getLeague());
-				to.put("year-founded", entry.getYearFounded().toString());
-				to.put("year-last", entry.getYearLast().toString());
+				to.put("yearfounded", entry.getYearFounded().toString());
+				to.put("yearlast", entry.getYearLast().toString());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			teamArray.put(to);
 		});
-
-		view.buildJSON(teamArray.toString());
-		return teamArray;
+		teamList.put("items", teamArray);
+		view.buildJSON(teamList.toString());
+		return teamList;
 	}
 
 	private void buildSearchResultsTableTeam(List<Team> teams) {
@@ -392,7 +406,7 @@ public class TeamController extends BaseController {
 			JSONObject season = new JSONObject();
 			try {
 				season.put("year", entry.getYear().toString());
-				season.put("games-played", entry.getGamesPlayed().toString());
+				season.put("gamesplayed", entry.getGamesPlayed().toString());
 				season.put("wins", entry.getWins().toString());
 				season.put("losses", entry.getLosses().toString());
 				season.put("rank", entry.getRank().toString());
@@ -523,7 +537,7 @@ public class TeamController extends BaseController {
 			JSONObject jsPlayer = new JSONObject();
 			try {
 				jsPlayer.put("name", player.getName());
-				jsPlayer.put("games-played", playerSeason.getGamesPlayed().toString());
+				jsPlayer.put("gamesplayed", playerSeason.getGamesPlayed().toString());
 				jsPlayer.put("salary", DOLLAR_FORMAT.format(playerSeason.getSalary()));
 			} catch (Exception e) {
 				e.printStackTrace();
