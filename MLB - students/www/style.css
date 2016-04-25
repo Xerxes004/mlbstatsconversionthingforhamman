@@ -19,7 +19,7 @@ header > h1 {
 header > #logo {
 	width: 100px;
 	float: left;
-	
+
 }
 
 table {
@@ -45,7 +45,7 @@ td {
 	padding: 3px;
 	margin: 0;
 	border: 0;
-	opacity: .85;
+	opacity: .9;
 }
 
 td a {

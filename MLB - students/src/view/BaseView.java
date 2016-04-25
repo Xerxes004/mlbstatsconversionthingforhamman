@@ -30,11 +30,14 @@ public abstract class BaseView {
         	.append("<link rel='stylesheet' type='text/css' href='style.css'>\r\n")
         	.append("</HEAD>\r\n")
         	.append("<BODY>\r\n")
-        	.append("<div id=\'wrapper\'>\r\n")
-        	.append("<header>\r\n")
-        	.append(header)
-        	.append("</header>\r\n")
-        	.append("<h2>")
+        	.append("<div id=\'wrapper\'>\r\n");
+        	if (header != null)
+        	{
+	        	sb.append("<header>\r\n")
+	        	  .append(header)
+	        	  .append("</header>\r\n");
+        	}
+          sb.append("<h2>")
         	.append(title)
         	.append("</h2>\r\n")
         	.append(body)
