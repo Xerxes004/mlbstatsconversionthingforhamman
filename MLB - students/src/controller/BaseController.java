@@ -33,8 +33,8 @@ public abstract class BaseController {
     protected abstract void performAction();
     
     public abstract void init(String query);
-
-    protected final String decodeURL(String s) {
+    	
+	protected final String decodeURL(String s) {
         // spaces are replaced by '+' in textfields
         s = s.replaceAll("\\+", " ");
         // '=&' indicates the field was left blank; 

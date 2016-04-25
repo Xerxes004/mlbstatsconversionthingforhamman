@@ -100,20 +100,38 @@ public class TeamController extends BaseController {
 		view.buildTable(table);
 	}
 
+	// individual team result
 	private void buildSearchResultsTableTeamDetail(Team team) {
-		String[][] table = new String[2][5];
-		table[0][0] = "Id";
-		table[0][1] = "Name";
-		table[0][2] = "League";
-		table[0][3] = "Year Founded";
-		table[0][4] = "Year Last";
+		/*String[][] table = new String[2][4];
+		//table[0][0] = "Id";
+		table[0][0] = "Name";
+		table[0][1] = "League";
+		table[0][2] = "Year Founded";
+		table[0][3] = "Year Last";
 
-		table[1][0] = team.getId().toString();
-		table[1][1] = team.getName();
-		table[1][2] = team.getLeague();
-		table[1][3] = team.getYearFounded().toString();
-		table[1][4] = team.getYearLast().toString();
-		view.buildTable(table);
+		//table[1][0] = team.getId().toString();
+		table[1][0] = team.getName();
+		table[1][1] = team.getLeague();
+		table[1][2] = team.getYearFounded().toString();
+		table[1][3] = team.getYearLast().toString();
+		view.buildTable(table);*/
+		
+		StringBuilder header = new StringBuilder();
+		header.append("<img id='logo' src='")
+		  	  .append(view.getLogo(team.getName()))
+		  	  .append("' />")
+			  .append("<h1>")
+			  .append(team.getName())
+			  .append("</h1>")
+			  .append("<h3>League - ")
+			  .append(team.getLeague())
+			  .append("</h3>")
+			  .append(team.getYearFounded())
+			  .append(" - ")
+			  .append(team.getYearLast())
+			  ;
+		
+		view.setHeader(header.toString());
 
 		Set<TeamSeason> ts = team.getSeasons();
 		ArrayList<TeamSeason> entries = new ArrayList<>(ts);
@@ -146,6 +164,7 @@ public class TeamController extends BaseController {
 		view.buildTable(seasonTable);
 	}
 	
+	// search results
 	private void buildRosterTable(TeamSeason teamSeason){
 		String[][] teamTable = new String[2][4];
 		Team team = teamSeason.getTeam();

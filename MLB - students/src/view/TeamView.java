@@ -1,9 +1,13 @@
 package view;
 
-public class TeamView extends BaseView {
+import java.util.HashMap;
 
-	public TeamView() {
-		title = "Team";
+public class TeamView extends BaseView {
+		public TeamView() {
+		title = "Team Overview";
+		
+		teamLogos = new HashMap<>();
+		teamLogos.put("Boston Red Sox", "images/redsox.png");
 	}
 
 	@Override

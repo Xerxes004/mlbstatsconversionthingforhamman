@@ -4,6 +4,8 @@
  */
 package view;
 
+import java.util.Map;
+
 /**
  *
  * @author user
@@ -11,27 +13,54 @@ package view;
 public abstract class BaseView {
     
     protected String title;
+    protected String header;
+	protected Map<String, String> teamLogos;
     protected StringBuffer body = new StringBuffer();
 
     public abstract void buildSearchForm();
     
     public final String buildPage() {
         StringBuilder sb = new StringBuilder();
-        sb.append("<!DOCTYPE html>\r\n");
-        sb.append("<HTML>\r\n");
-        sb.append("<HEAD><TITLE>");
-        sb.append(title);
-        sb.append("</TITLE></HEAD>\r\n");
-        sb.append("<BODY>\r\n");
-        sb.append("<h2>MLB - ");
-        sb.append(title);
-        sb.append("</h2>\r\n");
-        sb.append(body);
-        sb.append("<br/><br/>\r\n");
-        sb.append("<a href=\"index.htm\">Home</a>\r\n");
-        sb.append("</BODY>\r\n");
-        sb.append("</HTML>\r\n");
+        sb.append("<!DOCTYPE html>\r\n")
+        	.append("<HTML>\r\n")
+        	.append("<HEAD>\r\n")
+        	.append("<TITLE>")
+        	.append(title)
+        	.append("</TITLE>\r\n")
+        	.append("<link rel='stylesheet' type='text/css' href='style.css'>\r\n")
+        	.append("</HEAD>\r\n")
+        	.append("<BODY>\r\n")
+        	.append("<div id=\'wrapper\'>\r\n")
+        	.append("<header>\r\n")
+        	.append(header)
+        	.append("</header>\r\n")
+        	.append("<h2>")
+        	.append(title)
+        	.append("</h2>\r\n")
+        	.append(body)
+        	.append("<br/><br/>\r\n")
+        	.append("<a href=\"index.htm\">Home</a>\r\n")
+        	.append("</div>\r\n") //end wrapper div
+        	.append("</BODY>\r\n")
+        	.append("</HTML>\r\n");
         return sb.toString();
+    }
+    
+    public final void setHeader(String header)
+	{
+		this.header = header;
+	}
+    
+    public final String getLogo(String teamName)
+    {
+    	if (teamLogos != null)
+    	{
+    		return teamLogos.get(teamName);
+    	}
+    	else
+    	{
+    		return "";
+    	}
     }
     
     public final void buildLinkToSearch() {
