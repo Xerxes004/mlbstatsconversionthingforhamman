@@ -3,6 +3,7 @@ package controller;
 import dataaccesslayer.HibernateUtil;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -214,7 +215,9 @@ public class TeamController extends BaseController {
 		to.put("yearlast", team.getYearLast().toString());
 		
 		JSONArray seasons = new JSONArray();
-		team.getSeasons().forEach((entry) -> {
+		List<TeamSeason> ts = new ArrayList<>(team.getSeasons());
+		Collections.sort(ts, TeamSeason.teamSeasonComparator);
+		ts.forEach((entry) -> {
 			JSONObject season = new JSONObject();
 			try {
 				season.put("year", entry.getYear().toString());
@@ -255,7 +258,8 @@ public class TeamController extends BaseController {
 		view.setHeader(header.toString());
 
 		Set<TeamSeason> ts = team.getSeasons();
-		ArrayList<TeamSeason> entries = new ArrayList<>(ts);
+		List<TeamSeason> entries = new ArrayList<>(ts);
+		Collections.sort(entries, TeamSeason.teamSeasonComparator);
 		String[][] seasonTable = new String[ts.size() + 1][7];
 
 		seasonTable[0][0] = "Year";

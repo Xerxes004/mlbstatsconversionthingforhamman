@@ -1,6 +1,7 @@
 package bo;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -192,4 +193,12 @@ public class TeamSeason implements Serializable{
 	public int hashCode() {
 		return this.getId().hashCode();
 	}
+	
+	public static Comparator<TeamSeason> teamSeasonComparator = new Comparator<TeamSeason>() {
+		public int compare(TeamSeason ts1, TeamSeason ts2) {
+			Integer year1 = ts1.getYear();
+			Integer year2 = ts2.getYear();
+			return year1.compareTo(year2);
+		}
+	};
 }
