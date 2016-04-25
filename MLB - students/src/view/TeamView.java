@@ -15,7 +15,7 @@ public class TeamView extends BaseView {
 		body.append("<form action=\"");
 		body.append(title.toLowerCase());
 		body.append(".ssp\" method=\"get\">\r\n");
-		body.append("Enter Team: <input type=\"text\" size=\"20\" name=\"name\"><input type=\"checkbox\" name=\"exact\"> Exact Match?\r\n");
+		body.append("Enter Team: <select id='team-select' class='js-example-responsive' name='name' style='width:50%'><option></option></select><input type=\"checkbox\" name=\"exact\"> Exact Match?\r\n");
 		body.append("<input type=\"hidden\" name=\"action\" value=\"search\">\r\n");
 		body.append("<input type=\"submit\" value=\"Submit\">\r\n");
 		body.append("</form>\r\n");
