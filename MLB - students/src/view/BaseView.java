@@ -49,6 +49,10 @@ public abstract class BaseView {
         return sb.toString();
     }
     
+    public final String buildJSONResponse(){
+    	return body.toString();
+    }
+    
     public final void setHeader(String header)
 	{
 		this.header = header;
@@ -148,5 +152,9 @@ public abstract class BaseView {
     protected final String encodeURL(String s) {
         s = s.replace(" ", "+");
         return s;
+    }
+    
+    public final void buildJSON(String s){
+    	body.append(s);
     }
 }

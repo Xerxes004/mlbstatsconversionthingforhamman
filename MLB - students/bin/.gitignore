@@ -1,6 +1,3 @@
 /controller/
-/bo/
-/dataaccesslayer/
-/conversion/
-/view/
 /webserver/
+/view/

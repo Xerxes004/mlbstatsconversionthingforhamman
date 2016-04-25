@@ -8,6 +8,7 @@ import java.net.*;
 class WebRequestHandler implements Runnable {
 
     String SERVER_PAGE_EXT = ".ssp";
+    String JSON_PAGE_EXT = ".json";
     String INDEX_PAGE = "index.htm";
     String WWW_ROOT;
     Socket connSocket;
@@ -53,10 +54,18 @@ class WebRequestHandler implements Runnable {
             String ssp = urlName.substring(0, urlName.indexOf(SERVER_PAGE_EXT));
             BaseController serverApp = ControllerFactory.getServerApp(ssp);
             if (serverApp != null) {
-                serverApp.init(query);
+                serverApp.initSSP(query);
                 bytesToSend = serverApp.response().getBytes();
             }
-        } else {
+        } else if(urlName.contains(JSON_PAGE_EXT)){
+        	System.out.println("Generating contents for: " + urlName);
+        	String json = urlName.substring(0, urlName.indexOf(JSON_PAGE_EXT));
+        	BaseController jsonApp = ControllerFactory.getServerApp(json);
+        	if(jsonApp != null){
+        		jsonApp.initJSON(query);
+        		bytesToSend = jsonApp.jsonResponse().getBytes();
+        	}
+        }else {
             String fileName = WWW_ROOT + urlName;
             System.out.println("mapping to filename: " + fileName);
             File fileInfo = new File(fileName);

@@ -15,11 +15,20 @@ import dataaccesslayer.HibernateUtil;
 public class PlayerController extends BaseController {
 
 	@Override
-	public void init(String query) {
+	public void initSSP(String query) {
 		System.out.println("building dynamic html for player");
 		view = new PlayerView();
-		process(query);
+		processSSP(query);
 	}
+	
+	@Override
+	public void initJSON(String query){
+		System.out.println("Building JSON for player");
+		view = new PlayerView();
+		processJSON(query);
+	}
+	
+	protected void performJSONAction() {};
 
 	@Override
 	protected void performAction() {
