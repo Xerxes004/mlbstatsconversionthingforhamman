@@ -295,7 +295,6 @@ public class TeamController extends BaseController {
 		});
 		
 		jsRoster.put("seasons", roster);
-		System.out.println(jsonResponse().toString());
 		view.buildJSON(jsRoster.toString());
 		return jsRoster;
 	}
