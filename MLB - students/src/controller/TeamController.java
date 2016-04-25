@@ -82,20 +82,21 @@ public class TeamController extends BaseController {
 	}
 
 	private void buildSearchResultsTableTeam(List<Team> teams) {
-		String[][] table = new String[teams.size() + 1][5];
-		table[0][0] = "Id";
-		table[0][1] = "Name";
-		table[0][2] = "League";
-		table[0][3] = "Year Founded";
-		table[0][4] = "Year Last";
+		String[][] table = new String[teams.size() + 1][4];
+		//table[0][0] = "Id";
+		table[0][0] = "Name";
+		table[0][1] = "League";
+		table[0][2] = "Year Founded";
+		table[0][3] = "Year Last";
 		for (int i = 1; i <= teams.size(); i++) {
 			Team team = teams.get(i - 1);
+			String teamName = team.getName().toString();
 			String teamID = team.getId().toString();
-			table[i][0] = view.encodeLink(new String[] { "id" }, new String[] { teamID }, teamID, ACT_DETAIL, SSP_TEAM);
-			table[i][1] = team.getName();
-			table[i][2] = team.getLeague();
-			table[i][3] = team.getYearFounded().toString();
-			table[i][4] = team.getYearLast().toString();
+			//table[i][0] = view.encodeLink(new String[] { "id" }, new String[] { teamID }, teamID, ACT_DETAIL, SSP_TEAM);
+			table[i][0] = view.encodeLink(new String[] { "id" }, new String[] { teamID }, team.getName(), ACT_DETAIL, SSP_TEAM);
+			table[i][1] = team.getLeague();
+			table[i][2] = team.getYearFounded().toString();
+			table[i][3] = team.getYearLast().toString();
 		}
 		view.buildTable(table);
 	}
