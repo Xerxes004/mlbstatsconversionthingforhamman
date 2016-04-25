@@ -6,13 +6,8 @@
 <hibernate-configuration>
 <session-factory>
 <property name="hibernate.connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-<<<<<<< HEAD
 <property name="hibernate.connection.url">jdbc:sqlserver://192.168.196.128:1433;database=MLB</property>
 <property name="hibernate.connection.username">wes</property>
-=======
-<property name="hibernate.connection.url">jdbc:sqlserver://192.168.74.128:1433;database=MLB</property>
-<property name="hibernate.connection.username">susie</property>
->>>>>>> 3a917b0c7e224eef210849da87594a8e694acef9
 <property name="hibernate.connection.password">password</property>
 <property name="hibernate.connection.pool_size">1</property>
 <property name="hibernate.default_catalog">dbo</property>
