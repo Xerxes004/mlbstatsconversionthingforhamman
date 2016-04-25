@@ -16,6 +16,7 @@ import bo.TeamSeason;
 public class HibernateUtil {
 
 	private static final SessionFactory sessionFactory;
+	public static final int RESULTS_PER_PAGE = 10;
 
 	static {
 		try {
@@ -63,7 +64,7 @@ public class HibernateUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static List<Player> retrievePlayersByName(String nameQuery, Boolean exactMatch) {
+	public static List<Player> retrievePlayersByName(String nameQuery, Boolean exactMatch, Integer page) {
 		List<Player> list = null;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
@@ -71,11 +72,13 @@ public class HibernateUtil {
 			tx.begin();
 			org.hibernate.Query query;
 			if (exactMatch) {
-				query = session.createQuery("from bo.Player where name = :name ");
+				query = session.createQuery("from bo.Player p where name = :name order by p.name asc");
 			} else {
-				query = session.createQuery("from bo.Player where name like '%' + :name + '%' ");
+				query = session.createQuery("from bo.Player p where name like '%' + :name + '%' order by p.name asc");
 			}
 			query.setParameter("name", nameQuery);
+			query.setFirstResult(page * RESULTS_PER_PAGE);
+			//query.setMaxResults(RESULTS_PER_PAGE);
 			list = query.list();
 			tx.commit();
 		} catch (Exception e) {
@@ -86,6 +89,31 @@ public class HibernateUtil {
 				session.close();
 		}
 		return list;
+	}
+	
+	public static Integer retrieveCountPlayersByName(String nameQuery, Boolean exactMatch) {
+		Integer count = null;
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = session.getTransaction();
+		try {
+			tx.begin();
+			org.hibernate.Query query;
+			if (exactMatch) {
+				query = session.createQuery("select count(*) from bo.Player p where name = :name");
+			} else {
+				query = session.createQuery("select count(*) from bo.Player p where name like '%' + :name + '%'");
+			}
+			query.setParameter("name", nameQuery);
+			count = java.lang.Math.toIntExact((Long) query.uniqueResult());
+			tx.commit();
+		} catch (Exception e) {
+			tx.rollback();
+			e.printStackTrace();
+		} finally {
+			if (session.isOpen())
+				session.close();
+		}
+		return count;
 	}
 
 	/**
