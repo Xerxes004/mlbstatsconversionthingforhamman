@@ -1,5 +1,7 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,300);
+
 body {
-    font-family: "Helvetica Neue", sans-serif;
+    font-family: "Open Sans", "Helvetica Neue", sans-serif;
     font-size: 11pt;
 }
 
@@ -17,7 +19,7 @@ header > h1 {
 }
 
 header > #logo {
-    height: 110px;
+    height: 150px;
     float: right;
     margin-right: 10px;
     /* adds a white border around logos */
