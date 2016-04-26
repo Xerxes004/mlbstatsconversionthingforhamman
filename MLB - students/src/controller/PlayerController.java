@@ -96,7 +96,10 @@ public class PlayerController extends BaseController {
 		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, 0);
 		view.printSearchResultsMessage(name, exact);
 		buildSearchResultsTablePlayer(bos);
-		view.buildLinkToSearch();
+		StringBuilder footer = new StringBuilder();
+		footer.append(view.buildLinkToSearch())
+			  .append("<a href=\"index.htm\">Home</a>\r\n");
+		view.setFooter(footer.toString());
 	}
 
 	protected final void processJSONDetails(){
@@ -125,7 +128,10 @@ public class PlayerController extends BaseController {
 			return;
 		buildSearchResultsTablePlayerDetail(p);
 		((PlayerView)view).buildCharts(id);
-		view.buildLinkToSearch();
+		StringBuilder footer = new StringBuilder();
+		footer.append(view.buildLinkToSearch())
+			  .append("<a href=\"index.htm\">Home</a>\r\n");
+		view.setFooter(footer.toString());
 	}
 
 	private void buidJSONSearchResultsTablePlayer(List<Player> players, Integer count) throws JSONException {
@@ -186,6 +192,11 @@ public class PlayerController extends BaseController {
 			table[i + 1][8] = stats.getSteals().toString();
 		}
 		view.buildTable(table);
+		
+		StringBuilder footer = new StringBuilder();
+		footer.append(view.buildLinkToSearch())
+			  .append("<a href=\"index.htm\">Home</a>\r\n");
+		view.setFooter(footer.toString());
 	}
 
 	private void buildJSONSearchResultsTablePlayerDetail(Player player) throws JSONException {
@@ -283,6 +294,11 @@ public class PlayerController extends BaseController {
 			seasonTable[i][7] = ps.getBattingStats().getHomeRuns().toString();
 		}
 		view.buildTable(seasonTable);
+		
+		StringBuilder footer = new StringBuilder();
+		footer.append(view.buildLinkToSearch())
+			  .append("<a href=\"index.htm\">Home</a>\r\n");
+		view.setFooter(footer.toString());
 	}
 	
 	private String buildPlayerHeader(Player player)

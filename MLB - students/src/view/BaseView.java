@@ -15,6 +15,7 @@ public abstract class BaseView
 
     protected String title;
     protected String header;
+    protected String footer;
     protected Map<String, String> teamLogos;
     protected StringBuffer body = new StringBuffer();
 
@@ -49,11 +50,14 @@ public abstract class BaseView
 	        	  .append(header)
 	        	  .append("</header>\r\n");
         	}
-          sb.append(body)
-        	.append("<br/><br/>\r\n")
-        	.append("<a href=\"index.htm\">Home</a>\r\n")
-        	.append("</div>\r\n") //end wrapper div
-        	.append("</BODY>\r\n")
+          sb.append(body);
+          if (footer != null)
+          {
+        	sb.append("<footer>\r\n")
+        	  .append(footer)
+        	  .append("</footer>\r\n"); 
+          }
+          sb.append("</div>\r\n</BODY>\r\n")//end wrapper div
         	.append("</HTML>\r\n");
         return sb.toString();
     }
@@ -66,6 +70,11 @@ public abstract class BaseView
     {
         this.header = header;
     }
+    
+    public final void setFooter(String footer)
+    {
+    	this.footer = footer;
+	}
 
     public final String getLogo(String teamName)
     {
@@ -79,14 +88,15 @@ public abstract class BaseView
         }
     }
 
-    public final void buildLinkToSearch()
+    public final String buildLinkToSearch()
     {
-        body.append("<br/><br/>\r\n");
-        body.append("<a href=\"");
-        body.append(title.toLowerCase());
-        body.append(".ssp?action=searchform\">Search for a ");
-        body.append(title);
-        body.append("</a>\r\n");
+    	StringBuilder s = new StringBuilder();
+        s.append("<a href=\"")
+         .append(title.toLowerCase())
+         .append(".ssp?action=searchform\">Search for a ")
+         .append(title)
+         .append("</a>\r\n");
+        return s.toString();
     }
 
     public final void printMessage(String msg)
