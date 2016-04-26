@@ -16,6 +16,14 @@ public class PlayerView extends BaseView {
     
     @Override
     public void buildSearchForm() {
+    	body.append("<form id='select2form' action=\"");
+		body.append(title.toLowerCase());
+		body.append(".ssp\" method=\"get\">\r\n");
+		body.append("<h2>Dynamic Player Search</h2>");
+		body.append("Enter Player: <select id='player-select' class='js-example-responsive' name='id' style='width:50%'><option></option></select>\r\n");
+		body.append("<input type=\"hidden\" name=\"action\" value=\"details\">\r\n");
+		body.append("</form>\r\n");
+		body.append("<br/><br/>");
         body.append("<form action=\"");
         body.append(title.toLowerCase());
         body.append(".ssp\" method=\"get\">\r\n");

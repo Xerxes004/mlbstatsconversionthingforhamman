@@ -93,7 +93,7 @@ public class PlayerController extends BaseController {
 		}
 		String v = keyVals.get("exact");
 		boolean exact = (v != null && v.equalsIgnoreCase("on"));
-		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, 0);
+		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, -1);
 		view.printSearchResultsMessage(name, exact);
 		buildSearchResultsTablePlayer(bos);
 		StringBuilder footer = new StringBuilder();
@@ -126,6 +126,9 @@ public class PlayerController extends BaseController {
 		Player p = (Player) HibernateUtil.retrievePlayerById(Integer.valueOf(id));
 		if (p == null)
 			return;
+		List<Player> list = new ArrayList<>();
+		list.add(p);
+		buildSearchResultsTablePlayer(list);
 		buildSearchResultsTablePlayerDetail(p);
 		((PlayerView)view).buildCharts(id);
 		StringBuilder footer = new StringBuilder();

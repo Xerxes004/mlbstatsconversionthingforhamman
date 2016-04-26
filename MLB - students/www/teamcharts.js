@@ -6,12 +6,12 @@ $(document).ready(function(){
 			renderTo: 'attendance'
 		},
 		title:{
-			text: 'Batting Average'
+			text: 'Attendance'
 		},
 		yAxis:{
 			min:0,
 			title:{
-				text: 'Batting Average'
+				text: '#People'
 			}
 		}
 	});
@@ -21,12 +21,12 @@ $(document).ready(function(){
 			renderTo: 'winslosses'
 		},
 		title:{
-			text: 'Hits'
+			text: 'Wins-Losses'
 		},
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Hits'
+				text: '#Games'
 			}
 		},
 		plotOptions: {
@@ -35,9 +35,6 @@ $(document).ready(function(){
             }
         }
 	});
-
-
-
 
 	$.get("http://localhost:5555/team.json", {id:teamID, action:'details'}, function(data){
 		console.log(data);
@@ -54,8 +51,8 @@ $(document).ready(function(){
 		Highcharts.charts.forEach(function(item, index){
 			item.xAxis[0].setCategories(year)
 		});
-		Highcharts.charts[0].addSeries({name:'Average', data:attendance});
-		Highcharts.charts[1].addSeries({name:'Average', data:wins}, false);
-		Highcharts.charts[1].addSeries({name:'Average', data:losses});
+		Highcharts.charts[0].addSeries({name:'Attendance', data:attendance});
+		Highcharts.charts[1].addSeries({name:'Losses', data:losses}, false);
+		Highcharts.charts[1].addSeries({name:'Wins', data:wins});
 	}, 'json');
 });

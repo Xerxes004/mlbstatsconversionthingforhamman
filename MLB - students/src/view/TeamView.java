@@ -52,7 +52,6 @@ public class TeamView
 		body.append("<h2>Dynamic Team Search</h2>");
 		body.append("Enter Team: <select id='team-select' class='js-example-responsive' name='id' style='width:50%'><option></option></select>\r\n");
 		body.append("<input type=\"hidden\" name=\"action\" value=\"details\">\r\n");
-		//body.append("<input type=\"submit\" value=\"Submit\">\r\n");
 		body.append("</form>\r\n");
 		body.append("<br/><br/>");
 		body.append("<form action=\"");
@@ -65,9 +64,10 @@ public class TeamView
 		body.append("</form>\r\n");
 	}
     
+    @Override
     public void buildCharts(String id) {
-		body.append("<div id='attendance' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float: left'></div>");
-		body.append("<div id='winslosses' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
+		body.append("<div id='attendance' style='min-width: 310px; height: 400px; margin 0 auto'></div>");
+		body.append("<div id='winslosses' style='min-width: 310px; height: 400px; margin 0 auto'></div>");
 //		body.append("<div id='homeruns' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
 //		body.append("<div id='gamesplayed' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
 		body.append("<script>var teamID=" + id + ";</script>");

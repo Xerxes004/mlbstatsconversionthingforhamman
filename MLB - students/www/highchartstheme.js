@@ -9,7 +9,7 @@ Highcharts.theme = {
    colors: ["#f45b5b", "#8085e9", "#8d4654", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
       "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
    chart: {
-      backgroundColor: null,
+      backgroundColor: 'rgba(255,255,255,0.5)',
       style: {
          fontFamily: "Signika, serif"
       }
@@ -48,6 +48,9 @@ Highcharts.theme = {
             color: '#6e6e70'
          }
       }
+   },
+   exporting:{
+   	enabled: false
    },
    plotOptions: {
       series: {
