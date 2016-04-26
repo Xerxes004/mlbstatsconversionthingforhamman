@@ -3,16 +3,23 @@
 body {
     font-family: "Open Sans", "Helvetica Neue", sans-serif;
     font-size: 11pt;
-    /*background-color: rgba(198, 222, 255, 0.5);
     background-image: url('images/baseball.jpg');
-    background-size: 100%;
+    background-position: center top;
+    background-repeat: no-repeat;
+    min-width:100%; 
+    min-height:100%; 
+    width:auto; 
+    height:auto;
+    background-color: rgba(198, 222, 255, 0.5);
     background-attachment: fixed;
-    background-repeat: no-repeat;*/
 }
 
 #body-background {
     position: fixed;
-    width: 100%;
+    min-width:100%; 
+    min-height:100%; 
+    width:auto; 
+    height:auto;
     opacity: 0.5;
     top: 0;
     z-index: -1;
