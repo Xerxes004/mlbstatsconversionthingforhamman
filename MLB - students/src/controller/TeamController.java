@@ -85,7 +85,7 @@ public class TeamController extends BaseController {
 		}
 		String valExact = keyVals.get("on");
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
-		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, 0);
+		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, -1);
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildSearchResultsTableTeam(teams);
 		view.buildLinkToSearch();
@@ -124,6 +124,7 @@ public class TeamController extends BaseController {
 			return;
 		buildSearchResultsTableTeamDetail(team);
 		view.buildLinkToSearch();
+		view.buildCharts(teamId);
 	}
 	
 	protected void processJSONDetails() {
@@ -172,6 +173,7 @@ public class TeamController extends BaseController {
 		teams.forEach((entry) -> {
 			JSONObject to = new JSONObject();
 			try {
+				to.put("id", entry.getId());
 				to.put("name", entry.getName());
 				to.put("league", entry.getLeague());
 				to.put("yearfounded", entry.getYearFounded().toString());
@@ -222,12 +224,12 @@ public class TeamController extends BaseController {
 		ts.forEach((entry) -> {
 			JSONObject season = new JSONObject();
 			try {
-				season.put("year", entry.getYear().toString());
-				season.put("gamesplayed", entry.getGamesPlayed().toString());
-				season.put("wins", entry.getWins().toString());
-				season.put("losses", entry.getLosses().toString());
-				season.put("rank", entry.getRank().toString());
-				season.put("attendance", entry.getTotalAttendance().toString());
+				season.put("year", entry.getYear());
+				season.put("gamesplayed", entry.getGamesPlayed());
+				season.put("wins", entry.getWins());
+				season.put("losses", entry.getLosses());
+				season.put("rank", entry.getRank());
+				season.put("attendance", entry.getTotalAttendance());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

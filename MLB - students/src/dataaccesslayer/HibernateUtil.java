@@ -193,7 +193,7 @@ public class HibernateUtil {
 	@SuppressWarnings("unchecked")
 	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch, Integer page) {
 		List<Team> list = null;
-		final int RESULTS_PER_PAGE = 10;
+		final int RESULTS_PER_PAGE = 6;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
@@ -204,9 +204,13 @@ public class HibernateUtil {
 			} else {
 				query = session.createQuery("from bo.Team t where name like '%' + :name + '%' order by t.name");
 			}
+			
+			if(page >= 0){
+				query.setFirstResult(page * RESULTS_PER_PAGE);
+				query.setMaxResults(RESULTS_PER_PAGE);
+			}
+			
 			query.setParameter("name", nameQuery);
-			query.setFirstResult(page * RESULTS_PER_PAGE);
-			query.setMaxResults(RESULTS_PER_PAGE);
 			list = query.list();
 			tx.commit();
 		} catch (Exception e) {

@@ -205,7 +205,6 @@ public class PlayerController extends BaseController {
 		});
 
 		jsPlayer.put("positions", jsPositions);
-		System.out.println(jsPlayer.get("positions"));
 
 		// Get the seasons
 		List<PlayerSeason> seasonList = new ArrayList<PlayerSeason>(player.getSeasons());
