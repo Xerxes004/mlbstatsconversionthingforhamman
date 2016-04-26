@@ -122,9 +122,15 @@ public class TeamController extends BaseController {
 		Team team = (Team) HibernateUtil.retrieveTeamById(Integer.valueOf(teamId));
 		if (team == null)
 			return;
+		List<Team> list = new ArrayList<>();
+		list.add(team);
+		buildSearchResultsTableTeam(list);
+		
+		view.buildCharts(teamId);
+		
 		buildSearchResultsTableTeamDetail(team);
 		view.buildLinkToSearch();
-		view.buildCharts(teamId);
+		
 	}
 	
 	protected void processJSONDetails() {

@@ -124,13 +124,20 @@ public class PlayerController extends BaseController {
 			return;
 		}
 		Player p = (Player) HibernateUtil.retrievePlayerById(Integer.valueOf(id));
-		if (p == null)
+		if (p == null){
 			return;
+		}
 		List<Player> list = new ArrayList<>();
 		list.add(p);
+		// Build the baseic player information
 		buildSearchResultsTablePlayer(list);
+		
+		// Build the charts
+		view.buildCharts(id);
+		
+		// Build the season information
 		buildSearchResultsTablePlayerDetail(p);
-		((PlayerView)view).buildCharts(id);
+		
 		StringBuilder footer = new StringBuilder();
 		footer.append(view.buildLinkToSearch())
 			  .append("<a href=\"index.htm\">Home</a>\r\n");
