@@ -124,6 +124,7 @@ public class TeamController extends BaseController {
 			return;
 		buildSearchResultsTableTeamDetail(team);
 		view.buildLinkToSearch();
+		view.buildCharts(teamId);
 	}
 	
 	protected void processJSONDetails() {
@@ -223,12 +224,12 @@ public class TeamController extends BaseController {
 		ts.forEach((entry) -> {
 			JSONObject season = new JSONObject();
 			try {
-				season.put("year", entry.getYear().toString());
-				season.put("gamesplayed", entry.getGamesPlayed().toString());
-				season.put("wins", entry.getWins().toString());
-				season.put("losses", entry.getLosses().toString());
-				season.put("rank", entry.getRank().toString());
-				season.put("attendance", entry.getTotalAttendance().toString());
+				season.put("year", entry.getYear());
+				season.put("gamesplayed", entry.getGamesPlayed());
+				season.put("wins", entry.getWins());
+				season.put("losses", entry.getLosses());
+				season.put("rank", entry.getRank());
+				season.put("attendance", entry.getTotalAttendance());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

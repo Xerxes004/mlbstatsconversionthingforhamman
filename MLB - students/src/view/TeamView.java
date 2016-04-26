@@ -65,5 +65,13 @@ public class TeamView
 		body.append("</form>\r\n");
 	}
     
-    
+    public void buildCharts(String id) {
+		body.append("<div id='attendance' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float: left'></div>");
+		body.append("<div id='winslosses' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
+//		body.append("<div id='homeruns' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
+//		body.append("<div id='gamesplayed' style='width:50%; min-width: 310px; height: 400px; margin 0 auto; float:left'></div>");
+		body.append("<script>var teamID=" + id + ";</script>");
+		body.append("<script src='highchartstheme.js'></script>");
+		body.append("<script src='teamcharts.js'></script>");
+	}
 }

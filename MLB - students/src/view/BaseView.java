@@ -210,4 +210,6 @@ public abstract class BaseView
     public final void buildJSON(String s){
     	body.append(s);
     }
+    
+    public abstract void buildCharts(String id);
 }
