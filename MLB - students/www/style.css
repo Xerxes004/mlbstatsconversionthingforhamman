@@ -18,12 +18,15 @@ body {
     border-right: 1px solid #f9e1e1;
 }
 
-header {
+header,
+header a,
+header a:hover {
     background-color: #000088;
     color: white;
     padding: 10px;
     text-align: left;
     border-radius: 5px;
+    margin-bottom: 25px;
 }
 
 header > h1 {
@@ -44,6 +47,10 @@ header > #logo {
 		    drop-shadow(-1px -1px 0 #fff)
 		    drop-shadow(1px -1px 0 #fff)
 		    drop-shadow(-1px 1px 0 #fff);
+}
+
+#season-table {
+    table-layout: fixed;
 }
 
 table {
@@ -78,7 +85,7 @@ tr:hover td a {
 }
 
 #roster-table {
-    width: 50%;
+    width: 100%;
     table-layout: fixed;
 }
 
