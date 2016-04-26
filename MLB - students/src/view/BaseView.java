@@ -48,10 +48,7 @@ public abstract class BaseView
 	        	  .append(header)
 	        	  .append("</header>\r\n");
         	}
-          sb.append("<h2>")
-        	.append(title)
-        	.append("</h2>\r\n")
-        	.append(body)
+          sb.append(body)
         	.append("<br/><br/>\r\n")
         	.append("<a href=\"index.htm\">Home</a>\r\n")
         	.append("</div>\r\n") //end wrapper div

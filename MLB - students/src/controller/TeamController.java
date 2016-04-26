@@ -251,11 +251,12 @@ public class TeamController extends BaseController {
 		 * team.getYearLast().toString(); view.buildTable(table);
 		 */
 
-		buildHeader(team);
+		view.setHeader(buildHeader(team));
 
 		Set<TeamSeason> ts = team.getSeasons();
 		List<TeamSeason> entries = new ArrayList<>(ts);
 		Collections.sort(entries, TeamSeason.teamSeasonComparator);
+		Collections.reverse(entries);
 		String[][] seasonTable = new String[ts.size() + 1][7];
 
 		seasonTable[0][0] = "Season";
@@ -278,15 +279,15 @@ public class TeamController extends BaseController {
 			seasonTable[i][3] = entry.getWins().toString();
 			seasonTable[i][4] = entry.getLosses().toString();
 			seasonTable[i][5] = entry.getRank().toString();
-			seasonTable[i][6] = entry.getTotalAttendance().toString();
+			seasonTable[i][6] = INTEGER_FORMAT.format(entry.getTotalAttendance());
 			i++;
 		}
 
-		view.buildTable(seasonTable);
+		view.buildTable(seasonTable, "season-table");
 	}
 	
 	// build header for specific team season
-	private void buildHeader(TeamSeason teamSeason)
+	private String buildRosterHeader(TeamSeason teamSeason)
     {
         Team team = teamSeason.getTeam();
         int year = teamSeason.getYear();
@@ -311,28 +312,50 @@ public class TeamController extends BaseController {
         {
         	league = "American League";
         }
+        String teamLink = view.encodeLink(new String[] { "id" }, 
+    			new String[] { team.getId().toString() }, 
+    			team.getName(),
+				ACT_DETAIL, SSP_TEAM);
         header.append("<h1>")
         	.append(year)
         	.append(" ")
-            .append(team.getName())
+            .append(teamLink)
             .append("</h1>")
             .append("<h2>")
             .append(league)
-            .append("</h2>")
-            .append("<h3>Roster</h3>");
+            .append("</h2>");
 
-        view.setHeader(header.toString());
+        return header.toString();
     }
 	
 	// build header for team overview
-	private void buildHeader(Team team)
+	private String buildHeader(Team team)
     {
         StringBuilder header = new StringBuilder();
-        String logo = view.getLogo(team.getName());
+        header.append(buildTeamHeader(team))
+            .append("<h3>Team Overview</h3>");
+
+        return header.toString();
+    }
+	
+	// build header for team overview
+		private String buildHeader(TeamSeason teamSeason)
+	    {
+	        StringBuilder header = new StringBuilder();
+	        header.append(buildRosterHeader(teamSeason))
+	            .append("<h3>Team Roster</h3>");
+
+	        return header.toString();
+	    }
+	
+	private String buildTeamHeader(Team team)
+	{
+		StringBuilder s = new StringBuilder();
+		String logo = view.getLogo(team.getName());
         if (logo != null)
         {
-            header.append("<img id='logo' src='")
-                .append(view.getLogo(team.getName()))
+        	s.append("<img id='logo' src='")
+                .append(logo)
                 .append("'")
                 .append(" alt='")
                 .append(team.getName())
@@ -348,16 +371,14 @@ public class TeamController extends BaseController {
         {
         	league = "American League";
         }
-        header.append("<h1>")
+        s.append("<h1>")
             .append(team.getName())
             .append("</h1>")
             .append("<h2>")
             .append(league)
-            .append("</h2>")
-            .append("<h3>Roster</h3>");
-
-        view.setHeader(header.toString());
-    }
+            .append("</h2>");
+        return s.toString();
+	}
 
 	private JSONObject buildJSONRosterTable(TeamSeason teamSeason) throws JSONException {
 		Team team = teamSeason.getTeam();
@@ -389,7 +410,7 @@ public class TeamController extends BaseController {
 
 	// search results
 	private void buildRosterTable(TeamSeason teamSeason) {
-		buildHeader(teamSeason);
+		view.setHeader(buildHeader(teamSeason));
 		
 		/*String[][] teamTable = new String[2][4];
 		Team team = teamSeason.getTeam();

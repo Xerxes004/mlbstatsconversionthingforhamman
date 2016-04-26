@@ -62,21 +62,20 @@ public class Convert {
 	public static void convertTeams() {
 		try {
 			// Select all teams in the database along with pertinent information
-			PreparedStatement ps = conn.prepareStatement("select " +
-						"t.franchID, " + 
-						"franchName as name, " +
-						"lgID, " +
-						"min(yearID) as yearFounded, " +
-						"max(yearID) as yearLast " +
-						"from Teams t, TeamsFranchises f " +
-						"where t.franchId = f.franchId " +
-						"group by t.franchID");
+			PreparedStatement ps = conn.prepareStatement(
+					"select t.franchid, franchName as name, lgid, " +
+					"(select min(yearid) from Teams where franchid = t.franchid) yearFounded,"+
+					" max(yearid) as yearLast "+
+					"from Teams t, TeamsFranchises tf " +
+					"where t.franchid = tf.franchid " +
+					"and yearid = (select max(yearid) from Teams where franchid = t.franchid) " +
+					"group by t.franchid, t.lgid");
 			ResultSet rs = ps.executeQuery();
 			
 			int count = 0;
 			while(rs.next()) {
 				// Provides some feedback to the user
-				if (count++ % 10 == 0) System.out.println(count);
+				System.out.println(++count);
 				
 				// Extracts data from the results
 				String franchId = rs.getString("franchID");
