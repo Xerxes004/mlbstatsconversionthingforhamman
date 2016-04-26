@@ -36,14 +36,14 @@ header > #logo {
     float: right;
     margin-right: 10px;
     /* adds a white border around logos */
-    -webkit-filter: drop-shadow(1px 1px 000088 #fff) 
-    			    drop-shadow(-1px -1px 000088 #fff)
-    			    drop-shadow(1px -1px 000088 #fff)
-    			    drop-shadow(-1px 1px 000088 #fff);
-    filter: drop-shadow(1px 1px 000088 #fff) 
-		    drop-shadow(-1px -1px 000088 #fff)
-		    drop-shadow(1px -1px 000088 #fff)
-		    drop-shadow(-1px 1px 000088 #fff);
+    -webkit-filter: drop-shadow(1px 1px 0 #fff) 
+    			    drop-shadow(-1px -1px 0 #fff)
+    			    drop-shadow(1px -1px 0 #fff)
+    			    drop-shadow(-1px 1px 0 #fff);
+    filter: drop-shadow(1px 1px 0 #fff) 
+		    drop-shadow(-1px -1px 0 #fff)
+		    drop-shadow(1px -1px 0 #fff)
+		    drop-shadow(-1px 1px 0 #fff);
 }
 
 table {
