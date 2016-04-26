@@ -35,6 +35,43 @@ $(document).ready(function(){
 	teamSelector.on('select2:select', function(){
 		console.log('submitting form');
 		$("#select2form").submit();
-	})
-		
+	});
+
+	var playerSelector = $("#player-select");
+	playerSelector.select2({
+		ajax:{
+			url:"http://localhost:5555/player.json?action=search",
+			dataType:'json',
+			delay:250,
+			data: function(params){
+				return {
+					name: params.term || '',
+					page: params.page || 0
+				};
+			},
+			processResults: function(data, params){
+				params.page = params.page || 0;
+				var items = [];
+				var di = data.items;
+				console.log(di);
+				for(var i = 0; i < di.length; i++){
+					var datum = di[i]
+					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.firstgame + '-' + datum.lastgame + ')'});
+				}
+				return {
+					results:items,
+					pagination:{
+						more: ((params.page + 1) * 6) < data.count
+					}
+				};
+			},
+			cache:true
+		},
+		minimumInputLength:0
+	});
+
+	playerSelector.on('select2:select', function(){
+		console.log('submitting form');
+		$("#select2form").submit();
+	})	
 });

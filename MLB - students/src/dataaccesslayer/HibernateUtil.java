@@ -16,7 +16,7 @@ import bo.TeamSeason;
 public class HibernateUtil {
 
 	private static final SessionFactory sessionFactory;
-	public static final int RESULTS_PER_PAGE = 10;
+	public static final int RESULTS_PER_PAGE = 6;
 
 	static {
 		try {
@@ -77,8 +77,10 @@ public class HibernateUtil {
 				query = session.createQuery("from bo.Player p where name like '%' + :name + '%' order by p.name asc");
 			}
 			query.setParameter("name", nameQuery);
-			query.setFirstResult(page * RESULTS_PER_PAGE);
-			//query.setMaxResults(RESULTS_PER_PAGE);
+			if(page >= 0){
+				query.setFirstResult(page * RESULTS_PER_PAGE);
+				query.setMaxResults(RESULTS_PER_PAGE);
+			}
 			list = query.list();
 			tx.commit();
 		} catch (Exception e) {
@@ -193,7 +195,6 @@ public class HibernateUtil {
 	@SuppressWarnings("unchecked")
 	public static List<Team> retrieveTeamsByName(String nameQuery, Boolean exactMatch, Integer page) {
 		List<Team> list = null;
-		final int RESULTS_PER_PAGE = 6;
 		Session session = HibernateUtil.getSessionFactory().openSession();
 		Transaction tx = session.getTransaction();
 		try {
