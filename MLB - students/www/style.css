@@ -5,6 +5,19 @@ body {
     font-size: 11pt;
 }
 
+.dr {
+    background-color: white;
+}
+
+.lr {
+    background-color: #f9e1e1;
+}
+
+.dr, .lr {
+    border-left: 1px solid #f9e1e1;
+    border-right: 1px solid #f9e1e1;
+}
+
 header {
     background-color: #000088;
     color: white;
@@ -23,14 +36,14 @@ header > #logo {
     float: right;
     margin-right: 10px;
     /* adds a white border around logos */
-    -webkit-filter: drop-shadow(1px 1px 0 #fff) 
-    			    drop-shadow(-1px -1px 0 #fff)
-    			    drop-shadow(1px -1px 0 #fff)
-    			    drop-shadow(-1px 1px 0 #fff);
-    filter: drop-shadow(1px 1px 0 #fff) 
-		    drop-shadow(-1px -1px 0 #fff)
-		    drop-shadow(1px -1px 0 #fff)
-		    drop-shadow(-1px 1px 0 #fff);
+    -webkit-filter: drop-shadow(1px 1px 000088 #fff) 
+    			    drop-shadow(-1px -1px 000088 #fff)
+    			    drop-shadow(1px -1px 000088 #fff)
+    			    drop-shadow(-1px 1px 000088 #fff);
+    filter: drop-shadow(1px 1px 000088 #fff) 
+		    drop-shadow(-1px -1px 000088 #fff)
+		    drop-shadow(1px -1px 000088 #fff)
+		    drop-shadow(-1px 1px 000088 #fff);
 }
 
 table {
@@ -39,12 +52,6 @@ table {
     background-color: #CC0000;
     table-layout: auto;
     border-collapse: collapse;
-}
-
-th {
-    border: 0;
-    padding: 10px 0;
-    color: white;
 }
 
 td {
@@ -58,17 +65,10 @@ td a {
     color: #000088;
 }
 
-.dr {
-    background-color: white;
-}
-
-.lr {
-    background-color: #f9e1e1;
-}
-
-.dr, .lr {
-    border-left: 1px solid #f9e1e1;
-    border-right: 1px solid #f9e1e1;
+th {
+    border: 0;
+    padding: 10px 0;
+    color: white;
 }
 
 tr:hover td,
