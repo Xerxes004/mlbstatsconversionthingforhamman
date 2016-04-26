@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.crypto.spec.PSource.PSpecified;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,6 +123,7 @@ public class PlayerController extends BaseController {
 		if (p == null)
 			return;
 		buildSearchResultsTablePlayerDetail(p);
+		((PlayerView)view).buildCharts(id);
 		view.buildLinkToSearch();
 	}
 

@@ -24,5 +24,13 @@ public class PlayerView extends BaseView {
         body.append("<input type=\"submit\" value=\"Submit\">\r\n");
         body.append("</form>\r\n"); 
     }
+    
+    public void buildCharts(String id) {
+		body.append("<div id='batavg' style='min-width: 310px; height: 400px; margin 0 auto'></div>");
+		body.append("<div id='hits' style='min-width: 310px; height: 400px; margin 0 auto'></div>");
+		body.append("<div id='homeruns' style='min-width: 310px; height: 400px; margin 0 auto'></div>");
+		body.append("<script>var playerID=" + id + ";</script>");
+		body.append("<script src='playercharts.js'></script>");
+	}
 
 }
