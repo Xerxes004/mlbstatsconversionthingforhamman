@@ -85,7 +85,7 @@ public class TeamController extends BaseController {
 		}
 		String valExact = keyVals.get("on");
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
-		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, 0);
+		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, -1);
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildSearchResultsTableTeam(teams);
 		view.buildLinkToSearch();
@@ -172,6 +172,7 @@ public class TeamController extends BaseController {
 		teams.forEach((entry) -> {
 			JSONObject to = new JSONObject();
 			try {
+				to.put("id", entry.getId());
 				to.put("name", entry.getName());
 				to.put("league", entry.getLeague());
 				to.put("yearfounded", entry.getYearFounded().toString());

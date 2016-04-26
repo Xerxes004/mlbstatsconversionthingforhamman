@@ -1,5 +1,6 @@
 $(document).ready(function(){
-	$("#team-select").select2({
+	var teamSelector = $("#team-select");
+	teamSelector.select2({
 		ajax:{
 			url:"http://localhost:5555/team.json?action=search",
 			dataType:'json',
@@ -17,19 +18,23 @@ $(document).ready(function(){
 				console.log(di);
 				for(var i = 0; i < di.length; i++){
 					var datum = di[i]
-					items.push({id:datum.name, text:datum.name + '\t\t(' + datum.yearfounded + '-' + datum.yearlast + ')'});
+					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.yearfounded + '-' + datum.yearlast + ')'});
 				}
 				return {
 					results:items,
 					pagination:{
-						more: ((params.page + 1) * 10) < data.count
+						more: ((params.page + 1) * 6) < data.count
 					}
 				};
 			},
 			cache:true
 		},
-		minimumInputLength:1
+		minimumInputLength:0
 	});
 
-	
+	teamSelector.on('select2:select', function(){
+		console.log('submitting form');
+		$("#select2form").submit();
+	})
+		
 });
