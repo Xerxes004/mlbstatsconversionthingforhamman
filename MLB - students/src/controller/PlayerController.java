@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -244,38 +245,13 @@ public class PlayerController extends BaseController {
 		view.buildJSON(jsPlayer.toString());
 	}
 
-	private void buildSearchResultsTablePlayerDetail(Player p) {
-		Set<PlayerSeason> seasons = p.getSeasons();
-		Set<String> positions = p.getPositions();
+	private void buildSearchResultsTablePlayerDetail(Player player) {
+		Set<PlayerSeason> seasons = player.getSeasons();
 		List<PlayerSeason> list = new ArrayList<PlayerSeason>(seasons);
 		Collections.sort(list, PlayerSeason.playerSeasonsComparator);
-		// build 2 tables. first the player details, then the season details
-		// need a row for the table headers
-		String[][] playerTable = new String[2][6];
-		playerTable[0][0] = "Name";
-		playerTable[0][1] = "Given Name";
-		playerTable[0][2] = "Positions";
-		playerTable[0][3] = "Birthday";
-		playerTable[0][4] = "Deathday";
-		playerTable[0][5] = "Hometown";
-		playerTable[1][0] = p.getName();
-		playerTable[1][1] = p.getGivenName();
-		String pos = "";
-		boolean first = true;
-		for (String s : positions) {
-			if (first) {
-				pos += s;
-				first = false;
-			} else {
-				pos += ", " + s;
-			}
-		}
-		playerTable[1][2] = pos;
-		playerTable[1][3] = formatDate(p.getBirthDay());
-		playerTable[1][4] = formatDate(p.getDeathDay());
-		playerTable[1][5] = p.getBirthCity() + ", " + p.getBirthState();
-
-		view.buildTable(playerTable);
+		view.setHeader(buildPlayerHeader(player));
+		
+		
 		// now for seasons
 		String[][] seasonTable = new String[seasons.size() + 1][8];
 		seasonTable[0][0] = "Year";
@@ -307,6 +283,29 @@ public class PlayerController extends BaseController {
 			seasonTable[i][7] = ps.getBattingStats().getHomeRuns().toString();
 		}
 		view.buildTable(seasonTable);
+	}
+	
+	private String buildPlayerHeader(Player player)
+	{
+		StringBuilder s = new StringBuilder();
+		Date birthdate = player.getBirthDay();
+		Date deathdate = player.getDeathDay();
+		String birthday = birthdate != null ? DATE_FORMAT.format(birthdate) : "";
+		String deathday = deathdate != null ? DATE_FORMAT.format(deathdate) : "";
+		s.append("<h1>")
+         .append(player.getName())
+         .append(" (").append(player.getGivenName()).append(")\r\n")
+         .append("</h1>")
+         .append("<h2>")
+         .append(birthday).append(" - ").append(deathday)
+         .append("</h2>")
+         .append("<h2>Born in ")
+         .append(player.getBirthCity()).append(", ").append(player.getBirthState())            
+         .append("</h2>")
+         .append("<h2>")
+         .append(player.getPositions())
+         .append("</h2>");
+        return s.toString();
 	}
 
 }

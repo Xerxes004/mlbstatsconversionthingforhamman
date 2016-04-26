@@ -340,7 +340,7 @@ public class TeamController extends BaseController {
         return header.toString();
     }
 	
-	// build header for team overview
+	// build header for team roster 	
 		private String buildHeader(TeamSeason teamSeason)
 	    {
 	        StringBuilder header = new StringBuilder();

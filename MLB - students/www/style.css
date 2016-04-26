@@ -3,6 +3,19 @@
 body {
     font-family: "Open Sans", "Helvetica Neue", sans-serif;
     font-size: 11pt;
+    /*background-color: rgba(198, 222, 255, 0.5);
+    background-image: url('images/baseball.jpg');
+    background-size: 100%;
+    background-attachment: fixed;
+    background-repeat: no-repeat;*/
+}
+
+#body-background {
+    position: fixed;
+    width: 100%;
+    opacity: 0.5;
+    top: 0;
+    z-index: -1;
 }
 
 .dr {
@@ -14,8 +27,7 @@ body {
 }
 
 .dr, .lr {
-    border-left: 1px solid #f9e1e1;
-    border-right: 1px solid #f9e1e1;
+    border: 1px solid #f9e1e1;
 }
 
 header,
@@ -59,6 +71,7 @@ table {
     background-color: #CC0000;
     table-layout: auto;
     border-collapse: collapse;
+    margin-bottom: 25px;
 }
 
 td {

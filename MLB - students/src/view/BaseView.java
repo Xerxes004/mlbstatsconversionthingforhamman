@@ -41,6 +41,7 @@ public abstract class BaseView
         	.append("<script src='selector.js'></script>")
         	.append("</HEAD>\r\n")
         	.append("<BODY>\r\n")
+        	.append("<img src='images/baseball.jpg' id='body-background' />")
         	.append("<div id=\'wrapper\'>\r\n");
         	if (header != null)
         	{
