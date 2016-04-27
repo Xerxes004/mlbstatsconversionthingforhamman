@@ -114,9 +114,15 @@ public class TeamController extends BaseController {
 		if (teamName == null) {
 			return;
 		}
+		
 		String valExact = keyVals.get("on");
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
 		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, -1);
+		
+		if(teams == null){
+			return;
+		}
+		
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildTeamSearchResultsTable(teams);
 		view.buildLinkToSearch();
@@ -142,6 +148,11 @@ public class TeamController extends BaseController {
 		// Get the list of teams on the current page and the total count
 		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, false, pageNum);
 		Integer count = HibernateUtil.retrieveTeamsByNameCount(teamName, false);
+		if(teams == null){
+			return;
+		}
+		
+		// Try building JSON object
 		try {
 			buildTeamSearchResultsJSON(teams, count);
 		} catch (JSONException e) {
@@ -158,8 +169,10 @@ public class TeamController extends BaseController {
 			return;
 		}
 		Team team = (Team) HibernateUtil.retrieveTeamById(Integer.valueOf(teamId));
-		if (team == null)
+		if (team == null){
 			return;
+		}
+		
 		List<Team> list = new ArrayList<>();
 		list.add(team);
 		buildTeamSearchResultsTable(list);
@@ -199,7 +212,10 @@ public class TeamController extends BaseController {
 		Integer year = new Integer(keyVals.get("year"));
 
 		TeamSeason teamSeason = HibernateUtil.retrieveTeamSeason(teamId, year);
-
+		if(teamSeason == null){
+			return;
+		}
+		
 		buildRosterTable(teamSeason);
 	}
 
@@ -211,7 +227,10 @@ public class TeamController extends BaseController {
 		Integer year = new Integer(keyVals.get("year"));
 
 		TeamSeason teamSeason = HibernateUtil.retrieveTeamSeason(teamId, year);
-
+		if(teamSeason == null){
+			return;
+		}
+		
 		try {
 			buildJSONRosterTable(teamSeason);
 		} catch (JSONException e) {
