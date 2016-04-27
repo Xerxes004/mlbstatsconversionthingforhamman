@@ -33,14 +33,14 @@ public class PlayerView extends BaseView {
     }
     
     public void buildCharts(String id) {
+    	body.append("<script src='highchartstheme.js'></script>");
+		body.append("<script src='playercharts.js'></script>");
+		body.append("<script>var playerID=" + id + ";</script>");
     	body.append("<div id='chart-area'>");
 		body.append("<div id='batavg'></div>");
 		body.append("<div id='hits'></div>");
 		body.append("<div id='homeruns'></div>");
 		body.append("<div id='gamesplayed'></div>");
-		body.append("<script>var playerID=" + id + ";</script>");
-		body.append("<script src='highchartstheme.js'></script>");
-		body.append("<script src='playercharts.js'></script>");
 		body.append("</div>");
 	}
 }

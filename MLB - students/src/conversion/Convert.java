@@ -27,7 +27,7 @@ public class Convert {
 
 	static Connection conn;
 
-	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.8.129:3306/mlb?user=wes&password=password"; 
+	static final String MYSQL_CONN_URL = "jdbc:mysql://192.168.74.129:3306/mlb?user=joel&password=password"; 
 	
 	// This map of players is used when creating rosters.
 	static Map<String, Player> players = new HashMap<String, Player>();

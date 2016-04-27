@@ -66,12 +66,12 @@ public class TeamView
     
     @Override
     public void buildCharts(String id) {
+    	body.append("<script src='highchartstheme.js'></script>");
+		body.append("<script src='teamcharts.js'></script>");
+		body.append("<script>var teamID=" + id + ";</script>");
     	body.append("<div id='chart-area'>");
 		body.append("<div id='attendance'></div>");
 		body.append("<div id='winslosses'></div>");
-		body.append("<script>var teamID=" + id + ";</script>");
-		body.append("<script src='highchartstheme.js'></script>");
-		body.append("<script src='teamcharts.js'></script>");
 		body.append("</div>");
 	}
 }

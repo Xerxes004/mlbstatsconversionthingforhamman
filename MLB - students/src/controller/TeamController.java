@@ -341,11 +341,11 @@ public class TeamController extends BaseController {
 		String[][] seasonTable = new String[ts.size() + 1][7];
 
 		seasonTable[0][0] = "Season";
-		seasonTable[0][5] = "Rank";
-		seasonTable[0][1] = "Games Played";
-		seasonTable[0][2] = "Roster";
+		seasonTable[0][1] = "Roster";
+		seasonTable[0][2] = "Games Played";
 		seasonTable[0][3] = "Wins";
 		seasonTable[0][4] = "Losses";
+		seasonTable[0][5] = "Rank";
 		seasonTable[0][6] = "Attendance";
 
 		int i = 1;
@@ -355,8 +355,8 @@ public class TeamController extends BaseController {
 			String link = view.encodeLink(new String[] { "id", "year" }, new String[] { teamId, year }, "Roster",
 					ACT_ROSTER, SSP_TEAM);
 			seasonTable[i][0] = year;
-			seasonTable[i][1] = entry.getGamesPlayed().toString();
-			seasonTable[i][2] = link;
+			seasonTable[i][1] = link;
+			seasonTable[i][2] = entry.getGamesPlayed().toString();
 			seasonTable[i][3] = entry.getWins().toString();
 			seasonTable[i][4] = entry.getLosses().toString();
 			seasonTable[i][5] = entry.getRank().toString();

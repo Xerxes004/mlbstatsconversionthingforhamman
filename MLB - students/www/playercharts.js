@@ -2,10 +2,6 @@ var chart;
 $(document).ready(function(){
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'batavg'
 		},
@@ -21,10 +17,6 @@ $(document).ready(function(){
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'hits'
 		},
@@ -45,10 +37,6 @@ $(document).ready(function(){
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'homeruns'
 		},
@@ -64,10 +52,6 @@ $(document).ready(function(){
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'gamesplayed'
 		},
