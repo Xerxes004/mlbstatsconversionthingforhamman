@@ -11,7 +11,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#People'
+				text: null
 			}
 		}
 	});
@@ -26,7 +26,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Games'
+				text: null
 			}
 		},
 		plotOptions: {
@@ -36,8 +36,7 @@ $(document).ready(function(){
         }
 	});
 
-	$.get("http://localhost:5555/team.json", {id:teamID, action:'details'}, function(data){
-		console.log(data);
+	$.get("http://163.11.236.180:5555/team.json", {id:teamID, action:'details'}, function(data){
 		var attendance = [];
 		var year = [];
 		var wins = [];

@@ -129,7 +129,7 @@ public class PlayerController extends BaseController {
 		}
 		List<Player> list = new ArrayList<>();
 		list.add(p);
-		// Build the baseic player information
+		// Build the basic player information
 		buildSearchResultsTablePlayer(list);
 		
 		// Build the charts

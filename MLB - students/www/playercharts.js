@@ -15,7 +15,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: 'Batting Average'
+				text: null
 			}
 		}
 	});
@@ -34,7 +34,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Hits'
+				text: null
 			}
 		},
 		plotOptions: {
@@ -58,7 +58,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Home Runs'
+				text: null
 			}
 		}
 	});
@@ -77,15 +77,14 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Games Played'
+				text: null
 			}
 		}
 	});
 
 
 
-	$.get("http://localhost:5555/player.json", {id:playerID, action:'details'}, function(data){
-		console.log(data);
+	$.get("http://163.11.236.180:5555/player.json", {id:playerID, action:'details'}, function(data){
 		var batavg = [];
 		var year = [];
 		var hits = [];
