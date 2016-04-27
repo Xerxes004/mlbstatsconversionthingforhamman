@@ -16,12 +16,37 @@ import bo.Team;
 import bo.TeamSeason;
 import view.TeamView;
 
-
 public class TeamController extends BaseController {
+	
+	/**
+	 * 
+	 */
+	public void initSSP(String query) {
+		System.out.println("building team html");
+		view = new TeamView();
+		processSSP(query);
+	}
 
+	/**
+	 * Initializes the controller to respond to a JSON request.
+	 */
+	@Override
+	public void initJSON(String query) {
+		System.out.println("Building team json");
+		view = new TeamView();
+		processJSON(query);
+	}
+	
+	/**
+	 * Determines which dynamic HTML page to render.
+	 */
 	@Override
 	protected void performAction() {
 		String action = keyVals.get("action");
+		if (action == null) {
+			return;
+		}
+
 		System.out.println("Performing action: " + action);
 		switch (action.toLowerCase()) {
 		case ACT_SEARCHFORM:
@@ -41,10 +66,18 @@ public class TeamController extends BaseController {
 		}
 	}
 
+	/**
+	 * Determines which JSON operation to perform.
+	 */
 	@Override
 	protected void performJSONAction() {
+		// Get and validate action
 		String action = keyVals.get("action");
+		if (action == null) {
+			return;
+		}
 		System.out.println("Performing action: " + action);
+
 		switch (action.toLowerCase()) {
 		case ACT_SEARCH:
 			processJSONSearch();
@@ -60,24 +93,16 @@ public class TeamController extends BaseController {
 		}
 	}
 
-	@Override
-	public void initSSP(String query) {
-		System.out.println("building team html");
-		view = new TeamView();
-		processSSP(query);
-	}
-
-	@Override
-	public void initJSON(String query) {
-		System.out.println("Building team json");
-		view = new TeamView();
-		processJSON(query);
-	}
-
+	/**
+	 * Processes the HTML search page.
+	 */
 	protected void processSearchForm() {
 		view.buildSearchForm();
 	}
 
+	/**
+	 * Processes HTML search requests.
+	 */
 	protected void processSearch() {
 		String teamName = keyVals.get("name");
 		if (teamName == null) {
@@ -87,33 +112,40 @@ public class TeamController extends BaseController {
 		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
 		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, -1);
 		view.printSearchResultsMessage(teamName, exactMatch);
-		buildSearchResultsTableTeam(teams);
+		buildTeamSearchResultsTable(teams);
 		view.buildLinkToSearch();
 	}
-	
+
+	/**
+	 * Processes JSON search requests.
+	 */
 	protected void processJSONSearch() {
+		// Get and validate the name param
 		String teamName = keyVals.get("name");
 		if (teamName == null) {
 			return;
 		}
+
+		// Get and validate the page number param
 		String page = keyVals.get("page");
-		Integer pageNum;
-		if(page != null){
+		Integer pageNum = 0;
+		if (page != null) {
 			pageNum = new Integer(page);
-		}else{
-			pageNum = new Integer(0);
 		}
-		String valExact = keyVals.get("on");
-		boolean exactMatch = valExact != null && valExact.equalsIgnoreCase("on");
-		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, exactMatch, pageNum);
-		Integer count = HibernateUtil.retrieveTeamsByNameCount(teamName, exactMatch);
+
+		// Get the list of teams on the current page and the total count
+		List<Team> teams = HibernateUtil.retrieveTeamsByName(teamName, false, pageNum);
+		Integer count = HibernateUtil.retrieveTeamsByNameCount(teamName, false);
 		try {
-			buildJSONSearchResults(teams, count);
+			buildTeamSearchResultsJSON(teams, count);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Processes the HTML details page request.
+	 */
 	protected void processDetails() {
 		String teamId = keyVals.get("id");
 		if (teamId == null) {
@@ -124,32 +156,38 @@ public class TeamController extends BaseController {
 			return;
 		List<Team> list = new ArrayList<>();
 		list.add(team);
-		buildSearchResultsTableTeam(list);
-		
+		buildTeamSearchResultsTable(list);
+
 		view.buildCharts(teamId);
-		
-		buildSearchResultsTableTeamDetail(team);
+
+		buildTeamDetailsTable(team);
 		view.buildLinkToSearch();
-		
+
 	}
-	
+
+	/**
+	 * Processes the JSON details page request.
+	 */
 	protected void processJSONDetails() {
 		String teamId = keyVals.get("id");
 		if (teamId == null) {
 			return;
 		}
 		Team team = (Team) HibernateUtil.retrieveTeamById(Integer.valueOf(teamId));
-		if (team == null){
+		if (team == null) {
 			return;
 		}
-		
+
 		try {
-			buildJSONSearchResultsTableTeamDetail(team);
+			buildTeamDetailsJSON(team);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * Processes the roster HTML page request.
+	 */
 	protected void processRoster() {
 		Integer teamId = new Integer(keyVals.get("id"));
 		Integer year = new Integer(keyVals.get("year"));
@@ -158,13 +196,16 @@ public class TeamController extends BaseController {
 
 		buildRosterTable(teamSeason);
 	}
-	
+
+	/**
+	 * Processes the roster JSON page request.
+	 */
 	protected void processJSONRoster() {
 		Integer teamId = new Integer(keyVals.get("id"));
 		Integer year = new Integer(keyVals.get("year"));
 
 		TeamSeason teamSeason = HibernateUtil.retrieveTeamSeason(teamId, year);
-		
+
 		try {
 			buildJSONRosterTable(teamSeason);
 		} catch (JSONException e) {
@@ -172,7 +213,15 @@ public class TeamController extends BaseController {
 		}
 	}
 
-	private JSONObject buildJSONSearchResults(List<Team> teams, Integer count) throws JSONException {
+	/**
+	 * Builds the JSON object representing the search results and build a page
+	 * with the string representation.
+	 * 
+	 * @param teams The page of teams to incorporate in the search results.
+	 * @param count The total count of all teams in the search result.
+	 * @throws JSONException If an element cannot be placed into a JSON object.
+	 */
+	private void buildTeamSearchResultsJSON(List<Team> teams, Integer count) throws JSONException {
 		JSONObject teamList = new JSONObject();
 		teamList.put("count", count);
 		JSONArray teamArray = new JSONArray();
@@ -192,10 +241,13 @@ public class TeamController extends BaseController {
 		});
 		teamList.put("items", teamArray);
 		view.buildJSON(teamList.toString());
-		return teamList;
 	}
 
-	private void buildSearchResultsTableTeam(List<Team> teams) {
+	/**
+	 * Builds a table containing the search results and renders it to HTML.
+	 * @param teams the teams to include in the search results.
+	 */
+	private void buildTeamSearchResultsTable(List<Team> teams) {
 		String[][] table = new String[teams.size() + 1][4];
 		// table[0][0] = "Id";
 		table[0][0] = "Name";
@@ -217,13 +269,18 @@ public class TeamController extends BaseController {
 		view.buildTable(table);
 	}
 
-	private JSONObject buildJSONSearchResultsTableTeamDetail(Team team) throws JSONException {
+	/**
+	 * Builds a JSON object containing the team details and renders it to a string.
+	 * @param team The team to pull details from.
+	 * @throws JSONException
+	 */
+	private void buildTeamDetailsJSON(Team team) throws JSONException {
 		JSONObject to = new JSONObject();
 		to.put("name", team.getName());
 		to.put("league", team.getLeague());
 		to.put("yearfounded", team.getYearFounded().toString());
 		to.put("yearlast", team.getYearLast().toString());
-		
+
 		JSONArray seasons = new JSONArray();
 		List<TeamSeason> ts = new ArrayList<>(team.getSeasons());
 		Collections.sort(ts, TeamSeason.teamSeasonComparator);
@@ -243,22 +300,13 @@ public class TeamController extends BaseController {
 		});
 		to.put("seasons", seasons);
 		view.buildJSON(to.toString());
-		return to;
 	}
 
-	// individual team result
-	private void buildSearchResultsTableTeamDetail(Team team) {
-		/*
-		 * String[][] table = new String[2][4]; //table[0][0] = "Id";
-		 * table[0][0] = "Name"; table[0][1] = "League"; table[0][2] =
-		 * "Year Founded"; table[0][3] = "Year Last";
-		 * 
-		 * //table[1][0] = team.getId().toString(); table[1][0] =
-		 * team.getName(); table[1][1] = team.getLeague(); table[1][2] =
-		 * team.getYearFounded().toString(); table[1][3] =
-		 * team.getYearLast().toString(); view.buildTable(table);
-		 */
-
+	/**
+	 * Builds a table containing the details of the provided team.
+	 * @param team The provided team.
+	 */
+	private void buildTeamDetailsTable(Team team) {
 		view.setHeader(buildHeader(team));
 
 		Set<TeamSeason> ts = team.getSeasons();
@@ -268,7 +316,7 @@ public class TeamController extends BaseController {
 		String[][] seasonTable = new String[ts.size() + 1][7];
 
 		seasonTable[0][0] = "Season";
-		seasonTable[0][5] = "Rank";	
+		seasonTable[0][5] = "Rank";
 		seasonTable[0][1] = "Games Played";
 		seasonTable[0][2] = "Roster";
 		seasonTable[0][3] = "Wins";
@@ -293,112 +341,101 @@ public class TeamController extends BaseController {
 
 		view.buildTable(seasonTable, "season-table");
 	}
-	
-	// build header for specific team season
-	private String buildRosterHeader(TeamSeason teamSeason)
-    {
-        Team team = teamSeason.getTeam();
-        int year = teamSeason.getYear();
-        StringBuilder header = new StringBuilder();
-        String logo = view.getLogo(team.getName());
-        if (logo != null)
-        {
-            header.append("<img id='logo' src='")
-                .append(view.getLogo(team.getName()))
-                .append("'")
-                .append(" alt='")
-                .append(team.getName())
-                .append("'")
-                .append(" />");
-        }
-        String league = team.getLeague();
-        if (league.equals("NL"))
-        {
-        	league = "National League";
-        } 
-        else if (league.equals("AL"))
-        {
-        	league = "American League";
-        }
-        String teamLink = view.encodeLink(new String[] { "id" }, 
-    			new String[] { team.getId().toString() }, 
-    			team.getName(),
-				ACT_DETAIL, SSP_TEAM);
-        header.append("<h1>")
-        	.append(year)
-        	.append(" ")
-            .append(teamLink)
-            .append("</h1>")
-            .append("<h2>")
-            .append(league)
-            .append("</h2>");
 
-        return header.toString();
-    }
-	
-	// build header for team overview
-	private String buildHeader(Team team)
-    {
-        StringBuilder header = new StringBuilder();
-        header.append(buildTeamHeader(team))
-            .append("<h3>Team Overview</h3>");
-
-        return header.toString();
-    }
-	
-	// build header for team roster 	
-		private String buildHeader(TeamSeason teamSeason)
-	    {
-	        StringBuilder header = new StringBuilder();
-	        header.append(buildRosterHeader(teamSeason))
-	            .append("<h3>Team Roster</h3>");
-
-	        return header.toString();
-	    }
-	
-	private String buildTeamHeader(Team team)
-	{
-		StringBuilder s = new StringBuilder();
+	/**
+	 * Builds a roster header for a team during a specific season.
+	 * @param teamSeason The season for which to build the header.
+	 * @return The string representation of the header.
+	 */
+	private String buildRosterHeader(TeamSeason teamSeason) {
+		Team team = teamSeason.getTeam();
+		int year = teamSeason.getYear();
+		StringBuilder header = new StringBuilder();
 		String logo = view.getLogo(team.getName());
-        if (logo != null)
-        {
-        	s.append("<img id='logo' src='")
-                .append(logo)
-                .append("'")
-                .append(" alt='")
-                .append(team.getName())
-                .append("'")
-                .append(" />");
-        }
-        String league = team.getLeague();
-        if (league.equals("NL"))
-        {
-        	league = "National League";
-        } 
-        else if (league.equals("AL"))
-        {
-        	league = "American League";
-        }
-        s.append("<h1>")
-            .append(team.getName())
-            .append("</h1>")
-            .append("<h2>")
-            .append(league)
-            .append("</h2>");
-        return s.toString();
+		if (logo != null) {
+			header.append("<img id='logo' src='").append(view.getLogo(team.getName())).append("'").append(" alt='")
+					.append(team.getName()).append("'").append(" />");
+		}
+		String league = team.getLeague();
+		if (league.equals("NL")) {
+			league = "National League";
+		} else if (league.equals("AL")) {
+			league = "American League";
+		}
+		String teamLink = view.encodeLink(new String[] { "id" }, new String[] { team.getId().toString() },
+				team.getName(), ACT_DETAIL, SSP_TEAM);
+		header.append("<h1>").append(year).append(" ").append(teamLink).append("</h1>").append("<h2>").append(league)
+				.append("</h2>");
+
+		return header.toString();
 	}
 
-	private JSONObject buildJSONRosterTable(TeamSeason teamSeason) throws JSONException {
+	/**
+	 * Build the header for the team details page.
+	 * @param team The team to be used.
+	 * @return The string representation of the header.
+	 */
+	private String buildHeader(Team team) {
+		StringBuilder header = new StringBuilder();
+		header.append(buildTeamHeader(team)).append("<h3>Team Overview</h3>");
+
+		return header.toString();
+	}
+
+	/**
+	 * Builds a header for the team roster page.
+	 * @param teamSeason
+	 * @return
+	 */
+	private String buildHeader(TeamSeason teamSeason) {
+		StringBuilder header = new StringBuilder();
+		header.append(buildRosterHeader(teamSeason)).append("<h3>Team Roster</h3>");
+
+		return header.toString();
+	}
+
+	/**
+	 * Builds a header for team page
+	 * @param team The team to build the header for.
+	 * @return The string representation of the header.
+	 */
+	private String buildTeamHeader(Team team) {
+		StringBuilder s = new StringBuilder();
+		String logo = view.getLogo(team.getName());
+		if (logo != null) {
+			s.append("<img id='logo' src='").append(logo).append("'").append(" alt='").append(team.getName())
+					.append("'").append(" />");
+		}
+		String league = team.getLeague();
+		if (league.equals("NL")) {
+			league = "National League";
+		} else if (league.equals("AL")) {
+			league = "American League";
+		}
+		s.append("<h1>").append(team.getName()).append("</h1>").append("<h2>").append(league).append("</h2>");
+		return s.toString();
+	}
+
+	/**
+	 * Builds a JSON representation of the roster for a given team season.
+	 * @param teamSeason The team season containg the necessary information.
+	 * @return
+	 * @throws JSONException
+	 */
+	private void buildJSONRosterTable(TeamSeason teamSeason) throws JSONException {
 		Team team = teamSeason.getTeam();
 		Integer year = teamSeason.getYear();
+		
+		// Build the team season information
 		JSONObject jsRoster = new JSONObject();
 		jsRoster.put("name", team.getName());
 		jsRoster.put("league", team.getLeague());
 		jsRoster.put("year", year);
 		jsRoster.put("payroll", "@TODO");
-		
+
+		// Build the roster component
 		JSONArray roster = new JSONArray();
-		teamSeason.getRoster().forEach((player)->{
+		teamSeason.getRoster().forEach((player) -> {
 			PlayerSeason playerSeason = player.getPlayerSeason(year);
 			JSONObject jsPlayer = new JSONObject();
 			try {
@@ -410,29 +447,17 @@ public class TeamController extends BaseController {
 			}
 			roster.put(jsPlayer);
 		});
-		
 		jsRoster.put("seasons", roster);
+		
 		view.buildJSON(jsRoster.toString());
-		return jsRoster;
 	}
 
-	// search results
+	/**
+	 * Builds a roster table from the provided team season.
+	 * @param teamSeason The team season to generate the roster from.
+	 */
 	private void buildRosterTable(TeamSeason teamSeason) {
 		view.setHeader(buildHeader(teamSeason));
-		
-		/*String[][] teamTable = new String[2][4];
-		Team team = teamSeason.getTeam();
-		Integer year = teamSeason.getYear();
-		teamTable[0][0] = "Name";
-		teamTable[0][1] = "League";
-		teamTable[0][2] = "Year";
-		teamTable[0][3] = "Player Payroll";
-		teamTable[1][0] = team.getName();
-		teamTable[1][1] = team.getLeague();
-		teamTable[1][2] = year.toString();
-		teamTable[1][3] = "@TODO";
-
-		view.buildTable(teamTable);*/
 
 		ArrayList<Player> roster = new ArrayList<>(teamSeason.getRoster());
 		String rosterTable[][] = new String[roster.size() + 1][3];
