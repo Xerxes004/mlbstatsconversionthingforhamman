@@ -16,6 +16,12 @@ import bo.Team;
 import bo.TeamSeason;
 import view.TeamView;
 
+/**
+ * 
+ * @author Wesley Kely
+ * @author Joel D. Sabol
+ *
+ */
 public class TeamController extends BaseController {
 	
 	/**
