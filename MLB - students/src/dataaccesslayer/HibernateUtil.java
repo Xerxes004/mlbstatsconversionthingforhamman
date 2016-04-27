@@ -85,11 +85,12 @@ public class HibernateUtil {
 			tx.begin();
 			org.hibernate.Query query;
 			if (exactMatch) {
-				query = session.createQuery("from bo.Player p where name = :name order by p.name asc");
+				query = session.createQuery("from bo.Player p where name = :name or givenName like '%' + :gname + '%' order by p.name asc");
 			} else {
-				query = session.createQuery("from bo.Player p where name like '%' + :name + '%' order by p.name asc");
+				query = session.createQuery("from bo.Player p where name like '%' + :name + '%' or givenName like '%' + :gname + '%' order by p.name asc");
 			}
 			query.setParameter("name", nameQuery);
+			query.setParameter("gname", nameQuery);
 			if(page >= 0){
 				query.setFirstResult(page * RESULTS_PER_PAGE);
 				query.setMaxResults(RESULTS_PER_PAGE);
@@ -122,11 +123,12 @@ public class HibernateUtil {
 			
 			// Choose the query based on whether an exact match is desired
 			if (exactMatch) {
-				query = session.createQuery("select count(*) from bo.Player p where name = :name");
+				query = session.createQuery("select count(*) from bo.Player p where name = :name or givenName like '%' + :gname + '%'");
 			} else {
-				query = session.createQuery("select count(*) from bo.Player p where name like '%' + :name + '%'");
+				query = session.createQuery("select count(*) from bo.Player p where name like '%' + :name + '%' or givenName like '%' + :gname + '%'");
 			}
 			query.setParameter("name", nameQuery);
+			query.setParameter("gname", nameQuery);
 			
 			// Parses the int from the result
 			count = java.lang.Math.toIntExact((Long) query.uniqueResult());
