@@ -20,6 +20,7 @@ $(document).ready(function(){
 					var datum = di[i]
 					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.yearfounded + '-' + datum.yearlast + ')'});
 				}
+
 				return {
 					results:items,
 					pagination:{
@@ -58,6 +59,7 @@ $(document).ready(function(){
 					var datum = di[i]
 					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.firstgame + '-' + datum.lastgame + ')'});
 				}
+				console.log("Page Num" + params.page);
 				return {
 					results:items,
 					pagination:{

@@ -76,8 +76,13 @@ public class PlayerController extends BaseController {
 	protected final void processJSONSearch() {
 		String name = keyVals.get("name");
 		String v = keyVals.get("exact");
+		String p = keyVals.get("page");
+		Integer page = 0;
+		if(p != null){
+			page = Integer.parseInt(p);
+		}
 		boolean exact = (v != null && v.equalsIgnoreCase("on"));
-		List<Player> players = HibernateUtil.retrievePlayersByName(name, exact, 0);
+		List<Player> players = HibernateUtil.retrievePlayersByName(name, exact, page);
 		Integer count = HibernateUtil.retrieveCountPlayersByName(name, exact);
 		try {
 			buidJSONSearchResultsTablePlayer(players, count);
