@@ -37,12 +37,26 @@ public abstract class BaseController {
     	performJSONAction();
     }
     
+    /**
+     * Determines which dynamic HTML page to render.
+     */
     protected abstract void performAction();
     
+    /**
+     * Determines which JSON operation to perform.
+     */
     protected abstract void performJSONAction();
     
+    /**
+     * Initializes the controller to respond to a dynamic HTML request.
+     * @param query The request to respond to.
+     */
     public abstract void initSSP(String query);
     
+    /**
+     * Initializes the controller to respond to a JSON request.
+     * @param query The request to respond to.
+     */
     public abstract void initJSON(String query);
     	
 	protected final String decodeURL(String s) {
