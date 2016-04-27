@@ -168,31 +168,27 @@ public class PlayerController extends BaseController {
 
 	private void buildSearchResultsTablePlayer(List<Player> bos) {
 		// need a row for the table headers
-		String[][] table = new String[bos.size() + 1][9];
+		String[][] table = new String[bos.size() + 1][8];
 
-		table[0][0] = "Name";
-		table[0][1] = "Lifetime Salary";
-		table[0][2] = "Games Played";
-		table[0][3] = "First Game";
-		table[0][4] = "Last Game";
-		table[0][5] = "Career Home Runs";
-		table[0][6] = "Career Hits";
-		table[0][7] = "Career Batting Average";
-		table[0][8] = "Career Steals";
+		table[0][0] = "Lifetime Salary";
+		table[0][1] = "Games Played";
+		table[0][2] = "First Game";
+		table[0][3] = "Last Game";
+		table[0][4] = "Career Home Runs";
+		table[0][5] = "Career Hits";
+		table[0][6] = "Career Batting Average";
+		table[0][7] = "Career Steals";
 		for (int i = 0; i < bos.size(); i++) {
 			Player p = bos.get(i);
 			PlayerCareerStats stats = new PlayerCareerStats(p);
-			String pid = p.getId().toString();
-			table[i + 1][0] = view.encodeLink(new String[] { "id" }, new String[] { pid }, p.getName(), ACT_DETAIL,
-					SSP_PLAYER);
-			table[i + 1][1] = DOLLAR_FORMAT.format(stats.getSalary());
-			table[i + 1][2] = stats.getGamesPlayed().toString();
-			table[i + 1][3] = formatDate(p.getFirstGame());
-			table[i + 1][4] = formatDate(p.getLastGame());
-			table[i + 1][5] = stats.getHomeRuns().toString();
-			table[i + 1][6] = stats.getHits().toString();
-			table[i + 1][7] = DOUBLE_FORMAT.format(stats.getBattingAverage());
-			table[i + 1][8] = stats.getSteals().toString();
+			table[i + 1][0] = DOLLAR_FORMAT.format(stats.getSalary());
+			table[i + 1][1] = stats.getGamesPlayed().toString();
+			table[i + 1][2] = formatDate(p.getFirstGame());
+			table[i + 1][3] = formatDate(p.getLastGame());
+			table[i + 1][4] = stats.getHomeRuns().toString();
+			table[i + 1][5] = stats.getHits().toString();
+			table[i + 1][6] = DOUBLE_FORMAT.format(stats.getBattingAverage());
+			table[i + 1][7] = stats.getSteals().toString();
 		}
 		view.buildTable(table);
 		

@@ -19,8 +19,10 @@ body {
 }
 
 #chart-area div {
-    margin: 10px 0;
+    margin: 10px auto;
     height: 200px;
+    display: block;
+    width: 75%;
 }
 
 .dr {
