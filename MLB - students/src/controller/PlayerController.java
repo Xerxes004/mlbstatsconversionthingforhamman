@@ -19,11 +19,18 @@ import bo.Team;
 import bo.TeamSeason;
 import dataaccesslayer.HibernateUtil;
 
+/**
+ * 
+ * @author Seth Hamman
+ * @author Wesley Kelly
+ * @author Joel D. Sabol
+ *
+ */
 public class PlayerController extends BaseController {
 
 	@Override
 	public void initSSP(String query) {
-		System.out.println("building dynamic html for player");
+		System.out.println("Building dynamic html for player");
 		view = new PlayerView();
 		processSSP(query);
 	}
@@ -35,9 +42,18 @@ public class PlayerController extends BaseController {
 		processJSON(query);
 	}
 
+	/**
+	 * Determines which JSON operation to perform.
+	 */
+	@Override
 	protected void performJSONAction() {
 		String action = keyVals.get("action");
+		if (action == null) {
+			return;
+		}
+		
 		System.out.println("playercontroller performing action: " + action);
+		
 		switch (action.toLowerCase()) {
 		case ACT_SEARCH:
 			processJSONSearch();
@@ -50,29 +66,43 @@ public class PlayerController extends BaseController {
 		}
 	};
 
+	/**
+	 * Determines which dynamic HTML page to render.
+	 */
 	@Override
 	protected void performAction() {
 		String action = keyVals.get("action");
+		if (action == null) {
+			return;
+		}
+		
 		System.out.println("playercontroller performing action: " + action);
+		
 		switch (action.toLowerCase()) {
 		case ACT_SEARCHFORM:
 			processSearchForm();
 			break;
 		case ACT_SEARCH:
-			processSearch();
+			processHTMLSearch();
 			break;
 		case ACT_DETAIL:
-			processDetails();
+			processHTMLDetails();
 			break;
 		default:
 			break;
 		}
 	}
 
+	/**
+	 * Processes the HTML search page.
+	 */
 	protected void processSearchForm() {
 		view.buildSearchForm();
 	}
 
+	/**
+	 * Processes JSON search requests.
+	 */
 	protected final void processJSONSearch() {
 		String name = keyVals.get("name");
 		String v = keyVals.get("exact");
@@ -85,13 +115,16 @@ public class PlayerController extends BaseController {
 		List<Player> players = HibernateUtil.retrievePlayersByName(name, exact, page);
 		Integer count = HibernateUtil.retrieveCountPlayersByName(name, exact);
 		try {
-			buidJSONSearchResultsTablePlayer(players, count);
+			buildPlayerSearchResultsJSON(players, count);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	protected final void processSearch() {
+	/**
+	 * Processes HTML search requests.
+	 */
+	protected final void processHTMLSearch() {
 		String name = keyVals.get("name");
 		if (name == null) {
 			return;
@@ -100,13 +133,16 @@ public class PlayerController extends BaseController {
 		boolean exact = (v != null && v.equalsIgnoreCase("on"));
 		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, -1);
 		view.printSearchResultsMessage(name, exact);
-		buildSearchResultsTablePlayer(bos);
+		buildPlayerSearchResultsTable(bos);
 		StringBuilder footer = new StringBuilder();
 		footer.append(view.buildLinkToSearch())
 			  .append("<a href=\"index.htm\">Home</a>\r\n");
 		view.setFooter(footer.toString());
 	}
 
+	/**
+	 * Processes the JSON details page request.
+	 */
 	protected final void processJSONDetails(){
 		String id = keyVals.get("id");
 		if (id == null) {
@@ -117,13 +153,16 @@ public class PlayerController extends BaseController {
 			return;
 		}
 		try {
-			buildJSONSearchResultsTablePlayerDetail(player);
+			buildPlayerDetailsJSON(player);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	protected final void processDetails() {
+	/**
+	 * Processes the HTML details page request.
+	 */
+	protected final void processHTMLDetails() {
 		String id = keyVals.get("id");
 		if (id == null) {
 			return;
@@ -135,13 +174,13 @@ public class PlayerController extends BaseController {
 		List<Player> list = new ArrayList<>();
 		list.add(p);
 		// Build the basic player information
-		buildSearchResultsTablePlayer(list);
+		buildPlayerSearchResultsTable(list);
 		
 		// Build the charts
 		view.buildCharts(id);
 		
 		// Build the season information
-		buildSearchResultsTablePlayerDetail(p);
+		buildPlayerDetailsTable(p);
 		
 		StringBuilder footer = new StringBuilder();
 		footer.append(view.buildLinkToSearch())
@@ -149,14 +188,22 @@ public class PlayerController extends BaseController {
 		view.setFooter(footer.toString());
 	}
 
-	private void buidJSONSearchResultsTablePlayer(List<Player> players, Integer count) throws JSONException {
+	/**
+	 * Builds the JSON object representing the search results and build a page
+	 * with the string representation.
+	 * 
+	 * @param playerSearchResults The page list of players to incorporate in the search results.
+	 * @param count The total count of all players in the search result.
+	 * @throws JSONException
+	 */
+	private void buildPlayerSearchResultsJSON(List<Player> playerSearchResults, Integer count) throws JSONException {
 		JSONObject jsPlayerObj = new JSONObject();
 		jsPlayerObj.put("count", count);
 		JSONArray jsPlayers = new JSONArray();
 
 		jsPlayerObj.put("items", jsPlayers);
 
-		players.forEach((player) -> {
+		playerSearchResults.forEach((player) -> {
 			JSONObject jsPlayer = new JSONObject();
 			PlayerCareerStats stats = new PlayerCareerStats(player);
 			try {
@@ -178,9 +225,13 @@ public class PlayerController extends BaseController {
 		view.buildJSON(jsPlayerObj.toString());
 	}
 
-	private void buildSearchResultsTablePlayer(List<Player> bos) {
+	/**
+	 * Builds a table containing the search results and renders it to HTML.
+	 * @param playerSearchResults The players to include in the search results.
+	 */
+	private void buildPlayerSearchResultsTable(List<Player> playerSearchResults) {
 		// need a row for the table headers
-		String[][] table = new String[bos.size() + 1][9];
+		String[][] table = new String[playerSearchResults.size() + 1][9];
 
 		table[0][0] = "Name";
 		table[0][1] = "Lifetime Salary";
@@ -191,16 +242,16 @@ public class PlayerController extends BaseController {
 		table[0][6] = "Career Hits";
 		table[0][7] = "Career Batting Average";
 		table[0][8] = "Career Steals";
-		for (int i = 0; i < bos.size(); i++) {
-			Player p = bos.get(i);
-			PlayerCareerStats stats = new PlayerCareerStats(p);
-			String pid = p.getId().toString();
-			table[i + 1][0] = view.encodeLink(new String[] { "id" }, new String[] { pid }, p.getName(), ACT_DETAIL,
+		for (int i = 0; i < playerSearchResults.size(); i++) {
+			Player player = playerSearchResults.get(i);
+			PlayerCareerStats stats = new PlayerCareerStats(player);
+			String pid = player.getId().toString();
+			table[i + 1][0] = view.encodeLink(new String[] { "id" }, new String[] { pid }, player.getName(), ACT_DETAIL,
 					SSP_PLAYER);
 			table[i + 1][1] = DOLLAR_FORMAT.format(stats.getSalary());
 			table[i + 1][2] = stats.getGamesPlayed().toString();
-			table[i + 1][3] = formatDate(p.getFirstGame());
-			table[i + 1][4] = formatDate(p.getLastGame());
+			table[i + 1][3] = formatDate(player.getFirstGame());
+			table[i + 1][4] = formatDate(player.getLastGame());
 			table[i + 1][5] = stats.getHomeRuns().toString();
 			table[i + 1][6] = stats.getHits().toString();
 			table[i + 1][7] = DOUBLE_FORMAT.format(stats.getBattingAverage());
@@ -214,31 +265,43 @@ public class PlayerController extends BaseController {
 		view.setFooter(footer.toString());
 	}
 
-	private void buildJSONSearchResultsTablePlayerDetail(Player player) throws JSONException {
+	/**
+	 * Builds a JSON object containing the player details and renders it to a string.
+	 * @param player The player to pull details from.
+	 * @throws JSONException
+	 */
+	private void buildPlayerDetailsJSON(Player player) throws JSONException {
 		Set<String> positions = player.getPositions();
 
+		// Generate the player
 		JSONObject jsPlayer = new JSONObject();
-
 		jsPlayer.put("name", player.getName());
 		jsPlayer.put("givenname", player.getGivenName());
 		jsPlayer.put("birthday", formatDate(player.getBirthDay()));
 		jsPlayer.put("deathday", formatDate(player.getDeathDay()));
 		jsPlayer.put("hometown", player.getBirthCity() + ", " + player.getBirthState());
 
+		// Generate the positions
 		JSONArray jsPositions = new JSONArray();
+		jsPlayer.put("positions", jsPositions);
 		positions.forEach((position) -> {
 			jsPositions.put(position);
 		});
-
-		jsPlayer.put("positions", jsPositions);
-
+		
 		// Get the seasons
 		List<PlayerSeason> seasonList = new ArrayList<PlayerSeason>(player.getSeasons());
 		// Sort them based on the year
 		Collections.sort(seasonList, PlayerSeason.playerSeasonsComparator);
+		
+		// Generate the seasons
 		JSONArray jsSeasons = new JSONArray();
+		
+		// Add seasons to player
+		jsPlayer.put("items", jsSeasons);
+		
 		seasonList.forEach((season)->{
 			JSONObject jsSeason = new JSONObject();
+			jsSeasons.put(jsSeason);
 			BattingStats bs = season.getBattingStats();
 			Integer year = season.getYear();
 			try {
@@ -252,6 +315,7 @@ public class PlayerController extends BaseController {
 				JSONArray jsTeams = new JSONArray();
 				season.getPlayer().getTeamSeason(year).forEach((teamseason)->{
 					JSONObject jsTeam = new JSONObject();
+					jsTeams.put(jsTeam);
 					Team team = teamseason.getTeam();
 					try {
 						jsTeam.put("id", team.getId());
@@ -259,26 +323,27 @@ public class PlayerController extends BaseController {
 					} catch (JSONException e) {
 						e.printStackTrace();
 					}
-					jsTeams.put(jsTeam);
 				});
 				jsSeason.put("teams", jsTeams);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
-			jsSeasons.put(jsSeason);
 		});
-		jsPlayer.put("items", jsSeasons);
+		
 		view.buildJSON(jsPlayer.toString());
 	}
 
-	private void buildSearchResultsTablePlayerDetail(Player player) {
+	/**
+	 * Builds a table containing the details of the provided player.
+	 * @param player The provided player.
+	 */
+	private void buildPlayerDetailsTable(Player player) {
 		Set<PlayerSeason> seasons = player.getSeasons();
 		List<PlayerSeason> list = new ArrayList<PlayerSeason>(seasons);
 		Collections.sort(list, PlayerSeason.playerSeasonsComparator);
 		view.setHeader(buildPlayerHeader(player));
 		
-		
-		// now for seasons
+		// Build seasons table
 		String[][] seasonTable = new String[seasons.size() + 1][8];
 		seasonTable[0][0] = "Year";
 		seasonTable[0][1] = "Games Played";
@@ -316,6 +381,11 @@ public class PlayerController extends BaseController {
 		view.setFooter(footer.toString());
 	}
 	
+	/**
+	 * Builds the header for a specific player
+	 * @param player The player.
+	 * @return The string representation of the header.
+	 */
 	private String buildPlayerHeader(Player player)
 	{
 		StringBuilder s = new StringBuilder();
