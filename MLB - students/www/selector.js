@@ -5,7 +5,7 @@ $(document).ready(function(){
 			//url:"http://163.11.236.180:5555/team.json?action=search",
 			url:"http://localhost:5555/team.json?action=search",
 			dataType:'json',
-			delay:250,
+			delay:400,
 			data: function(params){
 				return {
 					name: params.term || '',
@@ -31,6 +31,7 @@ $(document).ready(function(){
 			},
 			cache:true
 		},
+		placeholder: 'Select Team',
 		minimumInputLength:0
 	});
 
@@ -45,7 +46,7 @@ $(document).ready(function(){
 			//url:"http://163.11.236.180:5555/player.json?action=search",
 			url:"http://localhost:5555/player.json?action=search",
 			dataType:'json',
-			delay:250,
+			delay:400,
 			data: function(params){
 				return {
 					name: params.term || '',
@@ -58,8 +59,10 @@ $(document).ready(function(){
 				var di = data.items;
 				console.log(di);
 				for(var i = 0; i < di.length; i++){
-					var datum = di[i]
-					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.firstgame + '-' + datum.lastgame + ')'});
+					var datum = di[i];
+					var firstlast = (datum.firstgame || datum.lastgame) ? '(' + (datum.firstgame || '') + '-' + (datum.lastgame || '') + ')' : '';
+
+					items.push({id:datum.id, text:datum.name + '  ' + firstlast});
 				}
 				console.log("Page Num" + params.page);
 				return {
@@ -71,6 +74,7 @@ $(document).ready(function(){
 			},
 			cache:true
 		},
+		placeholder: 'Select Player',
 		minimumInputLength:0
 	});
 

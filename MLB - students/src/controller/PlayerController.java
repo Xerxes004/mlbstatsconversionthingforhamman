@@ -207,8 +207,16 @@ public class PlayerController extends BaseController {
 				jsPlayer.put("name", player.getName());
 				jsPlayer.put("lifetimesalary", stats.getSalary());
 				jsPlayer.put("gamesplayed", stats.getGamesPlayed());
-				jsPlayer.put("firstgame", MLBUtil.DATE_FORMAT.format(player.getFirstGame()));
-				jsPlayer.put("lastgame", MLBUtil.DATE_FORMAT.format(player.getLastGame()));
+				
+				Date first = player.getFirstGame();
+				if(first != null){
+					jsPlayer.put("firstgame", MLBUtil.DATE_FORMAT.format(first));
+				}
+				
+				Date last = player.getLastGame();
+				if(last != null){
+					jsPlayer.put("lastgame", MLBUtil.DATE_FORMAT.format(player.getLastGame()));
+				}
 				jsPlayer.put("careerhomeruns", stats.getHomeRuns());
 				jsPlayer.put("careerhits", stats.getHits());
 				jsPlayer.put("careerbattingavg", MLBUtil.DOUBLE_FORMAT.format(stats.getBattingAverage()));
