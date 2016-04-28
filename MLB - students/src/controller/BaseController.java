@@ -1,13 +1,8 @@
 package controller;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import util.MLBUtil;
 import view.BaseView;
 
 public abstract class BaseController {
@@ -21,6 +16,10 @@ public abstract class BaseController {
     public static final String DATA_JSON = "json";
     public static final String SSP_PLAYER = "player";
     public static final String SSP_TEAM = "team";
+    
+    public static final int ALL_PAGES = -1;
+    
+    protected static final int TABLE_HEADER_SIZE = 1;
 
     protected final void processSSP(String query) {
         String q = decodeURL(query);

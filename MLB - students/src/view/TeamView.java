@@ -3,7 +3,6 @@ package view;
 
 import java.util.HashMap;
 
-import bo.Player;
 import bo.Team;
 import bo.TeamSeason;
 

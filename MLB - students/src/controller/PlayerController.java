@@ -28,6 +28,10 @@ import util.MLBUtil;
  *
  */
 public class PlayerController extends BaseController {
+	
+	private static final int SEARCH_TABLE_COLUMNS = 9;
+	private static final int DETAILS_TABLE_COLUMNS = 8;
+	private static final int HEADER_ROW = 0;
 
 	@Override
 	public void initSSP(String query) {
@@ -132,10 +136,11 @@ public class PlayerController extends BaseController {
 		}
 		String v = keyVals.get("exact");
 		boolean exact = (v != null && v.equalsIgnoreCase("on"));
-		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, -1);
+		List<Player> bos = HibernateUtil.retrievePlayersByName(name, exact, ALL_PAGES);
 		view.printSearchResultsMessage(name, exact);
 		buildPlayerSearchResultsTable(bos);
-		StringBuilder footer = new StringBuilder();
+		//StringBuilder footer = new StringBuilder();
+		view.buildFooter(view);
 	}
 
 	/**
@@ -235,39 +240,48 @@ public class PlayerController extends BaseController {
 	 */
 	private void buildPlayerSearchResultsTable(List<Player> playerSearchResults) {
 		// need a row for the table headers
-		String[][] table = new String[playerSearchResults.size() + 1][9];
-
-		table[0][0] = "Name";
-		table[0][1] = "Lifetime Salary";
-		table[0][2] = "Games Played";
-		table[0][3] = "First Game";
-		table[0][4] = "Last Game";
-		table[0][5] = "Career Home Runs";
-		table[0][6] = "Career Hits";
-		table[0][7] = "Career Batting Average";
-		table[0][8] = "Career Steals";
+		String[][] table = new String[playerSearchResults.size() + TABLE_HEADER_SIZE][SEARCH_TABLE_COLUMNS];
+		final int NAME_COL = 0;
+		final int LIFETIME_SALARY_COL = 1;
+		final int GAMES_PLAYED_COL = 2;
+		final int FIRST_GAME_COL = 3;
+		final int LAST_GAME_COL = 4;
+		final int CAREER_HOME_RUNS_COL = 5;
+		final int CAREER_HITS_COL = 6;
+		final int CAREER_BATTING_AVERAGE_ROW = 7;
+		final int CAREER_STEALS_COL = 8;
+		
+		table[HEADER_ROW][NAME_COL] = "Name";
+		table[HEADER_ROW][LIFETIME_SALARY_COL] = "Lifetime Salary";
+		table[HEADER_ROW][GAMES_PLAYED_COL] = "Games Played";
+		table[HEADER_ROW][FIRST_GAME_COL] = "First Game";
+		table[HEADER_ROW][LAST_GAME_COL] = "Last Game";
+		table[HEADER_ROW][CAREER_HOME_RUNS_COL] = "Career Home Runs";
+		table[HEADER_ROW][CAREER_HITS_COL] = "Career Hits";
+		table[HEADER_ROW][CAREER_BATTING_AVERAGE_ROW] = "Career Batting Average";
+		table[HEADER_ROW][CAREER_STEALS_COL] = "Career Steals";
 		
 		for (int i = 0; i < playerSearchResults.size(); i++) {
 			Player player = playerSearchResults.get(i);
 			PlayerCareerStats stats = new PlayerCareerStats(player);
 			String pid = player.getId().toString();
-			table[i + 1][0] = view.encodeLink(new String[] { "id" }, new String[] { pid }, player.getName(), ACT_DETAIL,
+			table[i + 1][NAME_COL] = view.encodeLink(new String[] { "id" }, new String[] { pid }, player.getName(), ACT_DETAIL,
 					SSP_PLAYER);
-			table[i + 1][1] = MLBUtil.DOLLAR_FORMAT.format(stats.getSalary());
-			table[i + 1][2] = stats.getGamesPlayed().toString();
+			table[i + 1][LIFETIME_SALARY_COL] = MLBUtil.DOLLAR_FORMAT.format(stats.getSalary());
+			table[i + 1][GAMES_PLAYED_COL] = stats.getGamesPlayed().toString();
 			
 			Date firstGameDate = player.getFirstGame();
 			String firstGame = firstGameDate != null ? MLBUtil.DATE_FORMAT.format(firstGameDate) : "N/A";
-			table[i + 1][3] = firstGame;
+			table[i + 1][FIRST_GAME_COL] = firstGame;
 			
 			Date lastGameDate = player.getLastGame();
 			String lastGame = lastGameDate != null ? MLBUtil.DATE_FORMAT.format(lastGameDate) : "N/A";
-			table[i + 1][4] = lastGame;
+			table[i + 1][LAST_GAME_COL] = lastGame;
 			
-			table[i + 1][5] = stats.getHomeRuns().toString();
-			table[i + 1][6] = stats.getHits().toString();
-			table[i + 1][7] = MLBUtil.DOUBLE_FORMAT.format(stats.getBattingAverage());
-			table[i + 1][8] = stats.getSteals().toString();
+			table[i + 1][CAREER_HOME_RUNS_COL] = stats.getHomeRuns().toString();
+			table[i + 1][CAREER_HITS_COL] = stats.getHits().toString();
+			table[i + 1][CAREER_BATTING_AVERAGE_ROW] = MLBUtil.DOUBLE_FORMAT.format(stats.getBattingAverage());
+			table[i + 1][CAREER_STEALS_COL] = stats.getSteals().toString();
 		}
 		
 		view.buildTable(table);
@@ -360,20 +374,29 @@ public class PlayerController extends BaseController {
 		Collections.reverse(list);
 		
 		// Build seasons table
-		String[][] seasonTable = new String[seasons.size() + 1][8];
-		seasonTable[0][0] = "Year";
-		seasonTable[0][1] = "Games Played";
-		seasonTable[0][2] = "Salary";
-		seasonTable[0][3] = "Teams(s)";
-		seasonTable[0][4] = "Hits";
-		seasonTable[0][5] = "At Bats";
-		seasonTable[0][6] = "Batting Average";
-		seasonTable[0][7] = "Home Runs";
+		String[][] seasonTable = new String[seasons.size() + TABLE_HEADER_SIZE][DETAILS_TABLE_COLUMNS];
+		final int YEAR_COL = 0;
+		final int GAMES_PLAYED_COL = 1;
+		final int SALARY_COL = 2;
+		final int TEAMS_COL = 3;
+		final int HITS_COL = 4;
+		final int AT_BATS_COL = 5;
+		final int BATTING_AVERAGE_COL = 6;
+		final int HOME_RUNS_COL = 7;
+		
+		seasonTable[HEADER_ROW][YEAR_COL] = "Year";
+		seasonTable[HEADER_ROW][GAMES_PLAYED_COL] = "Games Played";
+		seasonTable[HEADER_ROW][SALARY_COL] = "Salary";
+		seasonTable[HEADER_ROW][TEAMS_COL] = "Teams(s)";
+		seasonTable[HEADER_ROW][HITS_COL] = "Hits";
+		seasonTable[HEADER_ROW][AT_BATS_COL] = "At Bats";
+		seasonTable[HEADER_ROW][BATTING_AVERAGE_COL] = "Batting Average";
+		seasonTable[HEADER_ROW][HOME_RUNS_COL] = "Home Runs";
 
 		int i = 0;
 		for (PlayerSeason ps : list) {
 			i++;
-			List<TeamSeason> teams = ps.getPlayer().getTeamSeason(ps.getYear());
+			List<TeamSeason> teams = player.getTeamSeason(ps.getYear());
 			StringBuilder sb = new StringBuilder();
 			for (TeamSeason ts : teams) {
 				sb.append(view.encodeLink(new String[] { "id" }, new String[] { ts.getTeam().getId().toString() },
@@ -382,14 +405,14 @@ public class PlayerController extends BaseController {
 			if(sb.length() > 0){
 				sb.deleteCharAt(sb.length() - 1);
 			}
-			seasonTable[i][0] = ps.getYear().toString();
-			seasonTable[i][1] = ps.getGamesPlayed().toString();
-			seasonTable[i][2] = MLBUtil.DOLLAR_FORMAT.format(ps.getSalary());
-			seasonTable[i][3] = sb.toString();
-			seasonTable[i][4] = ps.getBattingStats().getHits().toString();
-			seasonTable[i][5] = ps.getBattingStats().getAtBats().toString();
-			seasonTable[i][6] = MLBUtil.DOUBLE_FORMAT.format(ps.getBattingAverage());
-			seasonTable[i][7] = ps.getBattingStats().getHomeRuns().toString();
+			seasonTable[i][YEAR_COL] = ps.getYear().toString();
+			seasonTable[i][GAMES_PLAYED_COL] = ps.getGamesPlayed().toString();
+			seasonTable[i][SALARY_COL] = MLBUtil.DOLLAR_FORMAT.format(ps.getSalary());
+			seasonTable[i][TEAMS_COL] = sb.toString();
+			seasonTable[i][HITS_COL] = ps.getBattingStats().getHits().toString();
+			seasonTable[i][AT_BATS_COL] = ps.getBattingStats().getAtBats().toString();
+			seasonTable[i][BATTING_AVERAGE_COL] = MLBUtil.DOUBLE_FORMAT.format(ps.getBattingAverage());
+			seasonTable[i][HOME_RUNS_COL] = ps.getBattingStats().getHomeRuns().toString();
 		}
 		view.buildTable(seasonTable);
 	}
