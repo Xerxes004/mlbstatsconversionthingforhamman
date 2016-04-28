@@ -434,7 +434,7 @@ public class TeamController extends BaseController {
 		String rosterTable[][] = new String[roster.size() + TABLE_HEADER_SIZE][ROSTER_TABLE_COLUMNS];
 		final int NAME_COL = 0;
 		final int GAMES_PLAYED_COL = 1;
-		final int SALARY_COL = 3;
+		final int SALARY_COL = 2;
 		rosterTable[HEADER_ROW][NAME_COL] = "Name";
 		rosterTable[HEADER_ROW][GAMES_PLAYED_COL] = "Games Played";
 		rosterTable[HEADER_ROW][SALARY_COL] = "Salary";

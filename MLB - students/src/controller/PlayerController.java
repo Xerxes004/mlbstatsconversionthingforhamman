@@ -272,16 +272,16 @@ public class PlayerController extends BaseController {
 			
 			Date firstGameDate = player.getFirstGame();
 			String firstGame = firstGameDate != null ? MLBUtil.DATE_FORMAT.format(firstGameDate) : "N/A";
-			table[i + 1][FIRST_GAME_COL] = firstGame;
+			table[i + TABLE_HEADER_SIZE][FIRST_GAME_COL] = firstGame;
 			
 			Date lastGameDate = player.getLastGame();
 			String lastGame = lastGameDate != null ? MLBUtil.DATE_FORMAT.format(lastGameDate) : "N/A";
-			table[i + 1][LAST_GAME_COL] = lastGame;
+			table[i + TABLE_HEADER_SIZE][LAST_GAME_COL] = lastGame;
 			
-			table[i + 1][CAREER_HOME_RUNS_COL] = stats.getHomeRuns().toString();
-			table[i + 1][CAREER_HITS_COL] = stats.getHits().toString();
-			table[i + 1][CAREER_BATTING_AVERAGE_ROW] = MLBUtil.DOUBLE_FORMAT.format(stats.getBattingAverage());
-			table[i + 1][CAREER_STEALS_COL] = stats.getSteals().toString();
+			table[i + TABLE_HEADER_SIZE][CAREER_HOME_RUNS_COL] = stats.getHomeRuns().toString();
+			table[i + TABLE_HEADER_SIZE][CAREER_HITS_COL] = stats.getHits().toString();
+			table[i + TABLE_HEADER_SIZE][CAREER_BATTING_AVERAGE_ROW] = MLBUtil.DOUBLE_FORMAT.format(stats.getBattingAverage());
+			table[i + TABLE_HEADER_SIZE][CAREER_STEALS_COL] = stats.getSteals().toString();
 		}
 		
 		view.buildTable(table);
