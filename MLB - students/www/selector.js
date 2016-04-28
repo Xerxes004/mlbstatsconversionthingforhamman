@@ -1,5 +1,6 @@
 $(document).ready(function(){
 	var teamSelector = $("#team-select");
+
 	teamSelector.select2({
 		ajax:{
 			url:"http://163.11.236.180:5555/team.json?action=search",
@@ -34,6 +35,7 @@ $(document).ready(function(){
 		minimumInputLength:0
 	});
 
+	//teamSelector.select2('open');
 	teamSelector.on('select2:select', function(){
 		console.log('submitting form');
 		$("#select2form").submit();

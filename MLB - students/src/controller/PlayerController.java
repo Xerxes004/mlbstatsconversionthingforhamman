@@ -350,6 +350,7 @@ public class PlayerController extends BaseController {
 		Set<PlayerSeason> seasons = player.getSeasons();
 		List<PlayerSeason> list = new ArrayList<PlayerSeason>(seasons);
 		Collections.sort(list, PlayerSeason.playerSeasonsComparator);
+		Collections.reverse(list);
 		view.setHeader(buildPlayerHeader(player));
 		
 		// Build seasons table
@@ -372,7 +373,9 @@ public class PlayerController extends BaseController {
 				sb.append(view.encodeLink(new String[] { "id" }, new String[] { ts.getTeam().getId().toString() },
 						ts.getTeam().getName(), ACT_DETAIL, SSP_TEAM) + " ");
 			}
-			sb.deleteCharAt(sb.length() - 1);
+			if(sb.length() > 0){
+				sb.deleteCharAt(sb.length() - 1);
+			}
 			seasonTable[i][0] = ps.getYear().toString();
 			seasonTable[i][1] = ps.getGamesPlayed().toString();
 			seasonTable[i][2] = DOLLAR_FORMAT.format(ps.getSalary());
@@ -417,5 +420,4 @@ public class PlayerController extends BaseController {
          .append("</h2>");
         return s.toString();
 	}
-
 }

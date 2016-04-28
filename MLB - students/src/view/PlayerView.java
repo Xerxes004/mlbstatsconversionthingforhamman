@@ -14,11 +14,11 @@ public class PlayerView extends BaseView {
     
     @Override
     public void buildSearchForm() {
-    	body.append("<form id='select2form' action=\"");
+    	body.append("<form class='form-horizontal' id='select2form' action=\"");
 		body.append(title.toLowerCase());
 		body.append(".ssp\" method=\"get\">\r\n");
 		body.append("<h2>Dynamic Player Search</h2>");
-		body.append("Enter Player: <select id='player-select' class='js-example-responsive' name='id' style='width:50%'><option></option></select>\r\n");
+		body.append("<div><select id='player-select' style='width:100%' name='id'><option></option></select></div>\r\n");
 		body.append("<input type=\"hidden\" name=\"action\" value=\"details\">\r\n");
 		body.append("</form>\r\n");
 		body.append("<br/><br/>");
@@ -26,9 +26,9 @@ public class PlayerView extends BaseView {
         body.append(title.toLowerCase());
         body.append(".ssp\" method=\"get\">\r\n");
         body.append("<h2>Search All Players</h2>");
-        body.append("Enter name: <input type=\"text\" size=\"20\" name=\"name\"><input type=\"checkbox\" name=\"exact\"> Exact Match?\r\n");
+        body.append("<input class='form-control input-lg' placeholder='Enter Player' type=\"text\" name=\"name\"><input type=\"checkbox\" name=\"exact\"> Exact Match?<br/>\r\n");
         body.append("<input type=\"hidden\" name=\"action\" value=\"search\">\r\n");
-        body.append("<input type=\"submit\" value=\"Submit\">\r\n");
+        body.append("<input class='btn btn-default' type=\"submit\" value=\"Submit\">\r\n");
         body.append("</form>\r\n"); 
     }
     
