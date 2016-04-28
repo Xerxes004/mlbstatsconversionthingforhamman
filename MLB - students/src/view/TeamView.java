@@ -139,8 +139,8 @@ public class TeamView
     	}
     	
     	header.append("<h1>")
-    		  .append(teamSeason.getYear()).append(linkToTeam).append("</h1>")
-    	      .append("<h3>").append(league).append("</h3>")
+    		  .append(teamSeason.getYear()).append(" ").append(linkToTeam).append("</h1>")
+    	      .append("<h2>").append(league).append("</h2>")
     	      .append("<h2>Team Roster</h2>");
     	
     	super.header = header.toString();

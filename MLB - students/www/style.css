@@ -56,25 +56,29 @@ body {
 }
 
 header,
-header a,
-header a:hover,
-footer,
-footer a,
-footer a:hover {
+footer {
     background-color: #000088;
-    color: white;
     padding: 10px;
     text-align: left;
     border-radius: 5px;
 }
 
-header {
-    margin-bottom: 25px;
+header,
+header a,
+header a:hover,
+footer,
+footer a,
+footer a:hover {
+    color: white;
 }
 
 footer {
     margin-top: 25px;
     padding: 10px;
+}
+
+header {
+    margin-bottom: 25px;
 }
 
 header > h1 {
