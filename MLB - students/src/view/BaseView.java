@@ -6,6 +6,10 @@ package view;
 
 import java.util.Map;
 
+import bo.Player;
+import bo.Team;
+import bo.TeamSeason;
+
 /**
  *
  * @author user
@@ -41,6 +45,8 @@ public abstract class BaseView
         	.append("<script src='selector.js'></script>")
         	.append("</HEAD>\r\n")
         	.append("<BODY>\r\n")
+        	.append("<div id='background-div'></div>")
+        	.append("<img src='./images/mlb.png' id='mlb-logo' z-index='-1'>")
         	.append("<div id=\'wrapper\'>\r\n");
         	if (header != null)
         	{
@@ -60,19 +66,29 @@ public abstract class BaseView
         return sb.toString();
     }
     
+    public void buildHeader(Team team)
+    {
+    	this.header = "<h1>Default Team Header</h1>";
+    }
+    public void buildHeader(TeamSeason teamseason, String linkToTeam)
+    {
+    	this.header = "<h1>Default team season header</h1>";
+    }
+    public void buildHeader(Player player)
+    {
+    	this.header = "<h1>Default player header</h1>";
+    }
+    public void buildFooter(BaseView view)
+    {
+    	StringBuilder footer = new StringBuilder();
+		footer.append(view.buildLinkToSearch())
+			  .append("<a href=\"index.htm\">Home</a>\r\n");
+		this.footer = footer.toString();
+    }
+    
     public final String buildJSONResponse(){
     	return body.toString();
     }
-
-    public final void setHeader(String header)
-    {
-        this.header = header;
-    }
-    
-    public final void setFooter(String footer)
-    {
-    	this.footer = footer;
-	}
 
     public final String getLogo(String teamName)
     {

@@ -1,6 +1,11 @@
 
 package view;
 
+import java.util.Date;
+
+import bo.Player;
+import util.MLBUtil;
+
 /**
  *
  * @author Wes Kelly
@@ -43,4 +48,27 @@ public class PlayerView extends BaseView {
 		body.append("<div id='gamesplayed'></div>");
 		body.append("</div>");
 	}
+
+    public void buildHeader(Player player)
+    {
+	    StringBuilder header = new StringBuilder();
+		Date birthdate = player.getBirthDay();
+		Date deathdate = player.getDeathDay();
+		String birthday = birthdate != null ? MLBUtil.DATE_FORMAT.format(birthdate) : "";
+		String deathday = deathdate != null ? MLBUtil.DATE_FORMAT.format(deathdate) : "";
+		header.append("<h1>")
+	     .append(player.getName())
+	     .append(" (").append(player.getGivenName()).append(")\r\n")
+	     .append("</h1>")
+	     .append("<h2>")
+	     .append(birthday).append(" - ").append(deathday)
+	     .append("</h2>")
+	     .append("<h2>Born in ")
+	     .append(player.getBirthCity()).append(", ").append(player.getBirthState())            
+	     .append("</h2>")
+	     .append("<h2>")
+	     .append(player.getPositions())
+	     .append("</h2>");
+	    super.header = header.toString();
+    }
 }

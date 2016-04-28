@@ -1,8 +1,17 @@
 <!DOCTYPE html>
+<head>
+<link rel='stylesheet' type='text/css' href='style.css'>
+</head>
 <html>
     <body>
-        <img src="./images/mlb-logo.jpg"><br/>
-        <a href="player.ssp?action=searchform">Players</a><br/>
-        <a href="team.ssp?action=searchform">Teams</a><br/>
+		<div id='background-div'></div>
+		<img src="./images/mlb.png" id="mlb-logo" z-index="-1" />
+		<div id="wrapper" style="background-image: url('images/banner.jpg');background-size:cover;background-repeat:no-repeat;height: 90vh">
+			<div style="padding:0 30px">
+				<h1 style="color:white">MLB Database</h1>
+				<h2><a style="color:white" href="player.ssp?action=searchform">Search for a Player</a></h2>
+		        <h2><a style="color:white" href="team.ssp?action=searchform">Search for a Team</a></h2>
+		    </div>
+	    </div>
     </body>
 </html>

@@ -3,6 +3,7 @@ $(document).ready(function(){
 
 	teamSelector.select2({
 		ajax:{
+			//url:"http://163.11.236.180:5555/team.json?action=search",
 			url:"http://163.11.236.180:5555/team.json?action=search",
 			dataType:'json',
 			delay:400,
@@ -44,6 +45,7 @@ $(document).ready(function(){
 	var playerSelector = $("#player-select");
 	playerSelector.select2({
 		ajax:{
+			//url:"http://163.11.236.180:5555/player.json?action=search",
 			url:"http://163.11.236.180:5555/player.json?action=search",
 			dataType:'json',
 			delay:400,

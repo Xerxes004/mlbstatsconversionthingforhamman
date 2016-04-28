@@ -2,6 +2,7 @@
 package controller;
 
 import dataaccesslayer.HibernateUtil;
+import util.MLBUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -126,6 +127,7 @@ public class TeamController extends BaseController {
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildTeamSearchResultsTable(teams);
 		view.buildLinkToSearch();
+		view.buildFooter(view);
 	}
 
 	/**
@@ -175,13 +177,13 @@ public class TeamController extends BaseController {
 		
 		List<Team> list = new ArrayList<>();
 		list.add(team);
-		buildTeamSearchResultsTable(list);
-
+		view.buildHeader(team);
+		
 		view.buildCharts(teamId);
 
 		buildTeamDetailsTable(team);
 		view.buildLinkToSearch();
-
+		view.buildFooter(view);
 	}
 
 	/**
@@ -216,6 +218,12 @@ public class TeamController extends BaseController {
 			return;
 		}
 		
+		Team team = teamSeason.getTeam();
+		
+		String linkToTeam = view.encodeLink(new String[] { "id" }, new String[] { team.getId().toString() },
+				team.getName(), BaseController.ACT_DETAIL, BaseController.SSP_TEAM);
+    	
+		view.buildHeader(teamSeason, linkToTeam);
 		buildRosterTable(teamSeason);
 	}
 
@@ -274,7 +282,6 @@ public class TeamController extends BaseController {
 	 */
 	private void buildTeamSearchResultsTable(List<Team> teams) {
 		String[][] table = new String[teams.size() + 1][4];
-		// table[0][0] = "Id";
 		table[0][0] = "Name";
 		table[0][1] = "League";
 		table[0][2] = "Year Founded";
@@ -332,8 +339,6 @@ public class TeamController extends BaseController {
 	 * @param team The provided team.
 	 */
 	private void buildTeamDetailsTable(Team team) {
-		view.setHeader(buildHeader(team));
-
 		Set<TeamSeason> ts = team.getSeasons();
 		List<TeamSeason> entries = new ArrayList<>(ts);
 		Collections.sort(entries, TeamSeason.teamSeasonComparator);
@@ -360,86 +365,12 @@ public class TeamController extends BaseController {
 			seasonTable[i][3] = entry.getWins().toString();
 			seasonTable[i][4] = entry.getLosses().toString();
 			seasonTable[i][5] = entry.getRank().toString();
-			seasonTable[i][6] = INTEGER_FORMAT.format(entry.getTotalAttendance());
+			seasonTable[i][6] = MLBUtil.INTEGER_FORMAT.format(entry.getTotalAttendance());
 			i++;
 		}
 
 		view.buildTable(seasonTable, "season-table");
-	}
-
-	/**
-	 * Builds a roster header for a team during a specific season.
-	 * @param teamSeason The season for which to build the header.
-	 * @return The string representation of the header.
-	 */
-	private String buildRosterHeader(TeamSeason teamSeason) {
-		Team team = teamSeason.getTeam();
-		int year = teamSeason.getYear();
-		StringBuilder header = new StringBuilder();
-		String logo = view.getLogo(team.getName());
-		if (logo != null) {
-			header.append("<img id='logo' src='").append(view.getLogo(team.getName())).append("'").append(" alt='")
-					.append(team.getName()).append("'").append(" />");
-		}
-		String league = team.getLeague();
-		if (league.equals("NL")) {
-			league = "National League";
-		} else if (league.equals("AL")) {
-			league = "American League";
-		}
-		String teamLink = view.encodeLink(new String[] { "id" }, new String[] { team.getId().toString() },
-				team.getName(), ACT_DETAIL, SSP_TEAM);
-		header.append("<h1>").append(year).append(" ").append(teamLink).append("</h1>").append("<h2>").append(league)
-				.append("</h2>");
-
-		return header.toString();
-	}
-
-	/**
-	 * Build the header for the team details page.
-	 * @param team The team to be used.
-	 * @return The string representation of the header.
-	 */
-	private String buildHeader(Team team) {
-		StringBuilder header = new StringBuilder();
-		header.append(buildTeamHeader(team)).append("<h3>Team Overview</h3>");
-
-		return header.toString();
-	}
-
-	/**
-	 * Builds a header for the team roster page.
-	 * @param teamSeason
-	 * @return
-	 */
-	private String buildHeader(TeamSeason teamSeason) {
-		StringBuilder header = new StringBuilder();
-		header.append(buildRosterHeader(teamSeason)).append("<h3>Team Roster</h3>");
-
-		return header.toString();
-	}
-
-	/**
-	 * Builds a header for team page
-	 * @param team The team to build the header for.
-	 * @return The string representation of the header.
-	 */
-	private String buildTeamHeader(Team team) {
-		StringBuilder s = new StringBuilder();
-		String logo = view.getLogo(team.getName());
-		if (logo != null) {
-			s.append("<img id='logo' src='").append(logo).append("'").append(" alt='").append(team.getName())
-					.append("'").append(" />");
-		}
-		String league = team.getLeague();
-		if (league.equals("NL")) {
-			league = "National League";
-		} else if (league.equals("AL")) {
-			league = "American League";
-		}
-		s.append("<h1>").append(team.getName()).append("</h1>").append("<h2>").append(league).append("</h2>");
-		return s.toString();
-	}
+	}	
 
 	/**
 	 * Builds a JSON representation of the roster for a given team season.
@@ -466,7 +397,7 @@ public class TeamController extends BaseController {
 			try {
 				jsPlayer.put("name", player.getName());
 				jsPlayer.put("gamesplayed", playerSeason.getGamesPlayed().toString());
-				jsPlayer.put("salary", DOLLAR_FORMAT.format(playerSeason.getSalary()));
+				jsPlayer.put("salary", MLBUtil.DOLLAR_FORMAT.format(playerSeason.getSalary()));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -482,7 +413,7 @@ public class TeamController extends BaseController {
 	 * @param teamSeason The team season to generate the roster from.
 	 */
 	private void buildRosterTable(TeamSeason teamSeason) {
-		view.setHeader(buildHeader(teamSeason));
+		//view.setHeader(buildHeader(teamSeason));
 
 		ArrayList<Player> roster = new ArrayList<>(teamSeason.getRoster());
 		String rosterTable[][] = new String[roster.size() + 1][3];
@@ -496,7 +427,7 @@ public class TeamController extends BaseController {
 			rosterTable[i][0] = view.encodeLink(new String[] { "id" }, new String[] { player.getId().toString() },
 					player.getName(), ACT_DETAIL, SSP_PLAYER);
 			rosterTable[i][1] = playerSeason.getGamesPlayed().toString();
-			rosterTable[i][2] = DOLLAR_FORMAT.format(playerSeason.getSalary());
+			rosterTable[i][2] = MLBUtil.DOLLAR_FORMAT.format(playerSeason.getSalary());
 			i++;
 		}
 

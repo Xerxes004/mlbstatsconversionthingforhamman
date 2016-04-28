@@ -3,6 +3,10 @@ package view;
 
 import java.util.HashMap;
 
+import bo.Player;
+import bo.Team;
+import bo.TeamSeason;
+
 public class TeamView
     extends BaseView
 {
@@ -73,5 +77,72 @@ public class TeamView
 		body.append("<div id='attendance'></div>");
 		body.append("<div id='winslosses'></div>");
 		body.append("</div>");
+	}
+
+    @Override
+    public void buildHeader(Team team)
+    {
+    	String league = team.getLeague();
+    	if (league.equals("NL"))
+    	{
+    		league = "National League";
+    	}
+    	else if (league.equals("AL"))
+    	{
+    		league = "American League";
+    	}
+    	
+    	StringBuilder header = new StringBuilder();
+    	
+    	String logo = teamLogos.get(team.getName());
+    	
+    	if (logo != null)
+    	{
+    		header.append("<img id='logo' src='").append(logo).append("' />");
+    	}
+    	
+    	header.append("<h1>").append(team.getName()).append("</h1>")
+    	      .append("<h2>")
+    	      .append(team.getYearFounded()).append(" - ").append(team.getYearLast())
+    	      .append("</h2>")
+    	      .append("<h2>").append(league).append("</h2>");
+    	
+    	super.header = header.toString();
+    }
+    
+	/**
+	 * Builds a header for the team roster page.
+	 * @param teamSeason
+	 * @return
+	 */
+    @Override
+	public void buildHeader(TeamSeason teamSeason, String linkToTeam) {
+    	Team team = teamSeason.getTeam();
+    	
+    	String league = team.getLeague();
+    	if (league.equals("NL"))
+    	{
+    		league = "National League";
+    	}
+    	else if (league.equals("AL"))
+    	{
+    		league = "American League";
+    	}
+    	
+    	StringBuilder header = new StringBuilder();
+    	
+    	String logo = teamLogos.get(team.getName());
+    	
+    	if (logo != null)
+    	{
+    		header.append("<img id='logo' src='").append(logo).append("' />");
+    	}
+    	
+    	header.append("<h1>")
+    		  .append(teamSeason.getYear()).append(linkToTeam).append("</h1>")
+    	      .append("<h2>").append(league).append("</h2>")
+    	      .append("<h3>Team Roster</h3>");
+    	
+    	super.header = header.toString();
 	}
 }
