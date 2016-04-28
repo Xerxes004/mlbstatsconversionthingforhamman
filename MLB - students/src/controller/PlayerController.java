@@ -358,7 +358,6 @@ public class PlayerController extends BaseController {
 		Collections.sort(list, PlayerSeason.playerSeasonsComparator);
 
 		Collections.reverse(list);
-		//view.setHeader(buildPlayerHeader(player));
 		
 		// Build seasons table
 		String[][] seasonTable = new String[seasons.size() + 1][8];
@@ -393,33 +392,5 @@ public class PlayerController extends BaseController {
 			seasonTable[i][7] = ps.getBattingStats().getHomeRuns().toString();
 		}
 		view.buildTable(seasonTable);
-	}
-	
-	/**
-	 * Builds the header for a specific player
-	 * @param player The player.
-	 * @return The string representation of the header.
-	 */
-	private String buildPlayerHeader(Player player)
-	{
-		StringBuilder s = new StringBuilder();
-		Date birthdate = player.getBirthDay();
-		Date deathdate = player.getDeathDay();
-		//String birthday = birthdate != null ? DATE_FORMAT.format(birthdate) : "";
-		//String deathday = deathdate != null ? DATE_FORMAT.format(deathdate) : "";
-		s.append("<h1>")
-         .append(player.getName())
-         .append(" (").append(player.getGivenName()).append(")\r\n")
-         .append("</h1>")
-         .append("<h2>")
-         //.append(birthday).append(" - ").append(deathday)
-         .append("</h2>")
-         .append("<h2>Born in ")
-         .append(player.getBirthCity()).append(", ").append(player.getBirthState())            
-         .append("</h2>")
-         .append("<h2>")
-         .append(player.getPositions())
-         .append("</h2>");
-        return s.toString();
 	}
 }
