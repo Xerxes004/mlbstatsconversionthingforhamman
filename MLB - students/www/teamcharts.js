@@ -36,7 +36,7 @@ $(document).ready(function(){
         }
 	});
 
-	$.get("http://163.11.236.180:5555/team.json", {id:teamID, action:'details'}, function(data){
+	$.get("http://localhost:5555/team.json", {id:teamID, action:'details'}, function(data){
 		var attendance = [];
 		var year = [];
 		var wins = [];

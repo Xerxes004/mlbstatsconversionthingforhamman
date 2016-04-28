@@ -60,15 +60,15 @@ public class PlayerView extends BaseView {
 	     .append(player.getName())
 	     .append(" (").append(player.getGivenName()).append(")\r\n")
 	     .append("</h1>")
-	     .append("<h2>")
+	     .append("<h3>")
 	     .append(birthday).append(" - ").append(deathday)
-	     .append("</h2>")
-	     .append("<h2>Born in ")
+	     .append("</h3>")
+	     .append("<h3>Born in ")
 	     .append(player.getBirthCity()).append(", ").append(player.getBirthState())            
-	     .append("</h2>")
-	     .append("<h2>")
+	     .append("</h3>")
+	     .append("<h3>")
 	     .append(player.getPositions())
-	     .append("</h2>");
+	     .append("</h3>");
 	    super.header = header.toString();
     }
 }

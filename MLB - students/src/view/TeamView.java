@@ -140,8 +140,8 @@ public class TeamView
     	
     	header.append("<h1>")
     		  .append(teamSeason.getYear()).append(linkToTeam).append("</h1>")
-    	      .append("<h2>").append(league).append("</h2>")
-    	      .append("<h3>Team Roster</h3>");
+    	      .append("<h3>").append(league).append("</h3>")
+    	      .append("<h2>Team Roster</h2>");
     	
     	super.header = header.toString();
 	}
