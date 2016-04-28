@@ -9,7 +9,10 @@ Highcharts.theme = {
    colors: ["#f45b5b", "#8085e9", "#8d4654", "#7798BF", "#aaeeee", "#ff0066", "#eeaaee",
       "#55BF3B", "#DF5353", "#7798BF", "#aaeeee"],
    chart: {
-      backgroundColor: 'rgba(255,255,255,0.5)',
+      borderWidth: 1,
+      backgroundColor: 'white',
+      borderRadius: 5,
+      borderColor: '#CC0000',
       style: {
          fontFamily: "Signika, serif"
       }
@@ -63,7 +66,14 @@ Highcharts.theme = {
          shadow: false
       }
    },
-
+   tooltip: {
+            headerFormat: '<span style="font-size:10px"><b>{point.key}</b></span><table class="tooltip-table">',
+            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style="color:{series.color};padding:1"><b> {point.y}</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        },
    // Highstock specific
    navigator: {
       xAxis: {

@@ -2,10 +2,6 @@ var chart;
 $(document).ready(function(){
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'batavg'
 		},
@@ -15,16 +11,12 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: 'Batting Average'
+				text: null
 			}
 		}
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'hits'
 		},
@@ -34,7 +26,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Hits'
+				text: null
 			}
 		},
 		plotOptions: {
@@ -45,10 +37,6 @@ $(document).ready(function(){
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'homeruns'
 		},
@@ -58,16 +46,12 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Home Runs'
+				text: null
 			}
 		}
 	});
 	Highcharts.chart({
 		chart:{
-			borderWidth: 1,
-			backgroundColor: 'white',
-			borderRadius: 5,
-			borderColor: '#CC0000',
 			type: 'column',
 			renderTo: 'gamesplayed'
 		},
@@ -77,7 +61,7 @@ $(document).ready(function(){
 		yAxis:{
 			min:0,
 			title:{
-				text: '#Games Played'
+				text: null
 			}
 		}
 	});
@@ -85,7 +69,6 @@ $(document).ready(function(){
 
 
 	$.get("http://localhost:5555/player.json", {id:playerID, action:'details'}, function(data){
-		console.log(data);
 		var batavg = [];
 		var year = [];
 		var hits = [];

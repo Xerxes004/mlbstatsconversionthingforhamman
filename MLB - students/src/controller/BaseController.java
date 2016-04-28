@@ -7,23 +7,20 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import util.MLBUtil;
 import view.BaseView;
 
 public abstract class BaseController {
 
-    protected DateFormat DATE_FORMAT = new SimpleDateFormat("MM/dd/yyyy");
-    protected DecimalFormat DOLLAR_FORMAT = new DecimalFormat("$#,##0.00");
-    protected DecimalFormat DOUBLE_FORMAT = new DecimalFormat(".000");
-    protected DecimalFormat INTEGER_FORMAT = new DecimalFormat("#,###");
     protected Map<String, String> keyVals = new HashMap<String, String>();
     protected BaseView view;
-    protected static final String ACT_SEARCHFORM = "searchform";
-    protected static final String ACT_SEARCH = "search";
-    protected static final String ACT_DETAIL = "details";
-    protected static final String ACT_ROSTER = "roster";
-    protected static final String DATA_JSON = "json";
-    protected static final String SSP_PLAYER = "player";
-    protected static final String SSP_TEAM = "team";
+    public static final String ACT_SEARCHFORM = "searchform";
+    public static final String ACT_SEARCH = "search";
+    public static final String ACT_DETAIL = "details";
+    public static final String ACT_ROSTER = "roster";
+    public static final String DATA_JSON = "json";
+    public static final String SSP_PLAYER = "player";
+    public static final String SSP_TEAM = "team";
 
     protected final void processSSP(String query) {
         String q = decodeURL(query);
@@ -37,12 +34,26 @@ public abstract class BaseController {
     	performJSONAction();
     }
     
+    /**
+     * Determines which dynamic HTML page to render.
+     */
     protected abstract void performAction();
     
+    /**
+     * Determines which JSON operation to perform.
+     */
     protected abstract void performJSONAction();
     
+    /**
+     * Initializes the controller to respond to a dynamic HTML request.
+     * @param query The request to respond to.
+     */
     public abstract void initSSP(String query);
     
+    /**
+     * Initializes the controller to respond to a JSON request.
+     * @param query The request to respond to.
+     */
     public abstract void initJSON(String query);
     	
 	protected final String decodeURL(String s) {
@@ -78,13 +89,4 @@ public abstract class BaseController {
     public String jsonResponse(){
     	return view.buildJSONResponse();
     }
-    
-    protected String formatDate(Date d) {
-    	String dstr = "";
-        if (d!=null) {
-        	dstr = DATE_FORMAT.format(d);
-        }
-        return dstr;
-    }
-    
 }

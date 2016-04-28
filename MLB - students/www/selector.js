@@ -2,6 +2,7 @@ $(document).ready(function(){
 	var teamSelector = $("#team-select");
 	teamSelector.select2({
 		ajax:{
+			//url:"http://163.11.236.180:5555/team.json?action=search",
 			url:"http://localhost:5555/team.json?action=search",
 			dataType:'json',
 			delay:250,
@@ -20,6 +21,7 @@ $(document).ready(function(){
 					var datum = di[i]
 					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.yearfounded + '-' + datum.yearlast + ')'});
 				}
+
 				return {
 					results:items,
 					pagination:{
@@ -40,6 +42,7 @@ $(document).ready(function(){
 	var playerSelector = $("#player-select");
 	playerSelector.select2({
 		ajax:{
+			//url:"http://163.11.236.180:5555/player.json?action=search",
 			url:"http://localhost:5555/player.json?action=search",
 			dataType:'json',
 			delay:250,
@@ -58,6 +61,7 @@ $(document).ready(function(){
 					var datum = di[i]
 					items.push({id:datum.id, text:datum.name + '\t\t(' + datum.firstgame + '-' + datum.lastgame + ')'});
 				}
+				console.log("Page Num" + params.page);
 				return {
 					results:items,
 					pagination:{
