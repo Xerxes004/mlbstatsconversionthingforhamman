@@ -119,6 +119,12 @@ public abstract class BaseView
         body.append(msg);
         body.append("</p>\r\n");
     }
+    
+    public final void addH2Header(String header){
+    	body.append("<h2>")
+    	.append(header)
+    	.append("</h2>");
+    }
 
     public final void printSearchResultsMessage(String name, boolean exact)
     {

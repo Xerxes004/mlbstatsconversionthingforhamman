@@ -313,10 +313,11 @@ public class HibernateUtil {
 			query.setParameter("year", year);
 
 			teamSeason = (TeamSeason) query.uniqueResult();
+			System.out.println("Got TeamSeason");
 			if(teamSeason != null){
 				Hibernate.initialize(teamSeason.getRoster());
 			}
-
+			System.out.println("Got Roster");
 			tx.commit();
 			System.out.println("Committing Transaction");
 		} catch (Exception e) {

@@ -12,6 +12,9 @@ import org.json.JSONObject;
 
 import view.PlayerView;
 import bo.BattingStats;
+import bo.CatchingStats;
+import bo.FieldingStats;
+import bo.PitchingStats;
 import bo.Player;
 import bo.PlayerCareerStats;
 import bo.PlayerSeason;
@@ -32,6 +35,8 @@ public class PlayerController extends BaseController {
 	private static final int SEARCH_TABLE_COLUMNS = 9;
 	private static final int DETAILS_TABLE_COLUMNS = 8;
 	private static final int HEADER_ROW = 0;
+	
+	private static final String ACT_STATS = "stats";
 
 	@Override
 	public void initSSP(String query) {
@@ -66,6 +71,9 @@ public class PlayerController extends BaseController {
 		case ACT_DETAIL:
 			processJSONDetails();
 			break;
+		case ACT_STATS:
+			//processJSONStats();
+			break;
 		default:
 			break;
 		}
@@ -92,6 +100,9 @@ public class PlayerController extends BaseController {
 			break;
 		case ACT_DETAIL:
 			processHTMLDetails();
+			break;
+		case ACT_STATS:
+			processHTMLStats();
 			break;
 		default:
 			break;
@@ -187,6 +198,23 @@ public class PlayerController extends BaseController {
 		buildPlayerDetailsTable(player);
 		
 		view.buildFooter(view);
+	}
+	
+	protected final void processHTMLStats(){
+		String id = keyVals.get("id");
+		String year = keyVals.get("year");
+		if(id == null || year == null){
+			return;
+		}
+		
+		Player player = (Player) HibernateUtil.retrievePlayerById(Integer.valueOf(id));
+		if(player == null){
+			return;
+		}
+		
+		PlayerSeason ps = player.getPlayerSeasonByYear(Integer.valueOf(year));
+		
+		buildPlayerStatsTable(ps);
 	}
 
 	/**
@@ -384,7 +412,7 @@ public class PlayerController extends BaseController {
 		final int BATTING_AVERAGE_COL = 6;
 		final int HOME_RUNS_COL = 7;
 		
-		seasonTable[HEADER_ROW][YEAR_COL] = "Year";
+		seasonTable[HEADER_ROW][YEAR_COL] = "Season Stats";
 		seasonTable[HEADER_ROW][GAMES_PLAYED_COL] = "Games Played";
 		seasonTable[HEADER_ROW][SALARY_COL] = "Salary";
 		seasonTable[HEADER_ROW][TEAMS_COL] = "Teams(s)";
@@ -405,7 +433,10 @@ public class PlayerController extends BaseController {
 			if(sb.length() > 0){
 				sb.deleteCharAt(sb.length() - 1);
 			}
-			seasonTable[i][YEAR_COL] = ps.getYear().toString();
+			String year = ps.getYear().toString();
+			String link = view.encodeLink(new String[] { "id", "year" }, new String[] { player.getId().toString(), year }, year,
+					ACT_STATS, SSP_PLAYER);
+			seasonTable[i][YEAR_COL] = link;
 			seasonTable[i][GAMES_PLAYED_COL] = ps.getGamesPlayed().toString();
 			seasonTable[i][SALARY_COL] = MLBUtil.DOLLAR_FORMAT.format(ps.getSalary());
 			seasonTable[i][TEAMS_COL] = sb.toString();
@@ -415,5 +446,125 @@ public class PlayerController extends BaseController {
 			seasonTable[i][HOME_RUNS_COL] = ps.getBattingStats().getHomeRuns().toString();
 		}
 		view.buildTable(seasonTable);
+	}
+	
+	private final void buildPlayerStatsTable(PlayerSeason ps){
+		Set<String> positions = ps.getPlayer().getPositions();
+		if(positions.contains("C")){
+			view.addH2Header("Catching Stats");
+			buildCatchingTable(ps.getCatchingStats());
+		}
+		
+		if(positions.contains("LF") || positions.contains("CF") || positions.contains("RF") || positions.contains("SS")
+				|| positions.contains("1B") || positions.contains("2B") || positions.contains("3B")){
+			view.addH2Header("Fielding Stats");
+			buildFieldingTable(ps.getFieldingStats());
+		}
+		
+		if(positions.contains("P")){
+			view.addH2Header("Pitching Stats");
+			buildPitchingTable(ps.getPitchingStats());
+		}
+		
+		view.addH2Header("Batting Stats");
+		buildBattingTable(ps.getBattingStats());
+	}
+	
+	private final void buildCatchingTable(CatchingStats catching){
+		if(catching == null){
+			return;
+		}
+		
+		String[][] catchingTable = new String[2][4];
+		catchingTable[0][0] = "Balls Passed";
+		catchingTable[0][1] = "Steals Allowed";
+		catchingTable[0][2] = "Steals Caught";
+		catchingTable[0][3] = "Wild Pitches";
+
+		catchingTable[1][0] = catching.getPassedBalls().toString();
+		catchingTable[1][1] = catching.getStealsAllowed().toString();
+		catchingTable[1][2] = catching.getStealsCaught().toString();
+		catchingTable[1][3] = catching.getWildPitches().toString();
+		view.buildTable(catchingTable);
+	}
+	
+	private final void buildFieldingTable(FieldingStats fielding){
+		if(fielding == null){
+			return;
+		}
+		
+		String[][] fieldingTable = new String[2][2];
+		fieldingTable[0][0] = "Errors";
+		fieldingTable[0][1] = "Put Outs";
+
+		fieldingTable[1][0] = fielding.getErrors().toString();
+		fieldingTable[1][1] = fielding.getPutOuts().toString();
+		view.buildTable(fieldingTable);
+	}
+	
+	private final void buildPitchingTable(PitchingStats pitching){
+		if(pitching == null){
+			return;
+		}
+		
+		String[][] pitchingTable = new String[2][11];
+		pitchingTable[0][0] = "Batters Faced";
+		pitchingTable[0][1] = "Earned Runs Allowed";
+		pitchingTable[0][2] = "Hit Batters";
+		pitchingTable[0][3] = "Home Runs Allowed";
+		pitchingTable[0][4] = "Losses";
+		pitchingTable[0][5] = "Outs Pitched";
+		pitchingTable[0][6] = "Saves";
+		pitchingTable[0][7] = "Strikeouts";
+		pitchingTable[0][8] = "Walks";
+		pitchingTable[0][9] = "Wild Pitches";
+		pitchingTable[0][10] = "Wins";
+		
+		pitchingTable[1][0] = pitching.getBattersFaced().toString();
+		pitchingTable[1][1] = pitching.getEarnedRunsAllowed().toString();
+		pitchingTable[1][2] = pitching.getHitBatters().toString();
+		pitchingTable[1][3] = pitching.getHomeRunsAllowed().toString();
+		pitchingTable[1][4] = pitching.getLosses().toString();
+		pitchingTable[1][5] = pitching.getOutsPitched().toString();
+		pitchingTable[1][6] = pitching.getSaves().toString();
+		pitchingTable[1][7] = pitching.getStrikeouts().toString();
+		pitchingTable[1][8] = pitching.getWalks().toString();
+		pitchingTable[1][9] = pitching.getWildPitches().toString();
+		pitchingTable[1][10] = pitching.getWins().toString();
+		view.buildTable(pitchingTable);
+	}
+	
+	private final void buildBattingTable(BattingStats batting) {
+		if(batting == null){
+			return;
+		}
+		
+		String[][] battingTable = new String[2][12];
+		battingTable[0][0] = "At Bats";
+		battingTable[0][1] = "Doubles";
+		battingTable[0][2] = "Triples";
+		battingTable[0][3] = "Hits By Pitcher";
+		battingTable[0][4] = "Hits";
+		battingTable[0][5] = "Home Runs";
+		battingTable[0][6] = "Intentional Walks";
+		battingTable[0][7] = "Runs Batted In";
+		battingTable[0][8] = "Steals";
+		battingTable[0][9] = "Steals Attempted";
+		battingTable[0][10] = "Strikeouts";
+		battingTable[0][11] = "Walks";
+
+		battingTable[1][0] = batting.getAtBats().toString();
+		battingTable[1][1] = batting.getDoubles().toString();
+		battingTable[1][2] = batting.getTriples().toString();
+		battingTable[1][3] = batting.getHitByPitch().toString();
+		battingTable[1][4] = batting.getHits().toString();
+		battingTable[1][5] = batting.getHomeRuns().toString();
+		battingTable[1][6] = batting.getIntentionalWalks().toString();
+		battingTable[1][7] = batting.getRunsBattedIn().toString();
+		battingTable[1][8] = batting.getSteals().toString();
+		battingTable[1][9] = batting.getStealsAttempted().toString();
+		battingTable[1][10] = batting.getStrikeouts().toString();
+		battingTable[1][11] = batting.getWalks().toString();
+		view.buildTable(battingTable);
 	}
 }

@@ -227,6 +227,15 @@ public class Player {
 	public void setTeams(Set<TeamSeason> teams) {
 		this.teams = teams;
 	}
+	
+	public PlayerSeason getPlayerSeasonByYear(Integer year){
+		for(PlayerSeason season : seasons){
+			if(year.equals(season.getYear())){
+				return season;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public boolean equals(Object obj) {

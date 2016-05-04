@@ -12,7 +12,7 @@ public abstract class BaseController {
     public static final String ACT_SEARCHFORM = "searchform";
     public static final String ACT_SEARCH = "search";
     public static final String ACT_DETAIL = "details";
-    public static final String ACT_ROSTER = "roster";
+    
     public static final String DATA_JSON = "json";
     public static final String SSP_PLAYER = "player";
     public static final String SSP_TEAM = "team";

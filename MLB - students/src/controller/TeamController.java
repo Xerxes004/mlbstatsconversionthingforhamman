@@ -24,9 +24,11 @@ import view.TeamView;
  *
  */
 public class TeamController extends BaseController {
+	
+	public static final String ACT_ROSTER = "roster";
 
 	private static final int SEARCH_TABLE_COLUMNS = 4;
-	private static final int DETAILS_TABLE_COLUMNS = 7;
+	private static final int DETAILS_TABLE_COLUMNS = 6;
 	private static final int ROSTER_TABLE_COLUMNS = 3;
 	private static final int HEADER_ROW = 0;
 	
@@ -352,16 +354,14 @@ public class TeamController extends BaseController {
 		Collections.reverse(entries);
 		String[][] seasonTable = new String[ts.size() + TABLE_HEADER_SIZE][DETAILS_TABLE_COLUMNS];
 		
-		final int SEASON_COL = 0;
-		final int ROSTER_COL = 1;
-		final int GAMES_PLAYED_COL = 2;
-		final int WINS_COL = 3;
-		final int LOSSES_COL = 4;
-		final int RANK_COL = 5;
-		final int ATTENDANCE_COL = 6;
-		
-		seasonTable[HEADER_ROW][SEASON_COL] = "Season";
-		seasonTable[HEADER_ROW][ROSTER_COL] = "Roster";
+		final int ROSTER_COL = 0;
+		final int GAMES_PLAYED_COL = 1;
+		final int WINS_COL = 2;
+		final int LOSSES_COL = 3;
+		final int RANK_COL = 4;
+		final int ATTENDANCE_COL = 5;
+
+		seasonTable[HEADER_ROW][ROSTER_COL] = "Season Roster";
 		seasonTable[HEADER_ROW][GAMES_PLAYED_COL] = "Games Played";
 		seasonTable[HEADER_ROW][WINS_COL] = "Wins";
 		seasonTable[HEADER_ROW][LOSSES_COL] = "Losses";
@@ -372,9 +372,8 @@ public class TeamController extends BaseController {
 		for (TeamSeason entry : entries) {
 			String teamId = entry.getTeam().getId().toString();
 			String year = entry.getYear().toString();
-			String link = view.encodeLink(new String[] { "id", "year" }, new String[] { teamId, year }, "Roster",
+			String link = view.encodeLink(new String[] { "id", "year" }, new String[] { teamId, year }, year,
 					ACT_ROSTER, SSP_TEAM);
-			seasonTable[i][SEASON_COL] = year;
 			seasonTable[i][ROSTER_COL] = link;
 			seasonTable[i][GAMES_PLAYED_COL] = entry.getGamesPlayed().toString();
 			seasonTable[i][WINS_COL] = entry.getWins().toString();
