@@ -203,3 +203,12 @@ tr:hover td a {
   font-size: 18px;
   line-height: 44px;
 }
+
+.search-button {
+	background-color: #000088;
+	border-color: #8085e9;
+}
+
+.search-button:hover, .search-button:active, .search-button:focus{
+	background-color: #8085e9 !important;
+}

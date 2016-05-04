@@ -3,10 +3,10 @@ $(document).ready(function(){
 
 	teamSelector.select2({
 		ajax:{
-			//url:"http://163.11.236.180:5555/team.json?action=search",
-			url:"http://localhost:5555/team.json?action=search",
+			url:"http://163.11.236.180:5555/team.json?action=search",
+			//url:"http://localhost:5555/team.json?action=search",
 			dataType:'json',
-			delay:400,
+			delay:250,
 			data: function(params){
 				return {
 					name: params.term || '',
@@ -39,16 +39,16 @@ $(document).ready(function(){
 	//teamSelector.select2('open');
 	teamSelector.on('select2:select', function(){
 		console.log('submitting form');
-		$("#select2form").submit();
+		$("#team-select-form").submit();
 	});
 
 	var playerSelector = $("#player-select");
 	playerSelector.select2({
 		ajax:{
-			//url:"http://163.11.236.180:5555/player.json?action=search",
-			url:"http://localhost:5555/player.json?action=search",
+			url:"http://163.11.236.180:5555/player.json?action=search",
+			//url:"http://localhost:5555/player.json?action=search",
 			dataType:'json',
-			delay:400,
+			delay:250,
 			data: function(params){
 				return {
 					name: params.term || '',
@@ -82,6 +82,6 @@ $(document).ready(function(){
 
 	playerSelector.on('select2:select', function(){
 		console.log('submitting form');
-		$("#select2form").submit();
-	})	
+		$("#player-select-form").submit();
+	});	
 });

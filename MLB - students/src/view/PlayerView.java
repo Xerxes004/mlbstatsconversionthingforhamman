@@ -19,7 +19,7 @@ public class PlayerView extends BaseView {
     
     @Override
     public void buildSearchForm() {
-    	body.append("<form class='form-horizontal' id='select2form' action=\"");
+    	body.append("<form class='form-horizontal' id='player-select-form' action=\"");
 		body.append(title.toLowerCase());
 		body.append(".ssp\" method=\"get\">\r\n");
 		body.append("<h2>Dynamic Player Search</h2>");
@@ -56,10 +56,14 @@ public class PlayerView extends BaseView {
 		Date deathdate = player.getDeathDay();
 		String birthday = birthdate != null ? MLBUtil.DATE_FORMAT.format(birthdate) : "";
 		String deathday = deathdate != null ? MLBUtil.DATE_FORMAT.format(deathdate) : "";
-		header.append("<h1>")
+		header.append("<button type='button' class='btn btn-info search-button' style='float:right' data-toggle='modal' data-target='#searchModal'>")
+		.append("<span class='glyphicon glyphicon-search' aria-hidden='true'></span>")
+		.append("</button>")
+		.append("<h1>")
 	     .append(player.getName())
 	     .append(" (").append(player.getGivenName()).append(")\r\n")
 	     .append("</h1>")
+	     
 	     .append("<h2>")
 	     .append(birthday).append(" - ").append(deathday)
 	     .append("</h2>")

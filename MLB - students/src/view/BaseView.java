@@ -39,14 +39,14 @@ public abstract class BaseView
         	.append("<script src='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js'></script>")
         	.append("<script src='https://code.highcharts.com/highcharts.js'></script>")
         	.append("<script src='https://code.highcharts.com/modules/exporting.js'></script>")
-        	//.append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS' crossorigin='anonymous'></script>")
+        	.append("<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS' crossorigin='anonymous'></script>")
         	.append("<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>")
         	.append("<link rel='stylesheet' type='text/css' href='style.css'>\r\n")
         	.append("<script src='selector.js'></script>")
         	.append("</HEAD>\r\n")
         	.append("<BODY>\r\n")
         	.append("<div id='background-div'></div>")
-        	.append("<img src='./images/mlb.png' id='mlb-logo' z-index='-1'>")
+        	.append("<a href='http://163.11.236.180:5555'><img src='./images/mlb.png' id='mlb-logo' z-index='-1'></a>")
         	.append("<div id=\'wrapper\'>\r\n");
         	if (header != null)
         	{
@@ -88,6 +88,35 @@ public abstract class BaseView
     
     public final String buildJSONResponse(){
     	return body.toString();
+    }
+    
+    public final void buildModal(){
+    	  body.append("<div class='modal fade' id='searchModal' role='dialog'>")
+    	  .append("<div class='modal-dialog'>")
+    	  .append("<div class='modal-content'>")
+    	  .append("<div class='modal-header'>")
+    	  .append("<button type='button' class='close' data-dismiss='modal'>&times;</button>")
+    	  .append("<h4 class='modal-title'>Search</h4>")
+    	  .append("</div>")
+    	  .append("<div class='modal-body'>")
+    	  
+    	  .append("<form class='form-horizontal' id='player-select-form' action='player.ssp' method='get'>\r\n")
+    	  .append("<div><select id='player-select' style='width:100%' name='id'><option></option></select></div>\r\n")
+    	  .append("<input type=\"hidden\" name=\"action\" value=\"details\">\r\n")
+    	  .append("</form>\r\n<br/><br/>")
+    	  
+    	  .append("<form id='team-select-form' action='team.ssp' method='get'>\r\n")
+    	  .append("<div><select id='team-select' style='width:100%' name='id'><option></option></select></div>\r\n")
+    	  .append("<input type=\"hidden\" name=\"action\" value=\"details\">\r\n")
+    	  .append("</form>\r\n")
+    	  
+    	  .append("</div>")
+    	  .append("<div class='modal-footer'>")
+    	  .append("<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>")
+    	  .append("</div>")
+    	  .append("</div>")
+    	  .append("</div>")
+    	  .append("</div>");
     }
 
     public final String getLogo(String teamName)

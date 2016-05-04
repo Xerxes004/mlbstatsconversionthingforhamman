@@ -49,7 +49,7 @@ public class TeamView
 
     @Override
 	public void buildSearchForm() {
-		body.append("<form id='select2form' action=\"");
+		body.append("<form id='team-select-form' action=\"");
 		body.append(title.toLowerCase());
 		body.append(".ssp\" method=\"get\">\r\n");
 		body.append("<h2>Dynamic Team Search</h2>");
@@ -92,6 +92,10 @@ public class TeamView
     	}
     	
     	StringBuilder header = new StringBuilder();
+    	header.append("<button type='button' class='btn btn-info search-button' style='float:right' data-toggle='modal' data-target='#searchModal'>")
+		.append("<span class='glyphicon glyphicon-search' aria-hidden='true'></span>")
+		.append("</button>");
+		
     	
     	String logo = teamLogos.get(team.getName());
     	
@@ -129,7 +133,9 @@ public class TeamView
     	}
     	
     	StringBuilder header = new StringBuilder();
-    	
+    	header.append("<button type='button' class='btn btn-info search-button' style='float:right' data-toggle='modal' data-target='#searchModal'>")
+		.append("<span class='glyphicon glyphicon-search' aria-hidden='true'></span>")
+		.append("</button>");
     	String logo = teamLogos.get(team.getName());
     	
     	if (logo != null)

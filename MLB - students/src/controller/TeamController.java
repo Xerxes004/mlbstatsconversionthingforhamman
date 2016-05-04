@@ -184,6 +184,7 @@ public class TeamController extends BaseController {
 		
 		List<Team> list = new ArrayList<>();
 		list.add(team);
+		view.buildModal();
 		view.buildHeader(team);
 		
 		view.buildCharts(teamId);
@@ -229,7 +230,7 @@ public class TeamController extends BaseController {
 		
 		String linkToTeam = view.encodeLink(new String[] { "id" }, new String[] { team.getId().toString() },
 				team.getName(), BaseController.ACT_DETAIL, BaseController.SSP_TEAM);
-    	
+    	view.buildModal();
 		view.buildHeader(teamSeason, linkToTeam);
 		buildRosterTable(teamSeason);
 	}
@@ -427,8 +428,6 @@ public class TeamController extends BaseController {
 	 * @param teamSeason The team season to generate the roster from.
 	 */
 	private void buildRosterTable(TeamSeason teamSeason) {
-		//view.setHeader(buildHeader(teamSeason));
-
 		ArrayList<Player> roster = new ArrayList<>(teamSeason.getRoster());
 		String rosterTable[][] = new String[roster.size() + TABLE_HEADER_SIZE][ROSTER_TABLE_COLUMNS];
 		final int NAME_COL = 0;

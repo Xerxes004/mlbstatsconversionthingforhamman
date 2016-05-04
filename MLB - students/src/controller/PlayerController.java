@@ -177,6 +177,7 @@ public class PlayerController extends BaseController {
 	 * Processes the HTML details page request.
 	 */
 	protected final void processHTMLDetails() {
+		view.buildModal();
 		String id = keyVals.get("id");
 		if (id == null) {
 			return;
