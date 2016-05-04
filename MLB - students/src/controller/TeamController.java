@@ -134,7 +134,7 @@ public class TeamController extends BaseController {
 		view.printSearchResultsMessage(teamName, exactMatch);
 		buildTeamSearchResultsTable(teams);
 		view.buildLinkToSearch();
-		view.buildFooter(view);
+		view.buildFooter();
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class TeamController extends BaseController {
 
 		buildTeamDetailsTable(team);
 		view.buildLinkToSearch();
-		view.buildFooter(view);
+		view.buildFooter();
 	}
 
 	/**

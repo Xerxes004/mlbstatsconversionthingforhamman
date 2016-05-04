@@ -151,7 +151,7 @@ public class PlayerController extends BaseController {
 		view.printSearchResultsMessage(name, exact);
 		buildPlayerSearchResultsTable(bos);
 		//StringBuilder footer = new StringBuilder();
-		view.buildFooter(view);
+		view.buildFooter();
 	}
 
 	/**
@@ -197,7 +197,7 @@ public class PlayerController extends BaseController {
 		// Build the season information
 		buildPlayerDetailsTable(player);
 		
-		view.buildFooter(view);
+		view.buildFooter();
 	}
 	
 	protected final void processHTMLStats(){
@@ -212,9 +212,12 @@ public class PlayerController extends BaseController {
 			return;
 		}
 		
-		PlayerSeason ps = player.getPlayerSeasonByYear(Integer.valueOf(year));
+		view.buildHeader(player);
 		
-		buildPlayerStatsTable(ps);
+		PlayerSeason season = player.getPlayerSeasonByYear(Integer.valueOf(year));
+		buildPlayerStatsTable(season);
+		
+		view.buildFooter();
 	}
 
 	/**
@@ -313,7 +316,7 @@ public class PlayerController extends BaseController {
 		}
 		
 		view.buildTable(table);
-		view.buildFooter(view);
+		view.buildFooter();
 	}
 
 	/**

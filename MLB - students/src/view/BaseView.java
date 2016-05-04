@@ -78,10 +78,10 @@ public abstract class BaseView
     {
     	this.header = "<h1>Default player header</h1>";
     }
-    public void buildFooter(BaseView view)
+    public void buildFooter()
     {
     	StringBuilder footer = new StringBuilder();
-		footer.append(view.buildLinkToSearch())
+		footer.append(buildLinkToSearch())
 			  .append("<a href=\"index.htm\">Home</a>\r\n");
 		this.footer = footer.toString();
     }
