@@ -438,8 +438,8 @@ public class PlayerController extends BaseController {
 				sb.deleteCharAt(sb.length() - 1);
 			}
 			String year = ps.getYear().toString();
-			String link = view.encodeLink(new String[] { "id", "year" }, new String[] { player.getId().toString(), year }, year,
-					ACT_STATS, SSP_PLAYER);
+			String link = view.encodeLink(new String[] { "id", "year" }, 
+					new String[] { player.getId().toString(), year }, year, ACT_STATS, SSP_PLAYER);
 			seasonTable[i][YEAR_COL] = link;
 			seasonTable[i][GAMES_PLAYED_COL] = ps.getGamesPlayed().toString();
 			seasonTable[i][SALARY_COL] = MLBUtil.DOLLAR_FORMAT.format(ps.getSalary());
@@ -452,77 +452,102 @@ public class PlayerController extends BaseController {
 		view.buildTable(seasonTable);
 	}
 	
-	private final void buildPlayerStatsTable(PlayerSeason ps){
-		Set<String> positions = ps.getPlayer().getPositions();
+	/**
+	 * Intelligently builds the appropriate stats tables for a given
+	 * player during a specific season.
+	 * @param playerSeason The player season.
+	 */
+	private final void buildPlayerStatsTable(PlayerSeason playerSeason){
+		Set<String> positions = playerSeason.getPlayer().getPositions();
+		
+		// Build catching stats if the player was a catcher
 		if(positions.contains("C")){
 			view.addH2Header("Catching Stats");
-			buildCatchingTable(ps.getCatchingStats());
+			buildCatchingTable(playerSeason.getCatchingStats());
 		}
 		
-		if(positions.contains("LF") || positions.contains("CF") || positions.contains("RF") || positions.contains("SS")
+		// Build fielding stats if the player was a fielder
+		if(positions.contains("LF") || positions.contains("CF") 
+				|| positions.contains("RF") || positions.contains("SS")
 				|| positions.contains("1B") || positions.contains("2B") || positions.contains("3B")){
 			view.addH2Header("Fielding Stats");
-			buildFieldingTable(ps.getFieldingStats());
+			buildFieldingTable(playerSeason.getFieldingStats());
 		}
 		
+		// Build pitching stats table if the player was a pitcher
 		if(positions.contains("P")){
 			view.addH2Header("Pitching Stats");
-			buildPitchingTable(ps.getPitchingStats());
+			buildPitchingTable(playerSeason.getPitchingStats());
 		}
 		
+		// Always build the batting table
 		view.addH2Header("Batting Stats");
-		buildBattingTable(ps.getBattingStats());
+		buildBattingTable(playerSeason.getBattingStats());
 	}
 	
+	/**
+	 * Builds the catching stats table.
+	 * @param catching Catching stats for a specific season.
+	 */
 	private final void buildCatchingTable(CatchingStats catching){
 		if(catching == null){
 			return;
 		}
 		
 		String[][] catchingTable = new String[2][4];
-		catchingTable[0][0] = "Balls Passed";
-		catchingTable[0][1] = "Steals Allowed";
-		catchingTable[0][2] = "Steals Caught";
-		catchingTable[0][3] = "Wild Pitches";
+		catchingTable[HEADER_ROW][0] = "Balls Passed";
+		catchingTable[HEADER_ROW][1] = "Steals Allowed";
+		catchingTable[HEADER_ROW][2] = "Steals Caught";
+		catchingTable[HEADER_ROW][3] = "Wild Pitches";
 
 		catchingTable[1][0] = catching.getPassedBalls().toString();
 		catchingTable[1][1] = catching.getStealsAllowed().toString();
 		catchingTable[1][2] = catching.getStealsCaught().toString();
 		catchingTable[1][3] = catching.getWildPitches().toString();
+		
 		view.buildTable(catchingTable);
 	}
 	
+	/**
+	 * Builds the fielding stats table.
+	 * @param fielding Fielding stats for a specific season.
+	 */
 	private final void buildFieldingTable(FieldingStats fielding){
 		if(fielding == null){
 			return;
 		}
 		
 		String[][] fieldingTable = new String[2][2];
-		fieldingTable[0][0] = "Errors";
-		fieldingTable[0][1] = "Put Outs";
+		fieldingTable[HEADER_ROW][0] = "Errors";
+		fieldingTable[HEADER_ROW][1] = "Put Outs";
 
 		fieldingTable[1][0] = fielding.getErrors().toString();
 		fieldingTable[1][1] = fielding.getPutOuts().toString();
+		
 		view.buildTable(fieldingTable);
 	}
 	
+	/**
+	 * Builds the pitching stats table.
+	 * @param pitching Pitching stats for a specific season.
+	 */
 	private final void buildPitchingTable(PitchingStats pitching){
 		if(pitching == null){
 			return;
 		}
 		
 		String[][] pitchingTable = new String[2][11];
-		pitchingTable[0][0] = "Batters Faced";
-		pitchingTable[0][1] = "Earned Runs Allowed";
-		pitchingTable[0][2] = "Hit Batters";
-		pitchingTable[0][3] = "Home Runs Allowed";
-		pitchingTable[0][4] = "Losses";
-		pitchingTable[0][5] = "Outs Pitched";
-		pitchingTable[0][6] = "Saves";
-		pitchingTable[0][7] = "Strikeouts";
-		pitchingTable[0][8] = "Walks";
-		pitchingTable[0][9] = "Wild Pitches";
-		pitchingTable[0][10] = "Wins";
+		pitchingTable[HEADER_ROW][0] = "Batters Faced";
+		pitchingTable[HEADER_ROW][1] = "Earned Runs Allowed";
+		pitchingTable[HEADER_ROW][2] = "Hit Batters";
+		pitchingTable[HEADER_ROW][3] = "Home Runs Allowed";
+		pitchingTable[HEADER_ROW][4] = "Losses";
+		pitchingTable[HEADER_ROW][5] = "Outs Pitched";
+		pitchingTable[HEADER_ROW][6] = "Saves";
+		pitchingTable[HEADER_ROW][7] = "Strikeouts";
+		pitchingTable[HEADER_ROW][8] = "Walks";
+		pitchingTable[HEADER_ROW][9] = "Wild Pitches";
+		pitchingTable[HEADER_ROW][10] = "Wins";
 		
 		pitchingTable[1][0] = pitching.getBattersFaced().toString();
 		pitchingTable[1][1] = pitching.getEarnedRunsAllowed().toString();
@@ -535,27 +560,32 @@ public class PlayerController extends BaseController {
 		pitchingTable[1][8] = pitching.getWalks().toString();
 		pitchingTable[1][9] = pitching.getWildPitches().toString();
 		pitchingTable[1][10] = pitching.getWins().toString();
+		
 		view.buildTable(pitchingTable);
 	}
 	
+	/**
+	 * Builds the batting stats table.
+	 * @param batting Batting stats for a spcific season.
+	 */
 	private final void buildBattingTable(BattingStats batting) {
 		if(batting == null){
 			return;
 		}
 		
 		String[][] battingTable = new String[2][12];
-		battingTable[0][0] = "At Bats";
-		battingTable[0][1] = "Doubles";
-		battingTable[0][2] = "Triples";
-		battingTable[0][3] = "Hits By Pitcher";
-		battingTable[0][4] = "Hits";
-		battingTable[0][5] = "Home Runs";
-		battingTable[0][6] = "Intentional Walks";
-		battingTable[0][7] = "Runs Batted In";
-		battingTable[0][8] = "Steals";
-		battingTable[0][9] = "Steals Attempted";
-		battingTable[0][10] = "Strikeouts";
-		battingTable[0][11] = "Walks";
+		battingTable[HEADER_ROW][0] = "At Bats";
+		battingTable[HEADER_ROW][1] = "Doubles";
+		battingTable[HEADER_ROW][2] = "Triples";
+		battingTable[HEADER_ROW][3] = "Hits By Pitcher";
+		battingTable[HEADER_ROW][4] = "Hits";
+		battingTable[HEADER_ROW][5] = "Home Runs";
+		battingTable[HEADER_ROW][6] = "Intentional Walks";
+		battingTable[HEADER_ROW][7] = "Runs Batted In";
+		battingTable[HEADER_ROW][8] = "Steals";
+		battingTable[HEADER_ROW][9] = "Steals Attempted";
+		battingTable[HEADER_ROW][10] = "Strikeouts";
+		battingTable[HEADER_ROW][11] = "Walks";
 
 		battingTable[1][0] = batting.getAtBats().toString();
 		battingTable[1][1] = batting.getDoubles().toString();
