@@ -4,7 +4,6 @@ $(document).ready(function(){
 	teamSelector.select2({
 		ajax:{
 			url:"http://163.11.236.180:5555/team.json?action=search",
-			//url:"http://localhost:5555/team.json?action=search",
 			dataType:'json',
 			delay:250,
 			data: function(params){
@@ -36,7 +35,6 @@ $(document).ready(function(){
 		minimumInputLength:0
 	});
 
-	//teamSelector.select2('open');
 	teamSelector.on('select2:select', function(){
 		console.log('submitting form');
 		$("#team-select-form").submit();
@@ -46,7 +44,6 @@ $(document).ready(function(){
 	playerSelector.select2({
 		ajax:{
 			url:"http://163.11.236.180:5555/player.json?action=search",
-			//url:"http://localhost:5555/player.json?action=search",
 			dataType:'json',
 			delay:250,
 			data: function(params){
@@ -83,5 +80,5 @@ $(document).ready(function(){
 	playerSelector.on('select2:select', function(){
 		console.log('submitting form');
 		$("#player-select-form").submit();
-	});	
+	});
 });

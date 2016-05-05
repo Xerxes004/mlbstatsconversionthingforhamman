@@ -102,12 +102,11 @@ class WebRequestHandler implements Runnable {
     private void outputResponseHeader() throws Exception {
         outToClient.writeBytes("HTTP/1.0 200 Document Follows\r\n");
         outToClient.writeBytes("Access-Control-Allow-Origin: *\r\n");
-        if (urlName.endsWith(".jpg")) {
+        if (urlName.endsWith(".jpg") || urlName.endsWith(".ico")) {
             outToClient.writeBytes("Content-Type: image/jpeg\r\n");
         } else if (urlName.endsWith(".gif")) {
             outToClient.writeBytes("Content-Type: image/gif\r\n");
         } else if (urlName.endsWith(".png")) {
-            outToClient.writeBytes("Content-Type: image/png\r\n");
         } else if (urlName.endsWith(".css")) {
             outToClient.writeBytes("Content-Type: text/css\r\n");
         } else if (urlName.endsWith(".html") || urlName.endsWith(".htm")

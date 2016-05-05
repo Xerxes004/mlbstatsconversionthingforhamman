@@ -207,7 +207,7 @@ public class PlayerController extends BaseController {
 		if(id == null || year == null){
 			return;
 		}
-		
+		view.buildModal();
 		Player player = (Player) HibernateUtil.retrievePlayerById(Integer.valueOf(id));
 		if(player == null){
 			return;

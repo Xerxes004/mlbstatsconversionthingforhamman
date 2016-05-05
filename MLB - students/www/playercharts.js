@@ -68,7 +68,7 @@ $(document).ready(function(){
 
 
 
-	$.get("http://localhost:5555/player.json", {id:playerID, action:'details'}, function(data){
+	$.get("http://163.11.236.180:5555/player.json", {id:playerID, action:'details'}, function(data){
 		var batavg = [];
 		var year = [];
 		var hits = [];

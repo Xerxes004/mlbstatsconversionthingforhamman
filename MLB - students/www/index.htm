@@ -1,16 +1,61 @@
 <!DOCTYPE html>
 <head>
 <link rel='stylesheet' type='text/css' href='style.css'>
+	<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js'></script>
+	<link href='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/css/select2.min.css' rel='stylesheet'/>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.2/js/select2.min.js'></script>
+	<script src='https://code.highcharts.com/highcharts.js'></script>
+	<script src='https://code.highcharts.com/modules/exporting.js'></script>
+	<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js' integrity='sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS' crossorigin='anonymous'></script>
+	<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css'>
+	<link rel='stylesheet' type='text/css' href='style.css'>
+	<script src='selector.js'></script>
 </head>
 <html>
     <body>
+	    <div class='modal fade' id='searchModal' role='dialog'>
+	    	<div class='modal-dialog'>
+	    		<div class='modal-content'>
+		    		<div class='modal-header'>
+		    			<button type='button' class='close' data-dismiss='modal'>&times;</button>
+		    			<h4 class='modal-title'>Search</h4>
+		    		</div>
+		    	  	<div class='modal-body'>
+		    	  		<form class='form-horizontal' id='player-select-form' action='player.ssp' method='get'>
+			    	  		<div>
+			    	  			<select id='player-select' style='width:100%' name='id'>
+			    	  				<option></option>
+			    	  			</select>
+			    	  		</div>
+			    	  		<input type="hidden" name="action" value="details">
+		    	  		</form>
+		    	  		<br/><br/>
+		    	 		<form id='team-select-form' action='team.ssp' method='get'>
+		    	 			<div>
+		    	 				<select id='team-select' style='width:100%' name='id'>
+		    	 					<option></option>
+		    	 				</select>
+		    	 			</div>
+		    	  			<input type="hidden" name="action" value="details">
+		    	  		</form>
+		    	  	</div>
+		    	  	<div class='modal-footer'>
+		    	  		<button type='button' class='btn btn-default' data-dismiss='modal'>Close</button>
+		    	  	</div>
+	    	 	</div>
+	    	</div>
+	    </div>
+
 		<div id='background-div'></div>
 		<img src="./images/mlb.png" id="mlb-logo" z-index="-1" />
 		<div id="wrapper" style="background-image: url('images/banner.jpg');background-size:cover;background-repeat:no-repeat;height: 90vh">
 			<div style="padding:0 30px">
+				<button type='button' class='btn btn-info main-search-button' style='float:right' data-toggle='modal' data-target='#searchModal'>
+					<span class='glyphicon glyphicon-search' aria-hidden='true'></span>
+				</button>
 				<h1 style="color:white">MLB Database</h1>
-				<h2><a style="color:white" href="player.ssp?action=searchform">Search for a Player</a></h2>
-		        <h2><a style="color:white" href="team.ssp?action=searchform">Search for a Team</a></h2>
+				<h2><a href="player.ssp?action=searchform" style="color: white">Player Search</a></h2>
+				<h2><a href="team.ssp?action=searchform" style="color: white">Team Search</a></h2>
 		    </div>
 	    </div>
     </body>

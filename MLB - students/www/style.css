@@ -163,7 +163,9 @@ tr:hover td a {
     width: 100%;
     table-layout: fixed;
 }
-
+#roster-table th {
+	text-align: left;
+}
 #roster-table td,
 #roster-table .lr {
     text-align: left;
@@ -210,5 +212,14 @@ tr:hover td a {
 }
 
 .search-button:hover, .search-button:active, .search-button:focus{
+	background-color: #8085e9 !important;
+}
+
+.main-search-button {
+	background-color: #4243A8;
+	border-color: #8085e9;
+}
+
+.main-search-button:hover, .main-search-button:active, .main-search-button:focus{
 	background-color: #8085e9 !important;
 }
